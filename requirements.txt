@@ -1,0 +1,4 @@
+pandas
+xarray
+psp # need to put on pypi
+pydantic
