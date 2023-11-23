@@ -9,8 +9,10 @@ from psp.typings import X
 from ocf_os_pv_forecast.data import get_gfs_nwp, make_pv_data
 from ocf_os_pv_forecast.pydantic_models import PVSite
 
+from datetime import datetime
 
-def run_forecast(site: PVSite, ts: datetime) -> pd.DataFrame:
+
+def run_forecast(site: PVSite, ts: datetime | str) -> pd.DataFrame:
     """
     Run the forecast from NWP data
 
@@ -18,6 +20,9 @@ def run_forecast(site: PVSite, ts: datetime) -> pd.DataFrame:
     :param ts: the timestamp of the site
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
+
+    if isinstance(ts, str):
+        ts = datetime.fromisoformat(ts)
 
     # make pv and nwp data from GFS
     nwp_xr = get_gfs_nwp(site=site, ts=ts)

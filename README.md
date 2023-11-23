@@ -1,13 +1,12 @@
 # Open Source PV Forecast
 
 The aim of the project is to build an forecast that is free and easy to use.
+Open Climate Fix also provide a commercial PV forecast, please get in touch at quartz.support@openclimatefix.org
 
-The current model uses GFS NWPs to predict the solar genertion at a site
+The current model uses GFS NWPs to predict the solar generation at a site
 
 
 ```python
-from datetime import datetime
-
 from ocf_os_pv_forecast.forecast import run_forecast
 from ocf_os_pv_forecast.pydantic_models import PVSite
 
@@ -16,7 +15,7 @@ site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
 ts = datetime(2023, 11, 1, 0, 0, 0)
 
 # run model
-predications_df = run_forecast(site=site, ts=ts)
+predications_df = run_forecast(site=site, ts='2023-11-01')
 ```
 
 Which gives the following prediction
@@ -37,9 +36,9 @@ TODO - we need to benchmark this forecast.
 
 ## Abbreviations
 
-- NWP
-- GFS
-- PV
+- NWP: Numerical Weather Predictions
+- GFS: Global Forecast System
+- PV: Photovoltaic
 - 
 
 ## Contribution
