@@ -1,6 +1,6 @@
 """ Example code to run the forecast"""
-from ocf_os_pv_forecast.forecast import run_forecast
-from ocf_os_pv_forecast.pydantic_models import PVSite
+from quartz_solar_forecast.forecast import run_forecast
+from quartz_solar_forecast.pydantic_models import PVSite
 
 
 def main():

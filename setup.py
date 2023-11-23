@@ -9,7 +9,7 @@ long_description = (this_directory / "README.md").read_text()
 install_requires = (this_directory / "requirements.txt").read_text().splitlines()
 
 setup(
-    name="ocf-os-pv-forecast",
+    name="quartz_solar_forecast",
     version="0.0.1",
     license="MIT",
     author="Peter Dudfield",

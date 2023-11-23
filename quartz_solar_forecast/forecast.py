@@ -6,8 +6,8 @@ from psp.data_sources.pv import NetcdfPvDataSource
 from psp.serialization import load_model
 from psp.typings import X
 
-from ocf_os_pv_forecast.data import get_gfs_nwp, make_pv_data
-from ocf_os_pv_forecast.pydantic_models import PVSite
+from quartz_solar_forecast.data import get_gfs_nwp, make_pv_data
+from quartz_solar_forecast.pydantic_models import PVSite
 
 from datetime import datetime
 
@@ -29,7 +29,7 @@ def run_forecast(site: PVSite, ts: datetime | str) -> pd.DataFrame:
     pv_xr = make_pv_data(site=site, ts=ts)
 
     # load model, TODO move locally
-    model = load_model("s3://pvsite-ml-models-development/models/model-0.3.0.pkl")
+    model = load_model("s3://uk-site-forecaster-models-development/models/model-0.3.0.pkl")
 
     # format pv and nwp data
     pv_data_source = NetcdfPvDataSource(

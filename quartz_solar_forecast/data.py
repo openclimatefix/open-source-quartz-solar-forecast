@@ -8,7 +8,7 @@ import pandas as pd
 import requests
 import xarray as xr
 
-from ocf_os_pv_forecast.pydantic_models import PVSite
+from quartz_solar_forecast.pydantic_models import PVSite
 
 ssl._create_default_https_context = ssl._create_unverified_context
 

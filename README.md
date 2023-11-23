@@ -1,14 +1,14 @@
-# Open Source PV Forecast
+# Quartz Solar Forecast
 
-The aim of the project is to build an forecast that is free and easy to use.
+The aim of the project is to build an open source PV forecast that is free and easy to use.
 Open Climate Fix also provide a commercial PV forecast, please get in touch at quartz.support@openclimatefix.org
 
 The current model uses GFS NWPs to predict the solar generation at a site
 
 
 ```python
-from ocf_os_pv_forecast.forecast import run_forecast
-from ocf_os_pv_forecast.pydantic_models import PVSite
+from quartz_solar_forecast.forecast import run_forecast
+from quartz_solar_forecast.pydantic_models import PVSite
 
 # make input data
 site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
