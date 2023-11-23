@@ -1,4 +1,4 @@
 pandas
 xarray
-psp # need to put on pypi
+pv-site-prediction
 pydantic
