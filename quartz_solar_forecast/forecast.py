@@ -1,5 +1,6 @@
-from datetime import datetime
 
+
+import os
 import pandas as pd
 from psp.data_sources.nwp import NwpDataSource
 from psp.data_sources.pv import NetcdfPvDataSource
@@ -10,6 +11,8 @@ from quartz_solar_forecast.data import get_gfs_nwp, make_pv_data
 from quartz_solar_forecast.pydantic_models import PVSite
 
 from datetime import datetime
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
 def run_forecast(site: PVSite, ts: datetime | str) -> pd.DataFrame:
@@ -28,8 +31,8 @@ def run_forecast(site: PVSite, ts: datetime | str) -> pd.DataFrame:
     nwp_xr = get_gfs_nwp(site=site, ts=ts)
     pv_xr = make_pv_data(site=site, ts=ts)
 
-    # load model, TODO move locally
-    model = load_model("s3://uk-site-forecaster-models-development/models/model-0.3.0.pkl")
+    # load model
+    model = load_model(f"{dir_path}/models/model-0.3.0.pkl")
 
     # format pv and nwp data
     pv_data_source = NetcdfPvDataSource(
