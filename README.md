@@ -12,7 +12,6 @@ from quartz_solar_forecast.pydantic_models import PVSite
 
 # make input data
 site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
-ts = datetime(2023, 11, 1, 0, 0, 0)
 
 # run model
 predications_df = run_forecast(site=site, ts='2023-11-01')
