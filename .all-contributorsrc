@@ -1,0 +1,44 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "peterdudfield",
+      "name": "Peter Dudfield",
+      "avatar_url": "https://avatars.githubusercontent.com/u/34686298?v=4",
+      "profile": "https://github.com/peterdudfield",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "zakwatts",
+      "name": "Megawattz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47150349?v=4",
+      "profile": "https://github.com/zakwatts",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "EdFage",
+      "name": "EdFage",
+      "avatar_url": "https://avatars.githubusercontent.com/u/87755165?v=4",
+      "profile": "https://github.com/EdFage",
+      "contributions": [
+        "doc"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "Open-Quartz-Solar-Forecast",
+  "projectOwner": "openclimatefix"
+}
