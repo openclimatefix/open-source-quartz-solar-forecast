@@ -113,11 +113,3 @@ def make_pv_data(site: PVSite, ts) -> xr.Dataset:
     da = da.to_dataset(name="generation_wh")
 
     return da
-
-
-# print the first 10 rows of the columns
-def print_first_10_rows(df):
-    for col in df.columns:
-        print(f"Column: {col}")
-        print(df[col].head(10))
-        print("\n")
