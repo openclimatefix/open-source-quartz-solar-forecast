@@ -13,7 +13,7 @@ from quartz_solar_forecast.pydantic_models import PVSite
 ssl._create_default_https_context = ssl._create_unverified_context
 
 
-def get_nwp(site: PVSite, ts:datetime, source: str = "icon") -> xr.Dataset:
+def get_nwp(site: PVSite, ts: datetime, source: str = "icon") -> xr.Dataset:
     """
     Get GFS NWP data for a point time space and time
 
@@ -37,7 +37,7 @@ def get_nwp(site: PVSite, ts:datetime, source: str = "icon") -> xr.Dataset:
 
     start = ts.date()
     end = start + pd.Timedelta(days=7)
-    
+
     # Getting NWP, from OPEN METEO
     urlStart = None
     if source == "icon":
@@ -56,21 +56,21 @@ def get_nwp(site: PVSite, ts:datetime, source: str = "icon") -> xr.Dataset:
 
     # If the source is icon, add gfs visibility data
     if source == "icon":
-         url = (
-        f"https://api.open-meteo.com/v1/gfs?"
-        f"latitude={site.latitude}&longitude={site.longitude}"
-        f"&hourly=visibility"
-        f"&start_date={start}&end_date={end}"
+        url = (
+            f"https://api.open-meteo.com/v1/gfs?"
+            f"latitude={site.latitude}&longitude={site.longitude}"
+            f"&hourly=visibility"
+            f"&start_date={start}&end_date={end}"
         )
-         r_gfs = requests.get(url)
-         d_gfs = json.loads(r_gfs.text)
+        r_gfs = requests.get(url)
+        d_gfs = json.loads(r_gfs.text)
 
-         # get visibility data
-         gfs_visibility_data = d_gfs['hourly']['visibility']
+        # get visibility data
+        gfs_visibility_data = d_gfs["hourly"]["visibility"]
 
-         # append it to the main json
-         d['hourly']['visibility'] = gfs_visibility_data
-        
+        # append it to the main json
+        d["hourly"]["visibility"] = gfs_visibility_data
+
     # convert data into xarray
     df = pd.DataFrame(d["hourly"])
     df["time"] = pd.to_datetime(df["time"])
@@ -97,7 +97,9 @@ def get_nwp(site: PVSite, ts:datetime, source: str = "icon") -> xr.Dataset:
         ),
     )
     data_xr = data_xr.to_dataset(name=source)
-    data_xr = data_xr.assign_coords({"x": [site.longitude], "y": [site.latitude], "time": [df.index[0]]})
+    data_xr = data_xr.assign_coords(
+        {"x": [site.longitude], "y": [site.latitude], "time": [df.index[0]]}
+    )
 
     return data_xr
 

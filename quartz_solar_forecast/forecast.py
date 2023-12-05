@@ -1,5 +1,3 @@
-
-
 import os
 import pandas as pd
 from psp.data_sources.nwp import NwpDataSource
