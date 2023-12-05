@@ -45,7 +45,7 @@ def get_nwp(site: PVSite, ts: datetime, source: str = "icon") -> xr.Dataset:
     elif source == "gfs":
         url_nwp_source = "gfs"
     else:
-        raise Exception(f'Source ({source}) must be either icon or gfs')
+        raise Exception(f'Source ({source}) must be either "icon" or "gfs"')
 
     # Pull data from the source provided 
     url = (
