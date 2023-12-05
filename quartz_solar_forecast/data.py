@@ -13,12 +13,13 @@ from quartz_solar_forecast.pydantic_models import PVSite
 ssl._create_default_https_context = ssl._create_unverified_context
 
 
-def get_gfs_nwp(site: PVSite, ts:datetime) -> xr.Dataset:
+def get_gfs_nwp(site: PVSite, ts:datetime, source:str) -> xr.Dataset:
     """
     Get GFS NWP data for a point time space and time
 
     :param site: the PV site
     :param ts: the timestamp for when you want the forecast for
+    :param source: the data source. Either "gfs" or "dwd-icon"
     :return: nwp forecast in xarray
     """
 
@@ -36,10 +37,10 @@ def get_gfs_nwp(site: PVSite, ts:datetime) -> xr.Dataset:
 
     start = ts.date()
     end = start + pd.Timedelta(days=7)
-
-    # Getting GFS, from OPEN METEO
+    
+    # Getting NWP, from OPEN METEO
     url = (
-        f"https://api.open-meteo.com/v1/gfs?"
+        f"https://api.open-meteo.com/v1/{source}?"
         f"latitude={site.latitude}&longitude={site.longitude}"
         f"&hourly={','.join(variables)}"
         f"&start_date={start}&end_date={end}"
@@ -72,7 +73,7 @@ def get_gfs_nwp(site: PVSite, ts:datetime) -> xr.Dataset:
             variable=df.columns,
         ),
     )
-    data_xr = data_xr.to_dataset(name="gfs")
+    data_xr = data_xr.to_dataset(name=source)
     data_xr = data_xr.assign_coords({"x": [site.longitude], "y": [site.latitude], "time": [df.index[0]]})
 
     return data_xr
