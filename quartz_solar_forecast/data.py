@@ -13,13 +13,13 @@ from quartz_solar_forecast.pydantic_models import PVSite
 ssl._create_default_https_context = ssl._create_unverified_context
 
 
-def get_gfs_nwp(site: PVSite, ts:datetime, source:str) -> xr.Dataset:
+def get_gfs_nwp(site: PVSite, ts:datetime, source: str = "icon") -> xr.Dataset:
     """
     Get GFS NWP data for a point time space and time
 
     :param site: the PV site
     :param ts: the timestamp for when you want the forecast for
-    :param source: the data source. Either "gfs" or "dwd-icon"
+    :param source: the data source. Either "gfs" or "icon". Defaults to "icon"
     :return: nwp forecast in xarray
     """
 
@@ -39,8 +39,14 @@ def get_gfs_nwp(site: PVSite, ts:datetime, source:str) -> xr.Dataset:
     end = start + pd.Timedelta(days=7)
     
     # Getting NWP, from OPEN METEO
+    urlStart = None
+    if source == "icon":
+        urlStart = "dwd-icon"
+    if source == "gfs":
+        urlStart = "gfs"
+
     url = (
-        f"https://api.open-meteo.com/v1/{source}?"
+        f"https://api.open-meteo.com/v1/{urlStart}?"
         f"latitude={site.latitude}&longitude={site.longitude}"
         f"&hourly={','.join(variables)}"
         f"&start_date={start}&end_date={end}"
@@ -48,6 +54,23 @@ def get_gfs_nwp(site: PVSite, ts:datetime, source:str) -> xr.Dataset:
     r = requests.get(url)
     d = json.loads(r.text)
 
+    # If the source is icon, add gfs visibility data
+    if source == "icon":
+         url = (
+        f"https://api.open-meteo.com/v1/gfs?"
+        f"latitude={site.latitude}&longitude={site.longitude}"
+        f"&hourly=visibility"
+        f"&start_date={start}&end_date={end}"
+        )
+         r_gfs = requests.get(url)
+         d_gfs = json.loads(r_gfs.text)
+
+         # get visibility data
+         gfs_visibility_data = d_gfs['hourly']['visibility']
+
+         # append it to the main json
+         d['hourly']['visibility'] = gfs_visibility_data
+        
     # convert data into xarray
     df = pd.DataFrame(d["hourly"])
     df["time"] = pd.to_datetime(df["time"])
@@ -64,6 +87,7 @@ def get_gfs_nwp(site: PVSite, ts:datetime, source:str) -> xr.Dataset:
             "cloudcover_high": "hcc",
         }
     )
+
     df = df.set_index("time")
     data_xr = xr.DataArray(
         data=df.values,
