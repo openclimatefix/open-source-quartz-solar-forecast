@@ -39,14 +39,14 @@ def get_nwp(site: PVSite, ts: datetime, source: str = "icon") -> xr.Dataset:
     end = start + pd.Timedelta(days=7)
 
     # Getting NWP, from OPEN METEO
-    urlStart = None
+    url_nwp_source = None
     if source == "icon":
-        urlStart = "dwd-icon"
-    if source == "gfs":
-        urlStart = "gfs"
+        url_nwp_source = "dwd-icon"
+    elif source == "gfs":
+        url_nwp_source = "gfs"
 
     url = (
-        f"https://api.open-meteo.com/v1/{urlStart}?"
+        f"https://api.open-meteo.com/v1/{url_nwp_source}?"
         f"latitude={site.latitude}&longitude={site.longitude}"
         f"&hourly={','.join(variables)}"
         f"&start_date={start}&end_date={end}"
