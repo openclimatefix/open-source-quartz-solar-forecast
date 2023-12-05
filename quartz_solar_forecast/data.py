@@ -44,7 +44,10 @@ def get_nwp(site: PVSite, ts: datetime, source: str = "icon") -> xr.Dataset:
         url_nwp_source = "dwd-icon"
     elif source == "gfs":
         url_nwp_source = "gfs"
+    else:
+        raise Exception(f'Source ({source}) must be either icon or gfs')
 
+    # Pull data from the source provided to get_nwp()
     url = (
         f"https://api.open-meteo.com/v1/{url_nwp_source}?"
         f"latitude={site.latitude}&longitude={site.longitude}"
@@ -54,7 +57,7 @@ def get_nwp(site: PVSite, ts: datetime, source: str = "icon") -> xr.Dataset:
     r = requests.get(url)
     d = json.loads(r.text)
 
-    # If the source is icon, add gfs visibility data
+    # If the source provided is icon, also pull gfs visibility data
     if source == "icon":
         url = (
             f"https://api.open-meteo.com/v1/gfs?"
