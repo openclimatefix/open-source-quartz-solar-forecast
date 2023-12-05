@@ -87,7 +87,6 @@ def get_nwp(site: PVSite, ts:datetime, source: str = "icon") -> xr.Dataset:
             "cloudcover_high": "hcc",
         }
     )
-
     df = df.set_index("time")
     data_xr = xr.DataArray(
         data=df.values,
