@@ -47,7 +47,7 @@ def get_nwp(site: PVSite, ts: datetime, source: str = "icon") -> xr.Dataset:
     else:
         raise Exception(f'Source ({source}) must be either icon or gfs')
 
-    # Pull data from the source provided to get_nwp()
+    # Pull data from the source provided 
     url = (
         f"https://api.open-meteo.com/v1/{url_nwp_source}?"
         f"latitude={site.latitude}&longitude={site.longitude}"
@@ -57,7 +57,7 @@ def get_nwp(site: PVSite, ts: datetime, source: str = "icon") -> xr.Dataset:
     r = requests.get(url)
     d = json.loads(r.text)
 
-    # If the source provided is icon, also pull gfs visibility data
+    # If the source is ICON, get visibility data from GFS as its not available for icon on Open Meteo
     if source == "icon":
         url = (
             f"https://api.open-meteo.com/v1/gfs?"
@@ -68,10 +68,10 @@ def get_nwp(site: PVSite, ts: datetime, source: str = "icon") -> xr.Dataset:
         r_gfs = requests.get(url)
         d_gfs = json.loads(r_gfs.text)
 
-        # get visibility data
+        # extract visibility data from gfs reponse
         gfs_visibility_data = d_gfs["hourly"]["visibility"]
 
-        # append it to the main json
+        # add visibility to the icon reponse to make a complete json file 
         d["hourly"]["visibility"] = gfs_visibility_data
 
     # convert data into xarray
