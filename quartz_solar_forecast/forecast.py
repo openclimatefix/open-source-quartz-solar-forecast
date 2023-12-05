@@ -7,7 +7,7 @@ from psp.data_sources.pv import NetcdfPvDataSource
 from psp.serialization import load_model
 from psp.typings import X
 
-from quartz_solar_forecast.data import get_gfs_nwp, make_pv_data
+from quartz_solar_forecast.data import get_nwp, make_pv_data
 from quartz_solar_forecast.pydantic_models import PVSite
 
 from datetime import datetime
@@ -28,7 +28,7 @@ def run_forecast(site: PVSite, ts: datetime | str) -> pd.DataFrame:
         ts = datetime.fromisoformat(ts)
 
     # make pv and nwp data from GFS
-    nwp_xr = get_gfs_nwp(site=site, ts=ts)
+    nwp_xr = get_nwp(site=site, ts=ts)
     pv_xr = make_pv_data(site=site, ts=ts)
 
     # load model

@@ -13,7 +13,7 @@ from quartz_solar_forecast.pydantic_models import PVSite
 ssl._create_default_https_context = ssl._create_unverified_context
 
 
-def get_gfs_nwp(site: PVSite, ts:datetime, source: str = "icon") -> xr.Dataset:
+def get_nwp(site: PVSite, ts:datetime, source: str = "icon") -> xr.Dataset:
     """
     Get GFS NWP data for a point time space and time
 
