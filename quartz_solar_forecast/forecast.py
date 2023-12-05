@@ -15,13 +15,12 @@ from datetime import datetime
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
-def run_forecast(site: PVSite, ts: datetime | str, source: str) -> pd.DataFrame:
+def run_forecast(site: PVSite, ts: datetime | str) -> pd.DataFrame:
     """
     Run the forecast from NWP data
 
     :param site: the PV site
     :param ts: the timestamp of the site
-    :param source: the meteo data source, either "gfs" or "dwd-icon"
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
 
@@ -29,7 +28,7 @@ def run_forecast(site: PVSite, ts: datetime | str, source: str) -> pd.DataFrame:
         ts = datetime.fromisoformat(ts)
 
     # make pv and nwp data from GFS
-    nwp_xr = get_gfs_nwp(site=site, ts=ts, source=source)
+    nwp_xr = get_gfs_nwp(site=site, ts=ts)
     pv_xr = make_pv_data(site=site, ts=ts)
 
     # load model
@@ -43,7 +42,8 @@ def run_forecast(site: PVSite, ts: datetime | str, source: str) -> pd.DataFrame:
         rename={"generation_wh": "power", "kwp": "capacity"},
         ignore_pv_ids=[],
     )
-    nwp = NwpDataSource(nwp_xr, value_name="gfs")
+    # make NwpDataSource, get the value_name from nwp_xr itself
+    nwp = NwpDataSource(nwp_xr, value_name=list(nwp_xr.data_vars)[0])
     model.set_data_sources(pv_data_source=pv_data_source, nwp_data_sources={"GFS": nwp})
 
     # make prediction
