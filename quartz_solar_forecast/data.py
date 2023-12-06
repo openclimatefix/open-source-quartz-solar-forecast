@@ -13,12 +13,13 @@ from quartz_solar_forecast.pydantic_models import PVSite
 ssl._create_default_https_context = ssl._create_unverified_context
 
 
-def get_gfs_nwp(site: PVSite, ts:datetime) -> xr.Dataset:
+def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     """
     Get GFS NWP data for a point time space and time
 
     :param site: the PV site
     :param ts: the timestamp for when you want the forecast for
+    :param nwp_source: the nwp data source. Either "gfs" or "icon". Defaults to "icon"
     :return: nwp forecast in xarray
     """
 
@@ -37,15 +38,41 @@ def get_gfs_nwp(site: PVSite, ts:datetime) -> xr.Dataset:
     start = ts.date()
     end = start + pd.Timedelta(days=7)
 
-    # Getting GFS, from OPEN METEO
+    # Getting NWP, from OPEN METEO
+    url_nwp_source = None
+    if nwp_source == "icon":
+        url_nwp_source = "dwd-icon"
+    elif nwp_source == "gfs":
+        url_nwp_source = "gfs"
+    else:
+        raise Exception(f'Source ({nwp_source}) must be either "icon" or "gfs"')
+
+    # Pull data from the nwp_source provided 
     url = (
-        f"https://api.open-meteo.com/v1/gfs?"
+        f"https://api.open-meteo.com/v1/{url_nwp_source}?"
         f"latitude={site.latitude}&longitude={site.longitude}"
         f"&hourly={','.join(variables)}"
         f"&start_date={start}&end_date={end}"
     )
     r = requests.get(url)
     d = json.loads(r.text)
+
+    # If the nwp_source is ICON, get visibility data from GFS as its not available for icon on Open Meteo
+    if nwp_source == "icon":
+        url = (
+            f"https://api.open-meteo.com/v1/gfs?"
+            f"latitude={site.latitude}&longitude={site.longitude}"
+            f"&hourly=visibility"
+            f"&start_date={start}&end_date={end}"
+        )
+        r_gfs = requests.get(url)
+        d_gfs = json.loads(r_gfs.text)
+
+        # extract visibility data from gfs reponse
+        gfs_visibility_data = d_gfs["hourly"]["visibility"]
+
+        # add visibility to the icon reponse to make a complete json file 
+        d["hourly"]["visibility"] = gfs_visibility_data
 
     # convert data into xarray
     df = pd.DataFrame(d["hourly"])
@@ -72,8 +99,10 @@ def get_gfs_nwp(site: PVSite, ts:datetime) -> xr.Dataset:
             variable=df.columns,
         ),
     )
-    data_xr = data_xr.to_dataset(name="gfs")
-    data_xr = data_xr.assign_coords({"x": [site.longitude], "y": [site.latitude], "time": [df.index[0]]})
+    data_xr = data_xr.to_dataset(name=nwp_source)
+    data_xr = data_xr.assign_coords(
+        {"x": [site.longitude], "y": [site.latitude], "time": [df.index[0]]}
+    )
 
     return data_xr
 

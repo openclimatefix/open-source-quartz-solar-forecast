@@ -1,5 +1,3 @@
-
-
 import os
 import pandas as pd
 from psp.data_sources.nwp import NwpDataSource
@@ -7,7 +5,7 @@ from psp.data_sources.pv import NetcdfPvDataSource
 from psp.serialization import load_model
 from psp.typings import X
 
-from quartz_solar_forecast.data import get_gfs_nwp, make_pv_data
+from quartz_solar_forecast.data import get_nwp, make_pv_data
 from quartz_solar_forecast.pydantic_models import PVSite
 
 from datetime import datetime
@@ -15,12 +13,13 @@ from datetime import datetime
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
-def run_forecast(site: PVSite, ts: datetime | str) -> pd.DataFrame:
+def run_forecast(site: PVSite, ts: datetime | str, nwp_source: str = "icon") -> pd.DataFrame:
     """
     Run the forecast from NWP data
 
     :param site: the PV site
     :param ts: the timestamp of the site
+    :param nwp_source: the nwp data source. Either "gfs" or "icon". Defaults to "icon"
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
 
@@ -28,7 +27,7 @@ def run_forecast(site: PVSite, ts: datetime | str) -> pd.DataFrame:
         ts = datetime.fromisoformat(ts)
 
     # make pv and nwp data from GFS
-    nwp_xr = get_gfs_nwp(site=site, ts=ts)
+    nwp_xr = get_nwp(site=site, ts=ts)
     pv_xr = make_pv_data(site=site, ts=ts)
 
     # load model
@@ -42,8 +41,9 @@ def run_forecast(site: PVSite, ts: datetime | str) -> pd.DataFrame:
         rename={"generation_wh": "power", "kwp": "capacity"},
         ignore_pv_ids=[],
     )
-    nwp = NwpDataSource(nwp_xr, value_name="gfs")
-    model.set_data_sources(pv_data_source=pv_data_source, nwp_data_sources={"GFS": nwp})
+    # make NwpDataSource
+    nwp = NwpDataSource(nwp_xr, value_name=nwp_source)
+    model.set_data_sources(pv_data_source=pv_data_source, nwp_data_sources={nwp_source: nwp})
 
     # make prediction
     x = X(pv_id="1", ts=ts)
