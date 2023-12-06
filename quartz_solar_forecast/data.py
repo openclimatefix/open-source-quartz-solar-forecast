@@ -13,13 +13,13 @@ from quartz_solar_forecast.pydantic_models import PVSite
 ssl._create_default_https_context = ssl._create_unverified_context
 
 
-def get_nwp(site: PVSite, ts: datetime, source: str = "icon") -> xr.Dataset:
+def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     """
     Get GFS NWP data for a point time space and time
 
     :param site: the PV site
     :param ts: the timestamp for when you want the forecast for
-    :param source: the data source. Either "gfs" or "icon". Defaults to "icon"
+    :param nwp_source: the nwp data source. Either "gfs" or "icon". Defaults to "icon"
     :return: nwp forecast in xarray
     """
 
@@ -40,14 +40,14 @@ def get_nwp(site: PVSite, ts: datetime, source: str = "icon") -> xr.Dataset:
 
     # Getting NWP, from OPEN METEO
     url_nwp_source = None
-    if source == "icon":
+    if nwp_source == "icon":
         url_nwp_source = "dwd-icon"
-    elif source == "gfs":
+    elif nwp_source == "gfs":
         url_nwp_source = "gfs"
     else:
-        raise Exception(f'Source ({source}) must be either "icon" or "gfs"')
+        raise Exception(f'Source ({nwp_source}) must be either "icon" or "gfs"')
 
-    # Pull data from the source provided 
+    # Pull data from the nwp_source provided 
     url = (
         f"https://api.open-meteo.com/v1/{url_nwp_source}?"
         f"latitude={site.latitude}&longitude={site.longitude}"
@@ -57,8 +57,8 @@ def get_nwp(site: PVSite, ts: datetime, source: str = "icon") -> xr.Dataset:
     r = requests.get(url)
     d = json.loads(r.text)
 
-    # If the source is ICON, get visibility data from GFS as its not available for icon on Open Meteo
-    if source == "icon":
+    # If the nwp_source is ICON, get visibility data from GFS as its not available for icon on Open Meteo
+    if nwp_source == "icon":
         url = (
             f"https://api.open-meteo.com/v1/gfs?"
             f"latitude={site.latitude}&longitude={site.longitude}"
@@ -99,7 +99,7 @@ def get_nwp(site: PVSite, ts: datetime, source: str = "icon") -> xr.Dataset:
             variable=df.columns,
         ),
     )
-    data_xr = data_xr.to_dataset(name=source)
+    data_xr = data_xr.to_dataset(name=nwp_source)
     data_xr = data_xr.assign_coords(
         {"x": [site.longitude], "y": [site.latitude], "time": [df.index[0]]}
     )
