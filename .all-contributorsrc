@@ -31,7 +31,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/87755165?v=4",
       "profile": "https://github.com/EdFage",
       "contributions": [
-        "doc"
+        "doc",
+        "code"
       ]
     },
     {
@@ -48,6 +49,6 @@
   "skipCi": true,
   "repoType": "github",
   "repoHost": "https://github.com",
-  "projectName": "Open-Quartz-Solar-Forecast",
+  "projectName": "Open-Source-Quartz-Solar-Forecast",
   "projectOwner": "openclimatefix"
 }
