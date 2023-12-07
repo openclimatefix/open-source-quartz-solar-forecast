@@ -125,7 +125,6 @@ def make_pv_data(site: PVSite, ts) -> xr.Dataset:
     timestamp = [ts]
     pv_id = [1]
 
-    # would be nice to not use ss_id, should be pv_id
     da = xr.DataArray(
         data=generation_wh,
         dims=["pv_id", "timestamp"],
@@ -135,8 +134,8 @@ def make_pv_data(site: PVSite, ts) -> xr.Dataset:
             timestamp=timestamp,
             pv_id=pv_id,
             kwp=(["pv_id"], [site.capacity_kwp]),
-            tilt=(["pv_id"], [0]),
-            orientation=(["pv_id"], [0]),
+            tilt=(["pv_id"], [site.tilt]),
+            orientation=(["pv_id"], [site.orientation]),
         ),
     )
     da = da.to_dataset(name="generation_wh")
