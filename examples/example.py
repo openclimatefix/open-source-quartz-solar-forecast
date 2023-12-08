@@ -8,10 +8,10 @@ def main():
     site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
 
     # run model
-    predications_df = run_forecast(site=site, ts='2023-10-30')
+    predictions_df = run_forecast(site=site, ts="2023-10-30")
 
-    print(predications_df)
-    print(f"Max: {predications_df['power_wh'].max()}")
+    print(predictions_df)
+    print(f"Max: {predictions_df['power_wh'].max()}")
 
 
 if __name__ == "__main__":
