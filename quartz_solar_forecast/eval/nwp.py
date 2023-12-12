@@ -1,12 +1,13 @@
 """ Get nwp data from HF"""
+import os
 import pandas as pd
 
-import ocf_blosc2 # noqa
+import ocf_blosc2  # noqa
 import xarray as xr
 from huggingface_hub import HfFileSystem
 
 
-def get_nwp(time_locations:pd.DataFrame):
+def get_nwp(time_locations: pd.DataFrame):
     """
     Get all the nwp data fpr the time locations
 
@@ -19,13 +20,15 @@ def get_nwp(time_locations:pd.DataFrame):
 
     all_nwp_dfs = []
     for i, row in time_locations.iterrows():
-        print(f'{i} of {len(time_locations)}')
-        one_nwp_df = get_nwp_for_one_timestamp_one_location(row['timestamp'], row['latitude'], row['longitude'])
+        print(f"{i} of {len(time_locations)}")
+        one_nwp_df = get_nwp_for_one_timestamp_one_location(
+            row["timestamp"], row["latitude"], row["longitude"]
+        )
 
-        one_nwp_df['timestamp'] = row['timestamp']
-        one_nwp_df['pv_id'] = row['pv_id']
-        one_nwp_df['latitude'] = row['latitude']
-        one_nwp_df['longitude'] = row['longitude']
+        one_nwp_df["timestamp"] = row["timestamp"]
+        one_nwp_df["pv_id"] = row["pv_id"]
+        one_nwp_df["latitude"] = row["latitude"]
+        one_nwp_df["longitude"] = row["longitude"]
 
         all_nwp_dfs.append(one_nwp_df)
 
@@ -34,14 +37,14 @@ def get_nwp(time_locations:pd.DataFrame):
     return all_nwp_df
 
 
-def get_nwp_for_one_timestamp_one_location(
-    timestamp: pd.Timestamp, latitude, longitude
-):
+def get_nwp_for_one_timestamp_one_location(timestamp: pd.Timestamp, latitude, longitude):
     """
     Get NWP data from Hugging Face for one timestamp and one location
 
     :param timestamp: the timestamp for when you want the forecast for
-    :param location: the location for when you want the forecast for
+    :param latitude: the latitude of the location
+    :param longitude: the longitude of the location
+
     :return: nwp forecast in xarray
     """
 
@@ -59,56 +62,50 @@ def get_nwp_for_one_timestamp_one_location(
     date_and_hour = timestamp.strftime("%Y%m%d_%H")
 
     date = f"{year}/{month}/{day}"
-    file_location = f"{date}/{date_and_hour}.zarr.zip"
+    file_location = f"{date}/{date_and_hour}"
     huggingface_route = "zip:///::hf://datasets/openclimatefix/dwd-icon-eu/data"
-    #huggingface_route = "datasets/openclimatefix/dwd-icon-eu/data"
-    huggingface_file = f"{huggingface_route}/{file_location}"
+    # huggingface_route = "datasets/openclimatefix/dwd-icon-eu/data"
+    huggingface_file = f"{huggingface_route}/{file_location}.zarr.zip"
 
-    # TODO add cache so we only need to download this file once
-    # see if this file exists in the cache
-    # cache_dir = 'data/nwp'
-    # cache_file = f"{cache_dir}/{file_location}"
-    # if not os.path.exists(cache_file):
-    #     # use fsspec to copy file
-    #     print('copying file { from HF to local')
-    #     os.makedirs(f'{cache_dir}/{date}', exist_ok=True)
-    #     fs.get(f"{huggingface_route}/{file_location}", f"{cache_file}")
-
-    data = xr.open_zarr(
-        f"{huggingface_file}",
-        chunks="auto",
-    )
-
-    # take nearest location
-    data_at_location = data.sel(latitude=latitude, longitude=longitude, method="nearest")
-
-    # select the following variables
-    # "visibility": "vis",
-    # "windspeed_10m": "si10", from u and v
-    # "temperature_2m": "t_2m",
-    # "precipitation": "tot_prec",
-    # "shortwave_radiation": "aswdifd_s",
-    # "direct_radiation": "aswdir_s",
-    # "cloudcover_low": "clcl",
-    # "cloudcover_mid": "clcm",
-    # "cloudcover_high": "clch",
+    # dataset variables
     variables = ["t_2m", "tot_prec", "clch", "clcm", "clcl", "u", "v", "aswdir_s", "aswdifd_s"]
-    data_at_location = data_at_location[variables]
 
-    # choise the first isobaricInhPa
-    data_at_location = data_at_location.isel(isobaricInhPa=-1)
+    cache_dir = "data/nwp"
+    cache_file = f"{cache_dir}/{file_location}_{latitude}_{longitude}.zarr"
+    if not os.path.exists(cache_file):
+        # use fsspec to copy file
+        print(f"Opening file {huggingface_file} from HF to local")
 
-    #  reduce to 54 hours timestaps, this means there is at least a 48 hours forecast
-    data_at_location = data_at_location.isel(step=slice(0, 54))
+        data = xr.open_zarr(
+            f"{huggingface_file}",
+            chunks="auto",
+        )
 
-    # matke times from the init time + steps
+        # take nearest location and only select the variables we want
+        data_at_location = data.sel(latitude=latitude, longitude=longitude, method="nearest")
+        data_at_location = data_at_location[variables]
+
+        # choise the first isobaricInhPa
+        data_at_location = data_at_location.isel(isobaricInhPa=-1)
+
+        #  reduce to 54 hours timestaps, this means there is at least a 48 hours forecast
+        data_at_location = data_at_location.isel(step=slice(0, 54))
+
+        # load all the data, this can take about ~1 minute seconds
+        print(f"Loading dataset for {timestamp=} {longitude=} {latitude=}")
+        data_at_location.load()
+
+        # save to cache
+        data_at_location.to_zarr(cache_file)
+    else:
+        # load from cache
+        print("loading from cache")
+        data_at_location = xr.open_zarr(cache_file)
+
+    # make times from the init time + steps
     times = pd.to_datetime(data_at_location.time.values) + pd.to_timedelta(
         data_at_location.step.values, unit="h"
     )
-
-    # load all the data, this can take about ~1 minute seconds
-    print(f"Loading dataset for {timestamp=} {longitude=} {latitude=}")
-    data_at_location.load()
 
     # convert to pandas dataframe
     df = pd.DataFrame(times, columns=["timestamp"])
