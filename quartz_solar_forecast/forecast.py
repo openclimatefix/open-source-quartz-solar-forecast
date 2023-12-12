@@ -1,16 +1,13 @@
 import os
 import pandas as pd
-from psp.data_sources.nwp import NwpDataSource
-from psp.data_sources.pv import NetcdfPvDataSource
-from psp.serialization import load_model
-from psp.typings import X
 
 from quartz_solar_forecast.data import get_nwp, make_pv_data
 from quartz_solar_forecast.pydantic_models import PVSite
 
 from datetime import datetime
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
+from quartz_solar_forecast.forecasts.v1 import forecast_v1
+
 
 
 def run_forecast(site: PVSite, ts: datetime | str, nwp_source: str = "icon") -> pd.DataFrame:
@@ -30,27 +27,9 @@ def run_forecast(site: PVSite, ts: datetime | str, nwp_source: str = "icon") -> 
     nwp_xr = get_nwp(site=site, ts=ts)
     pv_xr = make_pv_data(site=site, ts=ts)
 
-    # load model
-    model = load_model(f"{dir_path}/models/model-0.3.0.pkl")
-
-    # format pv and nwp data
-    pv_data_source = NetcdfPvDataSource(
-        pv_xr,
-        id_dim_name="pv_id",
-        timestamp_dim_name="timestamp",
-        rename={"generation_wh": "power", "kwp": "capacity"},
-        ignore_pv_ids=[],
-    )
-    # make NwpDataSource
-    nwp = NwpDataSource(nwp_xr, value_name=nwp_source)
-    model.set_data_sources(pv_data_source=pv_data_source, nwp_data_sources={nwp_source: nwp})
-
-    # make prediction
-    x = X(pv_id="1", ts=ts)
-    pred = model.predict(x)
-
-    # format into timerange and put into pd dataframe
-    times = pd.date_range(start=x.ts, periods=len(pred.powers), freq="15min")
-    pred_df = pd.DataFrame({"power_wh": pred.powers}, index=times)
+    # load and run models
+    pred_df = forecast_v1(nwp_source, nwp_xr, pv_xr, ts)
 
     return pred_df
+
+

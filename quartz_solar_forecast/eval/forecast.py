@@ -8,6 +8,8 @@ from psp.typings import X
 
 from quartz_solar_forecast.data import get_nwp, make_pv_data
 from quartz_solar_forecast.pydantic_models import PVSite
+from quartz_solar_forecast.forecasts.v1 import forecast_v1
+from quartz_solar_forecast.data import format_nwp_data
 
 from datetime import datetime
 
@@ -53,53 +55,23 @@ def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="ICON") -
         ts = pv_df["timestamp"][i]
 
         # format
-        times = nwp_site_df["time"]
-        step = times - ts
+        nwp_site_df["step"] = nwp_site_df["time"] - ts
         for c in ["timestamp", "latitude", "longitude", "pv_id"]:
             if c in nwp_site_df.columns:
                 nwp_site_df = nwp_site_df.drop(columns=c)
 
-        nwp_site_df.set_index("time", inplace=True, drop=True)
+        nwp_site_df.set_index("step", inplace=True, drop=True)
 
         if isinstance(ts, str):
             ts = datetime.fromisoformat(ts)
 
         # make pv and nwp data from GFS
         # TODO move this to model
-        nwp_xr = xr.DataArray(
-            data=nwp_site_df.values,
-            dims=["step", "variable"],
-            coords=dict(
-                step=("step", step),
-                variable=nwp_site_df.columns,
-            ),
-        )
-        nwp_xr = nwp_xr.to_dataset(name=nwp_source)
-        nwp_xr = nwp_xr.assign_coords(
-            {"x": [site.longitude], "y": [site.latitude], "time": [nwp_site_df.index[0]]}
-        )
-
+        nwp_xr = format_nwp_data(df=nwp_site_df, nwp_source=nwp_source, site=site)
         pv_xr = make_pv_data(site=site, ts=ts)
 
-        # format pv and nwp data
-        pv_data_source = NetcdfPvDataSource(
-            pv_xr,
-            id_dim_name="pv_id",
-            timestamp_dim_name="timestamp",
-            rename={"generation_wh": "power", "kwp": "capacity"},
-            ignore_pv_ids=[],
-        )
-        # make NwpDataSource
-        nwp = NwpDataSource(paths_or_data=nwp_xr, value_name=nwp_source)
-        model.set_data_sources(pv_data_source=pv_data_source, nwp_data_sources={nwp_source: nwp})
-
-        # make prediction # TODO change '1'
-        x = X(pv_id="1", ts=ts)
-        pred = model.predict(x)
-
-        # format into timerange and put into pd dataframe
-        times = pd.date_range(start=x.ts, periods=len(pred.powers), freq="15min")
-        pred_df = pd.DataFrame({"power_wh": pred.powers}, index=times)
+        # run model
+        pred_df = forecast_v1(nwp_source, nwp_xr, pv_xr, ts, model=model)
 
         # only select hourly predictions
         pred_df = pred_df.resample("1H").mean()

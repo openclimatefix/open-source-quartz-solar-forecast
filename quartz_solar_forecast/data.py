@@ -91,6 +91,12 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
         }
     )
     df = df.set_index("time")
+    data_xr = format_nwp_data(df, nwp_source, site)
+
+    return data_xr
+
+
+def format_nwp_data(df, nwp_source, site):
     data_xr = xr.DataArray(
         data=df.values,
         dims=["step", "variable"],
@@ -103,7 +109,6 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     data_xr = data_xr.assign_coords(
         {"x": [site.longitude], "y": [site.latitude], "time": [df.index[0]]}
     )
-
     return data_xr
 
 
