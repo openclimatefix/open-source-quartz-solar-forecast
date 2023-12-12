@@ -48,8 +48,6 @@ def get_nwp_for_one_timestamp_one_location(timestamp: pd.Timestamp, latitude, lo
     :return: nwp forecast in xarray
     """
 
-    # TODO add caching
-
     fs = HfFileSystem()
     # List which files are available. Not all dates, and model run times are available
     # print(fs.ls("datasets/openclimatefix/dwd-icon-eu/data/2022/4/11/", detail=False))
@@ -71,7 +69,7 @@ def get_nwp_for_one_timestamp_one_location(timestamp: pd.Timestamp, latitude, lo
     variables = ["t_2m", "tot_prec", "clch", "clcm", "clcl", "u", "v", "aswdir_s", "aswdifd_s"]
 
     cache_dir = "data/nwp"
-    cache_file = f"{cache_dir}/{file_location}_{latitude}_{longitude}.zarr"
+    cache_file = f"{cache_dir}/{date_and_hour}_lat={latitude}_lon={longitude}.zarr"
     if not os.path.exists(cache_file):
         # use fsspec to copy file
         print(f"Opening file {huggingface_file} from HF to local")
