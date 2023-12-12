@@ -31,13 +31,19 @@ def combine_forecast_ground_truth(forecast_df, ground_truth_df):
     """
 
     # rename power to forecast_power
-    forecast_df = forecast_df.rename(columns={"power": "forecast_power"})
+    forecast_df = forecast_df.rename(columns={"power_wh": "forecast_power"})
 
     # rename power to ground_truth_power
-    ground_truth_df = ground_truth_df.rename(columns={"power": "generation_power"})
+    ground_truth_df = ground_truth_df.rename(columns={"value": "generation_power"})
+
+    # make pv_ids are ints
+    forecast_df["pv_id"] = forecast_df["pv_id"].astype(int)
+    ground_truth_df["pv_id"] = ground_truth_df["pv_id"].astype(int)
 
     # merge the two dataframes
-    combined_df = pd.merge(forecast_df, ground_truth_df, on=["timestamp", "pv_id", "horizon_hours"])
+    print(forecast_df)
+    print(ground_truth_df)
+    combined_df = pd.merge(forecast_df, ground_truth_df, on=["timestamp", "pv_id", "horizon_hour"])
 
     return combined_df
 

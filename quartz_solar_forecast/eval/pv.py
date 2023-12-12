@@ -1,6 +1,8 @@
 import os
 
 import pandas as pd
+import numpy as np
+import xarray as xr
 from huggingface_hub import HfFileSystem
 
 fs = HfFileSystem()
@@ -37,9 +39,10 @@ def get_pv_metadata(testset: pd.DataFrame):
     )
 
     # format datetime
-    combined_data['timestamp'] = pd.to_datetime(combined_data['timestamp'])
+    combined_data["timestamp"] = pd.to_datetime(combined_data["timestamp"])
 
     return combined_data
+
 
 def get_pv_truth(testset: pd.DataFrame):
 
@@ -48,18 +51,19 @@ def get_pv_truth(testset: pd.DataFrame):
     metadata_file = f"{cache_dir}/pv.netcdf"
     if not os.path.exists(metadata_file):
         os.makedirs(cache_dir, exist_ok=True)
-        fs.get("datasets/openclimatefix/uk_pv/pv.netcdf", pv_ds)
+        fs.get("datasets/openclimatefix/uk_pv/pv.netcdf", metadata_file)
 
     # Load in the dataset
     pv_ds = xr.open_dataset(metadata_file, engine="h5netcdf")
 
+    combined_data = []
     for index, row in testset.iterrows():
-        pv_id = str(row['pv_id'])
-        base_datetime = row['datetime']
+        pv_id = str(row["pv_id"])
+        base_datetime = pd.to_datetime(row["timestamp"])
 
         # Calculate future timestamps up to the max horizon
         for i in range(0, 49):  # 48 hours in steps of 1 hour
-            future_datetime = base_datetime + DateOffset(hours=i)
+            future_datetime = base_datetime + pd.DateOffset(hours=i)
             horizon = i * 60  # Convert hours to minutes
 
             try:
@@ -71,5 +75,8 @@ def get_pv_truth(testset: pd.DataFrame):
                 value = np.nan
 
             # Add the data to the DataFrame
-            combined_data = combined_data.append({'pv_id': pv_id, 'datetime': base_datetime, 
-                                                'value': value, 'horizon': horizon}, ignore_index=True)
+            combined_data.append(pd.DataFrame(
+                {"pv_id": pv_id, "timestamp": base_datetime, "value": value, "horizon_hour": horizon}, index=[i])
+            )
+    combined_data = pd.concat(combined_data)
+    return combined_data

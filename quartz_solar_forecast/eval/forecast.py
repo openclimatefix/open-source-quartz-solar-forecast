@@ -102,8 +102,12 @@ def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="ICON") -
 
         # only select hourly predictions
         pred_df = pred_df.resample("1H").mean()
-        pred_df["horizon_hours"] = range(0, len(pred_df))
+        pred_df["horizon_hour"] = range(0, len(pred_df))
+        pred_df["pv_id"] = pv_id
 
         all_predictions.append(pred_df)
 
-    return pd.concat(all_predictions)
+    all_predictions = pd.concat(all_predictions)
+    all_predictions['timestamp'] = all_predictions.index
+
+    return all_predictions

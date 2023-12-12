@@ -16,10 +16,10 @@ def metrics(results_df):
 
     # calculate metrics over the different horizons hours
     # find all unique horizon_hours
-    horizon_hours = results_df["horizon_hours"].unique()
+    horizon_hours = results_df["horizon_hour"].unique()
     for horizon_hour in horizon_hours:
         # filter results_df to only include the horizon_hour
-        results_df_horizon = results_df[results_df["horizon_hours"] == horizon_hour]
+        results_df_horizon = results_df[results_df["horizon_hour"] == horizon_hour]
         mae = (results_df_horizon["forecast_power"] - results_df_horizon['generation_power']).abs().mean()
         print(f"MAE for horizon {horizon_hour}: {mae}")
 
