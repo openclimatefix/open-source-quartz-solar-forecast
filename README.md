@@ -4,6 +4,7 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 The aim of the project is to build an open source PV forecast that is free and easy to use.
+The forecast providers the expected generation in `kw` for 0 to 48 hours for a single PV site.
 Open Climate Fix also provide a commercial PV forecast, please get in touch at quartz.support@openclimatefix.org
 
 The current model uses GFS or ICON NWPs to predict the solar generation at a site

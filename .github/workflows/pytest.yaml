@@ -12,5 +12,4 @@ jobs:
       pytest_cov_dir: "quartz_solar_forecast"
       os_list: '["ubuntu-latest"]'
       python-version: "['3.10','3.11']"
-    extra_commands:
-      export HF_TOKEN=${{ secrets.HF_TOKEN }}
+      extra_commands: export HF_TOKEN=${{ secrets.HF_TOKEN }}
