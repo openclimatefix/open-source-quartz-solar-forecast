@@ -17,6 +17,10 @@ from quartz_solar_forecast.eval.nwp import get_nwp
 from quartz_solar_forecast.eval.pv import get_pv_metadata, get_pv_truth
 from quartz_solar_forecast.eval.utils import combine_forecast_ground_truth
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 try:
 
     hf_token = os.environ["HF_TOKEN"]
