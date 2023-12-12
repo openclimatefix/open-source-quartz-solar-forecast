@@ -62,6 +62,7 @@ def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="ICON") -
             ts = datetime.fromisoformat(ts)
 
         # make pv and nwp data from GFS
+        # TODO move this to model
         nwp_xr = xr.DataArray(
             data=nwp_site_df.values,
             dims=["step", "variable"],
@@ -96,6 +97,10 @@ def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="ICON") -
         # format into timerange and put into pd dataframe
         times = pd.date_range(start=x.ts, periods=len(pred.powers), freq="15min")
         pred_df = pd.DataFrame({"power_wh": pred.powers}, index=times)
+
+        # only select hourly predictions
+        pred_df = pred_df.resample("1H").mean()
+        pred_df["horizon_hours"] = range(0, len(pred_df))
 
         all_predictions.append(pred_df)
 
