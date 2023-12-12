@@ -106,12 +106,10 @@ def get_nwp_for_one_timestamp_one_location(timestamp: pd.Timestamp, latitude, lo
     times = pd.to_datetime(data_at_location.time.values) + pd.to_timedelta(
         data_at_location.step.values, unit="h"
     )
-    print(times)
 
     # convert to pandas dataframe
     df = pd.DataFrame(times, columns=["time"])
     for variable in variables:
-        print(variable)
         df[variable] = data_at_location[variable].values
 
     # make wind speed out of u and v

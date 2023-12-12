@@ -64,19 +64,20 @@ def get_pv_truth(testset: pd.DataFrame):
         # Calculate future timestamps up to the max horizon
         for i in range(0, 49):  # 48 hours in steps of 1 hour
             future_datetime = base_datetime + pd.DateOffset(hours=i)
-            horizon = i * 60  # Convert hours to minutes
+            horizon = i  # horizon in hours
 
             try:
                 # Attempt to select data for the future datetime
                 selected_data = pv_ds[pv_id].sel(datetime=future_datetime)
                 value = selected_data.values.item()
+                value = value /1000 *12 # to convert from wh to kw
             except KeyError:
                 # If data is not found for the future datetime, set value as NaN
                 value = np.nan
 
             # Add the data to the DataFrame
             combined_data.append(pd.DataFrame(
-                {"pv_id": pv_id, "timestamp": base_datetime, "value": value, "horizon_hour": horizon}, index=[i])
+                {"pv_id": pv_id, "timestamp": future_datetime, "value": value, "horizon_hour": horizon}, index=[i])
             )
     combined_data = pd.concat(combined_data)
     return combined_data
