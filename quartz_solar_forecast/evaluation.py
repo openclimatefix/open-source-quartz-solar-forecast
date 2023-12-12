@@ -25,7 +25,7 @@ def run_eval(testset_path):
     nwp_df = get_nwp(testset)
 
     # Run forecast with PV and NWP inputs.
-    # TODO updatepv_df
+    # TODO update pv_df
     predictions_df = run_forecast(pv_df=None, nwp_df=nwp_df)
 
     # Combine the forecast results with the ground truth (ts, id, horizon (in hours), pred, truth, diff)
@@ -35,5 +35,9 @@ def run_eval(testset_path):
     results_df.to_csv("results.csv")
 
     # Calculate and print metrics: MAE
+    mae = (results_df["forecast_power"] - results_df['generation_power']).abs().mean()
+    print(f"MAE: {mae}")
+    # TODO: add more metrics using ocf_ml_metrics
 
     # Visulisations
+
