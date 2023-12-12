@@ -6,6 +6,7 @@ This contains 50 sites each with 50 timestamps to make 2500 samples in total.
 
 """
 from quartz_solar_forecast.eval.nwp import get_nwp
+from quartz_solar_forecast.eval.forecast import run_forecast
 
 import pandas as pd
 
@@ -22,6 +23,8 @@ def run_eval(testset_path):
     nwp_df = get_nwp(testset)
 
     # Run forecast with PV and NWP inputs.
+    # TODO updatepv_df
+    predictions_df = run_forecast(pv_df=None, nwp_df=nwp_df)
 
     # Combine the forecast results with the ground truth (ts, id, horizon (in hours), pred, truth, diff)
 
