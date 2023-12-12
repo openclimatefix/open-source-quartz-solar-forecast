@@ -11,7 +11,7 @@ def test_metrics():
         columns=[
             "id",
             "timestamp",
-            "horizon_hours",
+            "horizon_hour",
             "forecast_power",
             "generation_power",
         ], data=np.random.random((100,5)))

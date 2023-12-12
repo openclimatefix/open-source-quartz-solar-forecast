@@ -3,7 +3,7 @@ import pandas as pd
 
 
 # can take ~ 1 minute to run
-def test_get_nwp():
+def test_get_pv():
     # make test dataset file
     test_set_df = pd.DataFrame(
         [
