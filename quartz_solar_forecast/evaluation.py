@@ -5,16 +5,32 @@ A file has been added to this branch (make-testset) which defines a set of rando
 This contains 50 sites each with 50 timestamps to make 2500 samples in total.
 
 """
-from quartz_solar_forecast.eval.metrics import metrics
-from quartz_solar_forecast.eval.nwp import get_nwp
-from quartz_solar_forecast.eval.forecast import run_forecast
-from quartz_solar_forecast.eval.utils import combine_forecast_ground_truth
-from quartz_solar_forecast.eval.pv import get_pv_metadata, get_pv_truth
+
+import os
 
 import pandas as pd
+from huggingface_hub.hf_api import HfFolder
+
+from quartz_solar_forecast.eval.forecast import run_forecast
+from quartz_solar_forecast.eval.metrics import metrics
+from quartz_solar_forecast.eval.nwp import get_nwp
+from quartz_solar_forecast.eval.pv import get_pv_metadata, get_pv_truth
+from quartz_solar_forecast.eval.utils import combine_forecast_ground_truth
+
+try:
+
+    hf_token = os.environ["HF_TOKEN"]
+    HfFolder.save_token(hf_token)
+except:
+
+    print(
+        "Warning, you wont be able to run evaluation if you dont set your "
+        "Hugging Face Access Token to HF_TOKEN, or be logged in with Hugging Face"
+    )
 
 
-def run_eval(testset_path: str = 'quartz_solar_forecast/dataset/testset.csv'):
+
+def run_eval(testset_path: str = "quartz_solar_forecast/dataset/testset2.csv"):
     # load testset from csv
     testset = pd.read_csv(testset_path)
 
@@ -42,3 +58,4 @@ def run_eval(testset_path: str = 'quartz_solar_forecast/dataset/testset.csv'):
     # Visulisations
 
 
+# run_eval()
