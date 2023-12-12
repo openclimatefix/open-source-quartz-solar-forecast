@@ -18,7 +18,7 @@ def test_run_forecast():
 
     nwp_df = pd.DataFrame(
         columns=[
-            "id",
+            "pv_id",
             "timestamp",
             "t",
             "prate",
