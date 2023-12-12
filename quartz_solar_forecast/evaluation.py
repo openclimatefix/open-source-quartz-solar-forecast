@@ -5,6 +5,7 @@ A file has been added to this branch (make-testset) which defines a set of rando
 This contains 50 sites each with 50 timestamps to make 2500 samples in total.
 
 """
+from quartz_solar_forecast.eval.metrics import metrics
 from quartz_solar_forecast.eval.nwp import get_nwp
 from quartz_solar_forecast.eval.forecast import run_forecast
 from quartz_solar_forecast.eval.utils import combine_forecast_ground_truth
@@ -35,9 +36,8 @@ def run_eval(testset_path):
     results_df.to_csv("results.csv")
 
     # Calculate and print metrics: MAE
-    mae = (results_df["forecast_power"] - results_df['generation_power']).abs().mean()
-    print(f"MAE: {mae}")
-    # TODO: add more metrics using ocf_ml_metrics
+    metrics(results_df)
 
     # Visulisations
+
 
