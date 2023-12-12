@@ -55,12 +55,11 @@ def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="ICON") -
         ts = pv_df["timestamp"][i]
 
         # format
-        nwp_site_df["step"] = nwp_site_df["time"] - ts
         for c in ["timestamp", "latitude", "longitude", "pv_id"]:
             if c in nwp_site_df.columns:
                 nwp_site_df = nwp_site_df.drop(columns=c)
 
-        nwp_site_df.set_index("step", inplace=True, drop=True)
+        nwp_site_df.set_index("time", inplace=True, drop=True)
 
         if isinstance(ts, str):
             ts = datetime.fromisoformat(ts)

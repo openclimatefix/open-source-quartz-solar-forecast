@@ -7,14 +7,13 @@ def test_get_pv_metadata():
         [
             {
                 "timestamp": pd.Timestamp("2021-01-26 01:15:00"),
-                "latitude": 51.5,
-                "longitude": 0.0,
                 "pv_id": 8215,
             }
         ]
     )
 
     metadata_df = get_pv_metadata(test_set_df)
+    assert "latitude" in metadata_df.columns
 
 
 def test_get_pv():
@@ -23,8 +22,6 @@ def test_get_pv():
         [
             {
                 "timestamp": pd.Timestamp("2021-01-26 01:15:00"),
-                "latitude": 51.5,
-                "longitude": 0.0,
                 "pv_id": 8215,
             }
         ]
