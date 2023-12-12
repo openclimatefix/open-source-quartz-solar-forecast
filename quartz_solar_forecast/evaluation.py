@@ -10,13 +10,13 @@ def run_eval(testset_path):
   # load testset from csv
   testset = df.read_csv(testset_path)
 
-  # Extract generation data and metadata for specific sites and timestamps for the testset from Hugging Face.
+  # Extract generation data and metadata for specific sites and timestamps for the testset from Hugging Face. (Zak)
 
 
-  # Split data into PV inputs and ground truth.
+  # Split data into PV inputs and ground truth. (Zak)
 
 
-  # Collect NWP data from Hugging Face, ICON.
+  # Collect NWP data from Hugging Face, ICON. (Peter)
 
 
   # Run forecast with PV and NWP inputs. 
