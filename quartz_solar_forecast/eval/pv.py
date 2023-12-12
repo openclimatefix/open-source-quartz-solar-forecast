@@ -24,7 +24,7 @@ def get_pv_metadata(testset: pd.DataFrame):
 
     # only keep the columns we need
     combined_data = combined_data[
-        ["pv_id", "datetime", "latitude_rounded", "longitude_rounded", "kwp"]
+        ["pv_id", "timestamp", "latitude_rounded", "longitude_rounded", "kwp"]
     ]
 
     # rename latitude_rounded to latitude and longitude_rounded to longitude
@@ -35,5 +35,8 @@ def get_pv_metadata(testset: pd.DataFrame):
             "kwp": "capacity",
         }
     )
+
+    # format datetime
+    combined_data['timestamp'] = pd.to_datetime(combined_data['timestamp'])
 
     return combined_data

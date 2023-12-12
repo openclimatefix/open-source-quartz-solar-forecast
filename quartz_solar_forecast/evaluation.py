@@ -14,18 +14,18 @@ from quartz_solar_forecast.eval.pv import get_pv_metadata
 import pandas as pd
 
 
-def run_eval(testset_path = 'quartz_solar_forecast/dataset/testset.csv'):
+def run_eval(testset_path: str = 'quartz_solar_forecast/dataset/testset.csv'):
     # load testset from csv
     testset = pd.read_csv(testset_path)
 
     # Extract generation data and metadata for specific sites and timestamps for the testset from Hugging Face. (Zak)
-    pv_metadata=get_pv_metadata(testset)
+    pv_metadata = get_pv_metadata(testset)
 
     # Split data into PV inputs and ground truth. (Zak)
     ground_truth_df = None # TODO
 
     # Collect NWP data from Hugging Face, ICON. (Peter)
-    nwp_df = get_nwp(testset)
+    nwp_df = get_nwp(pv_metadata)
 
     # Run forecast with PV and NWP inputs.
     # TODO update pv_df

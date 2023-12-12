@@ -46,7 +46,7 @@ def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="ICON") -
         )
 
         nwp_site_df = nwp_df[
-            (nwp_df["id"] == pv_row.pv_id) & (nwp_df["timestamp"] == pv_row.timestamp)
+            (nwp_df["pv_id"] == pv_row.pv_id) & (nwp_df["timestamp"] == pv_row.timestamp)
         ]
 
         pv_id = pv_df["pv_id"][i]
@@ -55,7 +55,9 @@ def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="ICON") -
         # format
         times = nwp_site_df["time"]
         step = times - ts
-        nwp_site_df = nwp_site_df.drop(columns=["id", "timestamp"])
+        nwp_site_df = nwp_site_df.drop(
+            columns=["timestamp", "latitude", "longitude", "pv_id"]
+        )
         nwp_site_df.set_index("time", inplace=True, drop=True)
 
         if isinstance(ts, str):

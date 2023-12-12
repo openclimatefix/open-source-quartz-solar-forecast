@@ -106,34 +106,42 @@ def get_nwp_for_one_timestamp_one_location(timestamp: pd.Timestamp, latitude, lo
     times = pd.to_datetime(data_at_location.time.values) + pd.to_timedelta(
         data_at_location.step.values, unit="h"
     )
+    print(times)
 
     # convert to pandas dataframe
-    df = pd.DataFrame(times, columns=["timestamp"])
+    df = pd.DataFrame(times, columns=["time"])
     for variable in variables:
         print(variable)
         df[variable] = data_at_location[variable].values
 
     # make wind speed out of u and v
-    df["windspeed_10m"] = (df["u"] ** 2 + df["v"] ** 2) ** 0.5
+    df["si10"] = (df["u"] ** 2 + df["v"] ** 2) ** 0.5
 
     # rename variables
     df = df.rename(
         columns={
-            "t_2m": "temperature_2m",
-            "tot_prec": "precipitation",
-            "aswdifd_s": "shortwave_radiation",
-            "aswdir_s": "direct_radiation",
-            "clcl": "cloudcover_low",
-            "clcm": "cloudcover_mid",
-            "clch": "cloudcover_high",
+            "t_2m": "t",
+            "tot_prec": "prate",
+            "aswdifd_s": "dswrf",
+            "aswdir_s": "dlwrf",
+            "clcl": "lcc",
+            "clcm": "mcc",
+            "clch": "hcc",
         }
     )
 
     # add visbility for the moment
     # TODO
-    df["visibility"] = 10000
+    df["vis"] = 10000
 
     # drop u and v
     df = df.drop(columns=["u", "v"])
 
+    # rename id to pv_id
+    df = df.rename(columns={"id": "pv_id"})
+
     return df
+
+
+{'t_isnan', 'prate_isnan', 'lcc', 'h_mean_nan', 't', 'poa_global_now_is_zero', 'dswrf_isnan', 'h_median_nan', 'dlwrf', 'recent_power', 'capacity', 'h_median', 'dlwrf_isnan', 'vis_isnan', 'hcc_isnan', 'mcc', 'h_max_nan', 'vis', 'dswrf', 'recent_power_nan', 'h_mean', 'hcc', 'poa_global', 'h_max', 'mcc_isnan', 'si10', 'si10_isnan', 'lcc_isnan', 'prate'} != \
+{'shortwave_radiation', 'h_mean_nan', 'poa_global_now_is_zero', 'windspeed_10m_isnan', 'longitude', 'h_median_nan', 'windspeed_10m', 'recent_power', 'capacity', 'h_median', 'precipitation_isnan', 'direct_radiation', 'cloudcover_mid', 'temperature_2m_isnan', 'cloudcover_low', 'temperature_2m', 'visibility', 'h_max_nan', 'visibility_isnan', 'cloudcover_high_isnan', 'shortwave_radiation_isnan', 'longitude_isnan', 'h_mean', 'cloudcover_low_isnan', 'recent_power_nan', 'cloudcover_high', 'pv_id_isnan', 'poa_global', 'h_max', 'latitude_isnan', 'latitude', 'cloudcover_mid_isnan', 'pv_id', 'precipitation', 'direct_radiation_isnan'}
