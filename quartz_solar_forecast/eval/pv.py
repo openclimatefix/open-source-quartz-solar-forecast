@@ -69,7 +69,7 @@ def get_pv_truth(testset: pd.DataFrame):
                 # Attempt to select data for the future datetime
                 selected_data = pv_ds[pv_id].sel(datetime=future_datetime)
                 value = selected_data.values.item()
-                value = value /1000 *12 # to convert from wh to kw
+                value = value / 1000 # to convert from w to kw
             except KeyError:
                 # If data is not found for the future datetime, set value as NaN
                 value = np.nan
