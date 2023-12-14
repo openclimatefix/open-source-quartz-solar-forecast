@@ -1,6 +1,7 @@
 """ Get nwp data from HF"""
 import os
 import pandas as pd
+import numpy as np
 
 import ocf_blosc2  # noqa
 import xarray as xr
@@ -25,7 +26,7 @@ def get_nwp(time_locations: pd.DataFrame):
     all_nwp_dfs = []
 
     tasks_args = []
-    with multiprocessing.Pool(processes=3) as pool:
+    with multiprocessing.Pool() as pool:
         for i, row in time_locations.iterrows():
             print(f"Making task {i} of {len(time_locations)}")
 
@@ -34,16 +35,18 @@ def get_nwp(time_locations: pd.DataFrame):
                 "latitude": row["latitude"],
                 "longitude": row["longitude"],
                 "pv_id": row["pv_id"],
+                "progress": np.round(i / len(time_locations), 3),
             }
+
 
             # collect together args for pool.starmap
             task_arg = list(kwargs.values())
             tasks_args.append(task_arg)
 
-        print("Made all tasks")
+        print("Made all NWP tasks, now getting the data")
         results = pool.starmap(get_nwp_for_one_timestamp_one_location, tasks_args)
 
-    print("Gathered all tasks")
+    print("Got all NWP data")
 
     for result in results:
         one_nwp_df = result
@@ -56,7 +59,7 @@ def get_nwp(time_locations: pd.DataFrame):
 
 
 def get_nwp_for_one_timestamp_one_location(
-    timestamp: pd.Timestamp, latitude, longitude, pv_id: None
+    timestamp: pd.Timestamp, latitude, longitude, pv_id: int = None, progress: float = True
 ):
     """
     Get NWP data from Hugging Face for one timestamp and one location
@@ -64,13 +67,16 @@ def get_nwp_for_one_timestamp_one_location(
     :param timestamp: the timestamp for when you want the forecast for
     :param latitude: the latitude of the location
     :param longitude: the longitude of the location
+    :param pv_id: the pv_id of the location, if known
+    :param progress: Float of how far through the process we are. This is becasue we use multiprocessing
+        to pull lots of NWP data. This should be a float between 0 and 1
+
 
     :return: nwp forecast in xarray
     """
 
-    # round timestamp to 6 hours floor
-    fs = HfFileSystem()
     # List which files are available. Not all dates, and model run times are available
+    # fs = HfFileSystem()
     # print(fs.ls("datasets/openclimatefix/dwd-icon-eu/data/2022/4/11/", detail=False))
 
     # round timestamp to 6 hours floor
@@ -115,6 +121,7 @@ def get_nwp_for_one_timestamp_one_location(
         data_at_location.load()
 
         # save to cache
+        print(f"Saving to cache {cache_file}")
         data_at_location.to_zarr(cache_file)
     else:
         # load from cache
@@ -165,5 +172,8 @@ def get_nwp_for_one_timestamp_one_location(
     # add pv_id columns if it is given
     if pv_id is not None:
         df["pv_id"] = pv_id
+
+    if progress:
+        print(f"Getting NWP for {timestamp} {pv_id}. Progress: {100*progress}%")
 
     return df

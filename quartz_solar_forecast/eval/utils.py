@@ -1,10 +1,7 @@
 import pandas as pd
 
 
-
-
-
-def combine_forecast_ground_truth(forecast_df, ground_truth_df):
+def combine_forecast_ground_truth(forecast_df: pd.DataFrame, ground_truth_df: pd.DataFrame) ->pd.DataFrame:
     """
     Combine the forecast results with the ground truth (ts, id, horizon (in hours), pred, truth, diff)
 
@@ -41,9 +38,6 @@ def combine_forecast_ground_truth(forecast_df, ground_truth_df):
     ground_truth_df["pv_id"] = ground_truth_df["pv_id"].astype(int)
 
     # merge the two dataframes
-    print(forecast_df)
-    print(ground_truth_df)
     combined_df = pd.merge(forecast_df, ground_truth_df, on=["timestamp", "pv_id", "horizon_hour"])
 
     return combined_df
-
