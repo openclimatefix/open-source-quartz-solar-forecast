@@ -8,6 +8,8 @@ from huggingface_hub import HfFileSystem
 
 import multiprocessing
 
+multiprocessing.set_start_method("spawn", force=True)
+
 
 def get_nwp(time_locations: pd.DataFrame):
     """
@@ -39,7 +41,6 @@ def get_nwp(time_locations: pd.DataFrame):
             tasks_args.append(task_arg)
 
         print("Made all tasks")
-        print(tasks_args)
         results = pool.starmap(get_nwp_for_one_timestamp_one_location, tasks_args)
 
     print("Gathered all tasks")
