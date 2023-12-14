@@ -96,7 +96,7 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     return data_xr
 
 
-def format_nwp_data(df, nwp_source, site):
+def format_nwp_data(df: pd.DataFrame, nwp_source:str, site: PVSite):
     data_xr = xr.DataArray(
         data=df.values,
         dims=["step", "variable"],
@@ -112,7 +112,7 @@ def format_nwp_data(df, nwp_source, site):
     return data_xr
 
 
-def make_pv_data(site: PVSite, ts) -> xr.Dataset:
+def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     """
     Make fake PV data for the site
 
