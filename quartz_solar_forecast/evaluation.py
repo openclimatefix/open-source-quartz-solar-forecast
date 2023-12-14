@@ -59,7 +59,8 @@ def run_eval(testset_path: str = "quartz_solar_forecast/dataset/testset.csv"):
     # Calculate and print metrics: MAE
     metrics(results_df)
 
-    # Visulisations
+    # Visualizations
+    # TODO
 
 
 # run_eval()
