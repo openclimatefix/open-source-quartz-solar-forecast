@@ -85,7 +85,7 @@ def make_test_set(output_file_name: Optional[str] = None, number_of_samples_per_
     for pv_id in pv_ids:
         ts = pd.date_range(start=test_start_date, end=test_end_date, freq="15min")
         ts = ts[np.random.choice(len(ts), size=number_of_samples_per_system, replace=False)]
-        test_set.append(pd.DataFrame({"pv_id": pv_id, "datetime": ts}))
+        test_set.append(pd.DataFrame({"pv_id": pv_id, "timestamp": ts}))
     test_set = pd.concat(test_set)
     test_set.to_csv(output_file_name, index=False)
 
