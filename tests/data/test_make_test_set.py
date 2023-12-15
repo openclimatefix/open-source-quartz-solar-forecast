@@ -15,4 +15,4 @@ def test_make_test_set():
         test_set = pd.read_csv(output_file)
         assert len(test_set) == 50 * 50
         # we can check this as we have set the seed
-        assert test_set.iloc[0].datetime == "2021-04-29 07:00:00"
+        assert test_set.iloc[0].timestamp == "2021-04-29 07:00:00"
