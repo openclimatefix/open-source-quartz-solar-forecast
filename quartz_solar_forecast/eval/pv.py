@@ -45,10 +45,13 @@ def get_pv_metadata(testset: pd.DataFrame):
 
 def get_pv_truth(testset: pd.DataFrame):
 
+    print('Loading PV data')
+
     # download from hugginface or load from cache
     cache_dir = "data/pv"
     metadata_file = f"{cache_dir}/pv.netcdf"
     if not os.path.exists(metadata_file):
+        print('Loading from HF)')
         os.makedirs(cache_dir, exist_ok=True)
         fs.get("datasets/openclimatefix/uk_pv/pv.netcdf", metadata_file)
 
@@ -57,6 +60,7 @@ def get_pv_truth(testset: pd.DataFrame):
 
     combined_data = []
     for index, row in testset.iterrows():
+        print(f'Processing {index} of {len(testset)}')
         pv_id = str(row["pv_id"])
         base_datetime = pd.to_datetime(row["timestamp"])
 
