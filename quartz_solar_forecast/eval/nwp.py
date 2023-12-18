@@ -1,13 +1,15 @@
 """ Get nwp data from HF"""
 import os
+import sys
 import pandas as pd
 import numpy as np
 
 import ocf_blosc2  # noqa
 import xarray as xr
-from huggingface_hub import HfFileSystem
 
 import multiprocessing
+
+from quartz_solar_forecast.eval.utils import make_hf_filename
 
 multiprocessing.set_start_method("spawn", force=True)
 
@@ -37,7 +39,6 @@ def get_nwp(time_locations: pd.DataFrame):
                 "pv_id": row["pv_id"],
                 "progress": np.round(i / len(time_locations), 3),
             }
-
 
             # collect together args for pool.starmap
             task_arg = list(kwargs.values())
@@ -81,16 +82,7 @@ def get_nwp_for_one_timestamp_one_location(
 
     # round timestamp to 6 hours floor
     timestamp_floor = timestamp.floor("6H")
-    year = timestamp_floor.year
-    month = timestamp_floor.month
-    day = timestamp_floor.day
-    date_and_hour = timestamp_floor.strftime("%Y%m%d_%H")
-
-    date = f"{year}/{month}/{day}"
-    file_location = f"{date}/{date_and_hour}"
-    huggingface_route = "zip:///::hf://datasets/openclimatefix/dwd-icon-eu/data"
-    # huggingface_route = "datasets/openclimatefix/dwd-icon-eu/data"
-    huggingface_file = f"{huggingface_route}/{file_location}.zarr.zip"
+    date_and_hour, huggingface_file = make_hf_filename(timestamp_floor)
 
     # dataset variables
     variables = ["t_2m", "tot_prec", "clch", "clcm", "clcl", "u", "v", "aswdir_s", "aswdifd_s"]
@@ -100,6 +92,7 @@ def get_nwp_for_one_timestamp_one_location(
     if not os.path.exists(cache_file):
         # use fsspec to copy file
         print(f"Opening file {huggingface_file} from HF to local")
+        sys.stdout.flush()
 
         data = xr.open_zarr(
             f"{huggingface_file}",
@@ -177,3 +170,5 @@ def get_nwp_for_one_timestamp_one_location(
         print(f"Getting NWP for {timestamp} {pv_id}. Progress: {100*progress}%")
 
     return df
+
+

@@ -41,3 +41,23 @@ def combine_forecast_ground_truth(forecast_df: pd.DataFrame, ground_truth_df: pd
     combined_df = pd.merge(forecast_df, ground_truth_df, on=["timestamp", "pv_id", "horizon_hour"])
 
     return combined_df
+
+
+def make_hf_filename(timestamp_floor):
+    """
+    Make ICON filename from timestamp_floor
+
+    '2021-01-01 00:00:00' ->
+    'zip:///::hf://datasets/openclimatefix/dwd-icon-eu/data/2021/1/1/20210101_00.zarr.zip'
+
+    """
+    year = timestamp_floor.year
+    month = timestamp_floor.month
+    day = timestamp_floor.day
+    date_and_hour = timestamp_floor.strftime("%Y%m%d_%H")
+    date = f"{year}/{month}/{day}"
+    file_location = f"{date}/{date_and_hour}"
+    huggingface_route = "zip:///::hf://datasets/openclimatefix/dwd-icon-eu/data"
+    # huggingface_route = "datasets/openclimatefix/dwd-icon-eu/data"
+    huggingface_file = f"{huggingface_route}/{file_location}.zarr.zip"
+    return date_and_hour, huggingface_file
