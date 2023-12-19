@@ -78,7 +78,10 @@ The MAE is 0.1906 kw across all horizons.
 | 24 - 48  | 0.201 +- 0.01 | 6.1 |
 
 
-
+Notes: 
+- THe MAE in % is the MAE divided by the capacity of the PV site. We acknowledge there are a number of different ways to do this. 
+- it is slightly surprising that the 0-hour forecast horizon and the 24-48 hour horizon have a similar MAE.
+This may be because the model is trained expecting live PV data, but currently in this project we provide no live PV data. 
 
 ## Abbreviations
 
