@@ -31,7 +31,8 @@ def forecast_v1(nwp_source:str, nwp_xr:xr.Dataset, pv_xr:xr.Dataset, ts:pd.Times
     nwp = NwpDataSource(nwp_xr, value_name=nwp_source)
     model.set_data_sources(pv_data_source=pv_data_source, nwp_data_sources={nwp_source: nwp})
 
-    # make prediction
+    # make prediction.
+    # Note pv_id=1 is arbitrary, but the pv_xr must have this in it.
     x = X(pv_id="1", ts=ts)
     pred = model.predict(x)
 
