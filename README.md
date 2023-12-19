@@ -4,16 +4,17 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 The aim of the project is to build an open source PV forecast that is free and easy to use.
+The forecast provides the expected generation in `kw` for 0 to 48 hours for a single PV site.
+
 Open Climate Fix also provide a commercial PV forecast, please get in touch at quartz.support@openclimatefix.org
 
 The current model uses GFS or ICON NWPs to predict the solar generation at a site
-
 
 ```python
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
 
-# make input data
+# make a pv site object
 site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
 
 # run model, uses ICON NWP data by default
@@ -49,6 +50,38 @@ The 9 NWP variables, from Open-Meteo documentation, are mentioned above with the
 
 - The model is trained on [UK MetOffice](https://www.metoffice.gov.uk/services/data/met-office-weather-datahub) NWPs, but when running inference we use [GFS](https://www.ncei.noaa.gov/products/weather-climate-models/global-forecast) data from [Open-meteo](https://open-meteo.com/). The differences between GFS and UK MetOffice, could led to some odd behaviours.
 - It looks like the GFS data on Open-Meteo is only available for free for the last 3 months. 
+
+## Evaluation
+
+To evaluate the model we use the [UK PV](https://huggingface.co/datasets/openclimatefix/uk_pv) dataset and the [ICON NWP](https://huggingface.co/datasets/openclimatefix/dwd-icon-eu) dataset.
+All the data is publicly available and the evaluation script can be run with the following command
+
+```bash
+python scripts/run_evaluation.py
+```
+
+The test dataset we used is defined in `quartz_solar_forecast/dataset/testset.csv`. 
+This contains 50 PV sites, which 50 unique timestamps. The data is from 2021. 
+
+The results of the evaluation are as follows
+The MAE is 0.1906 kw across all horizons. 
+
+| Horizons | MAE [kw]      | MAE [%] |
+|----------|---------------| ------- |
+| 0        | 0.202 +- 0.03 | 6.2 |
+| 1        | 0.211 +- 0.03 | 6.4 |
+| 2        | 0.216 +- 0.03 | 6.5 |
+| 3 - 4    | 0.211 +- 0.02 |6.3 |
+| 5 - 8    | 0.191 +- 0.01 | 6 |
+| 9 - 16   | 0.161 +- 0.01 | 5 |
+| 17 - 24  | 0.173 +- 0.01 | 5.3 |
+| 24 - 48  | 0.201 +- 0.01 | 6.1 |
+
+
+Notes: 
+- THe MAE in % is the MAE divided by the capacity of the PV site. We acknowledge there are a number of different ways to do this. 
+- it is slightly surprising that the 0-hour forecast horizon and the 24-48 hour horizon have a similar MAE.
+This may be because the model is trained expecting live PV data, but currently in this project we provide no live PV data. 
 
 ## Abbreviations
 

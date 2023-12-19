@@ -2,3 +2,5 @@ pandas
 xarray
 pv-site-prediction
 pydantic
+huggingface_hub # only for evaluation
+python-dotenv
