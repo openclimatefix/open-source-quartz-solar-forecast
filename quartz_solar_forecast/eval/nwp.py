@@ -84,7 +84,7 @@ def get_nwp_for_one_timestamp_one_location(
     timestamp_floor = timestamp.floor("6H")
     date_and_hour, huggingface_file = make_hf_filename(timestamp_floor)
 
-    # dataset variables
+    # dataset variables, note these are unique for ICON
     variables = ["t_2m", "tot_prec", "clch", "clcm", "clcl", "u", "v", "aswdir_s", "aswdifd_s"]
 
     cache_dir = "data/nwp"
