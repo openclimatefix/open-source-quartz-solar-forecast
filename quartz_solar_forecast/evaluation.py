@@ -57,7 +57,7 @@ def run_eval(testset_path: str = "quartz_solar_forecast/dataset/testset.csv"):
     results_df.to_csv("results.csv")
 
     # Calculate and print metrics: MAE
-    metrics(results_df)
+    metrics(results_df, pv_metadata)
 
     # Visualizations
     # TODO

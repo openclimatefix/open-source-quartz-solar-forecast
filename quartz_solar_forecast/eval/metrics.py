@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-def metrics(results_df: pd.DataFrame):
+def metrics(results_df: pd.DataFrame, pv_metadata: pd.DataFrame):
     """
     Calculate and print metrics: MAE
 
@@ -13,10 +13,23 @@ def metrics(results_df: pd.DataFrame):
     - forecast_power
     - generation_power
 
+    pv_metadata is a dataframe with the following columns
+    - pv_id
+    - capacity
+
     """
 
+    # merge pv_metadata with results_df
+    results_df = pd.merge(results_df, pv_metadata, on="pv_id")
+
     mae = np.round((results_df["forecast_power"] - results_df["generation_power"]).abs().mean(), 4)
-    print(f"MAE: {mae}")
+    mae_normalized = np.round(
+        ((results_df["forecast_power"] - results_df["generation_power"]) / results_df["capacity"])
+        .abs()
+        .mean(),
+        4,
+    )
+    print(f"MAE: {mae} kw, normalized {mae_normalized} %")
 
     # calculate metrics over the different horizons hours
     # find all unique horizon_hours
@@ -35,12 +48,23 @@ def metrics(results_df: pd.DataFrame):
                 (results_df_horizon["forecast_power"] - results_df_horizon["generation_power"])
                 .abs()
                 .std()
-                / len(results_df_horizon) ** 0.5
+                / 50 ** 0.5
             ),
             3,
         )
+        mae_normalized = np.round(
+            (
+                (results_df_horizon["forecast_power"] - results_df_horizon["generation_power"])
+                / results_df_horizon["capacity"]
+            )
+            .abs()
+            .mean(),
+            3,
+        )
 
-        print(f"MAE for horizon {horizon_hour}: {mae} +- {1.96*sem}")
+        print(
+            f"MAE for horizon {horizon_hour}: {mae} +- {1.96*sem}. Normalized MAE: {mae_normalized} %"
+        )
 
     # calculate metrics over the different horizon groups
     horizon_groups = [[0, 0], [1, 1], [2, 2], [3, 4], [5, 8], [9, 16], [17, 24], [24, 48]]
@@ -59,11 +83,23 @@ def metrics(results_df: pd.DataFrame):
                 (horizon_group_df["forecast_power"] - horizon_group_df["generation_power"])
                 .abs()
                 .std()
-                / len(horizon_group_df) ** 0.5
+                / 50 ** 0.5
             ),
             3,
         )
 
-        print(f"MAE for horizon {horizon_group}: {mae} +- {1.96*sem}")
+        mae_normalized = np.round(
+            (
+                (horizon_group_df["forecast_power"] - horizon_group_df["generation_power"])
+                / horizon_group_df["capacity"]
+            )
+            .abs()
+            .mean(),
+            3,
+        )
+
+        print(
+            f"MAE for horizon {horizon_group}: {mae} +- {1.96*sem}. mae_normalized: {mae_normalized} %"
+        )
 
         # TODO add more metrics using ocf_ml_metrics
