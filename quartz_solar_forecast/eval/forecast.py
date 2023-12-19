@@ -39,6 +39,8 @@ def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="ICON") -
     all_predictions = []
     for i in range(len(pv_df)):
 
+        print(f"Running forecast for {i} of {len(pv_df)}")
+
         pv_row = pv_df.iloc[i]
 
         site = PVSite(
@@ -66,10 +68,12 @@ def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="ICON") -
 
         # make pv and nwp data from GFS
         # TODO move this to model
+        print("Making pv and nwp data")
         nwp_xr = format_nwp_data(df=nwp_site_df, nwp_source=nwp_source, site=site)
         pv_xr = make_pv_data(site=site, ts=ts)
 
         # run model
+        print('Running model')
         pred_df = forecast_v1(nwp_source, nwp_xr, pv_xr, ts, model=model)
 
         # only select hourly predictions

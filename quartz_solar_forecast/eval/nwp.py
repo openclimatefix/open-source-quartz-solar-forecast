@@ -91,7 +91,7 @@ def get_nwp_for_one_timestamp_one_location(
     cache_file = f"{cache_dir}/{date_and_hour}_lat={latitude}_lon={longitude}.zarr"
     if not os.path.exists(cache_file):
         # use fsspec to copy file
-        print(f"Opening file {huggingface_file} from HF to local")
+        print(f"Copying file {huggingface_file} from HF to local")
         sys.stdout.flush()
 
         data = xr.open_zarr(
@@ -103,10 +103,10 @@ def get_nwp_for_one_timestamp_one_location(
         data_at_location = data.sel(latitude=latitude, longitude=longitude, method="nearest")
         data_at_location = data_at_location[variables]
 
-        # choise the first isobaricInhPa
+        # choice the first isobaricInhPa
         data_at_location = data_at_location.isel(isobaricInhPa=-1)
 
-        #  reduce to 54 hours timestaps, this means there is at least a 48 hours forecast
+        #  reduce to 54 hours timestamps, this means there is at least a 48 hours forecast
         data_at_location = data_at_location.isel(step=slice(0, 54))
 
         # load all the data, this can take about ~1 minute seconds
