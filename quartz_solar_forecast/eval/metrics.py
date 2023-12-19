@@ -42,4 +42,28 @@ def metrics(results_df: pd.DataFrame):
 
         print(f"MAE for horizon {horizon_hour}: {mae} +- {1.96*sem}")
 
-    # TODO add more metrics using ocf_ml_metrics
+    # calculate metrics over the different horizon groups
+    horizon_groups = [[0, 0], [1, 1], [2, 2], [3, 4], [5, 8], [9, 16], [17, 24], [24, 48]]
+    for horizon_group in horizon_groups:
+        horizon_group_df = results_df[
+            results_df["horizon_hour"].between(horizon_group[0], horizon_group[1])
+        ]
+        mae = np.round(
+            (horizon_group_df["forecast_power"] - horizon_group_df["generation_power"])
+            .abs()
+            .mean(),
+            3,
+        )
+        sem = np.round(
+            (
+                (horizon_group_df["forecast_power"] - horizon_group_df["generation_power"])
+                .abs()
+                .std()
+                / len(horizon_group_df) ** 0.5
+            ),
+            3,
+        )
+
+        print(f"MAE for horizon {horizon_group}: {mae} +- {1.96*sem}")
+
+        # TODO add more metrics using ocf_ml_metrics

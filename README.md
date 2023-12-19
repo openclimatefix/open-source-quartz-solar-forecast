@@ -60,11 +60,23 @@ All the data is publicly available and the evaluation script can be run with the
 python scripts/run_evaluation.py
 ```
 
-The test dataset we used is defined in `quartz_solar_forecast/dataset/testset.csv'. 
+The test dataset we used is defined in `quartz_solar_forecast/dataset/testset.csv`. 
 This contains 50 PV sites, which 50 unique timestamps. The data is from 2021. 
 
-The results of the evaluation are shown below:
-TODO
+The results of the evaluation are as follows
+The MAE is 0.1906 kw across all horizons. 
+
+| Horizons | MAE [kw]      |
+|----------|---------------|
+| 0        | 0.202 +- 0.03 |
+| 1        | 0.211 +- 0.03 |
+| 2        | 0.216 +- 0.03 |
+| 3-4      | 0.211 +- 0.02 |
+| 5-8      | 0.191 +- 0.01 |
+| 9-16     | 0.161 +- 0.01 |
+| 17-24    | 0.173 +- 0.01 |
+| 24-48    | 0.201 +- 0.01 |
+
 
 
 
