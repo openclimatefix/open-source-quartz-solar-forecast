@@ -9,12 +9,22 @@ def test_metrics():
 
     results_df = pd.DataFrame(
         columns=[
-            "id",
+            "pv_id",
             "timestamp",
             "horizon_hour",
             "forecast_power",
             "generation_power",
-        ], data=np.random.random((100,5)))
+        ],
+        data=np.random.random((100, 5)),
+    )
+
+    pv_metadata = pd.DataFrame(
+        columns=[
+            "pv_id",
+            "capacity",
+        ],
+        data=np.random.random((100, 2)),
+    )
 
     # call the metrics function
-    metrics(results_df)
+    metrics(results_df, pv_metadata)
