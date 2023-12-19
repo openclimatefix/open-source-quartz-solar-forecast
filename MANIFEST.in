@@ -1,0 +1,1 @@
+include *.txt quartz_solar_forecast/models/model-0.3.0.pkl
