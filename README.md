@@ -23,7 +23,7 @@ predictions_df = run_forecast(site=site, ts='2023-11-01')
 
 Which gives the following prediction
 
-![predictions.png](predictions.png)
+![https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/blob/main/predictions.png?raw=true](https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/blob/main/predictions.png?raw=true)
 
 ## Model
 
