@@ -2,9 +2,11 @@ import numpy as np
 import pandas as pd
 
 
-def metrics(results_df: pd.DataFrame, pv_metadata: pd.DataFrame):
+def metrics(results_df: pd.DataFrame, pv_metadata: pd.DataFrame, include_night: bool = False):
     """
     Calculate and print metrics: MAE
+
+    There is an option to include nighttime in the calculation of the MAE.
 
     results_df dataframe with the following columns
     - timestamp
@@ -18,6 +20,10 @@ def metrics(results_df: pd.DataFrame, pv_metadata: pd.DataFrame):
     - capacity
 
     """
+
+    # remove night time
+    if not include_night:
+        results_df = results_df[results_df["generation_power"] > 0.1]
 
     # merge pv_metadata with results_df
     results_df = pd.merge(results_df, pv_metadata, on="pv_id")
@@ -34,40 +40,9 @@ def metrics(results_df: pd.DataFrame, pv_metadata: pd.DataFrame):
     # calculate metrics over the different horizons hours
     # find all unique horizon_hours
     horizon_hours = results_df["horizon_hour"].unique()
-    for horizon_hour in horizon_hours:
-        # filter results_df to only include the horizon_hour
-        results_df_horizon = results_df[results_df["horizon_hour"] == horizon_hour]
-        mae = np.round(
-            (results_df_horizon["forecast_power"] - results_df_horizon["generation_power"])
-            .abs()
-            .mean(),
-            3,
-        )
-        sem = np.round(
-            (
-                (results_df_horizon["forecast_power"] - results_df_horizon["generation_power"])
-                .abs()
-                .std()
-                / 50 ** 0.5
-            ),
-            3,
-        )
-        mae_normalized = np.round(
-            (
-                (results_df_horizon["forecast_power"] - results_df_horizon["generation_power"])
-                / results_df_horizon["capacity"]
-            )
-            .abs()
-            .mean(),
-            3,
-        )
+    horizon_groups = [[x, x] for x in horizon_hours]
+    horizon_groups += [[3, 4], [5, 8], [9, 16], [17, 24], [24, 48], [0, 36]]
 
-        print(
-            f"MAE for horizon {horizon_hour}: {mae} +- {1.96*sem}. Normalized MAE: {mae_normalized} %"
-        )
-
-    # calculate metrics over the different horizon groups
-    horizon_groups = [[0, 0], [1, 1], [2, 2], [3, 4], [5, 8], [9, 16], [17, 24], [24, 48]]
     for horizon_group in horizon_groups:
         horizon_group_df = results_df[
             results_df["horizon_hour"].between(horizon_group[0], horizon_group[1])
@@ -99,7 +74,7 @@ def metrics(results_df: pd.DataFrame, pv_metadata: pd.DataFrame):
         )
 
         print(
-            f"MAE for horizon {horizon_group}: {mae} +- {1.96*sem}. mae_normalized: {mae_normalized} %"
+            f"MAE for horizon {horizon_group}: {mae} +- {1.96*sem}. mae_normalized: {100*mae_normalized} %"
         )
 
         # TODO add more metrics using ocf_ml_metrics
