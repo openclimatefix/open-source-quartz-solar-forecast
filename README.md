@@ -77,6 +77,7 @@ The MAE is 0.1906 kw across all horizons.
 | 17 - 24  | 0.173 +- 0.01 | 5.3 |
 | 24 - 48  | 0.201 +- 0.01 | 6.1 |
 
+If we exclude nighttime, then the average MAE [%] from 0 to 36 forecast hours is 13.0%. 
 
 Notes: 
 - THe MAE in % is the MAE divided by the capacity of the PV site. We acknowledge there are a number of different ways to do this. 
