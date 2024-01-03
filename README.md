@@ -80,8 +80,8 @@ The MAE is 0.1906 kw across all horizons.
 If we exclude nighttime, then the average MAE [%] from 0 to 36 forecast hours is 13.0%. 
 
 Notes: 
-- THe MAE in % is the MAE divided by the capacity of the PV site. We acknowledge there are a number of different ways to do this. 
-- it is slightly surprising that the 0-hour forecast horizon and the 24-48 hour horizon have a similar MAE.
+- The MAE in % is the MAE divided by the capacity of the PV site. We acknowledge there are a number of different ways to do this. 
+- It is slightly surprising that the 0-hour forecast horizon and the 24-48 hour horizon have a similar MAE.
 This may be because the model is trained expecting live PV data, but currently in this project we provide no live PV data. 
 
 ## Abbreviations
@@ -89,6 +89,8 @@ This may be because the model is trained expecting live PV data, but currently i
 - NWP: Numerical Weather Predictions
 - GFS: Global Forecast System
 - PV: Photovoltaic
+- MAE: Mean Absolute Error
+- KW: Kilowatt
 
 ## Contribution
 
