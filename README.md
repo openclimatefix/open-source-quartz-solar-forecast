@@ -25,6 +25,15 @@ Which gives the following prediction
 
 ![https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/blob/main/predictions.png?raw=true](https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/blob/main/predictions.png?raw=true)
 
+## Installation
+
+The source code is currently hosted on GitHub at: https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecas
+
+Binary installers for the latest released version are available at the Python Package Index (PyPI)  
+```bash
+pip install quartz-solar-forecast
+```
+
 ## Model
 
 The model is a gradient boosted tree model and uses 9 NWP variables.
@@ -44,7 +53,17 @@ The 9 NWP variables, from Open-Meteo documentation, are mentioned above with the
 8. **Cloud Cover mid (%)**, or mcc : Percentage of the sky covered by clouds at mid altitudes. 
 9. **Cloud Cover high (%)**, or lcc : Percentage of the sky covered by clouds at high altitude
 
+We also use the following features
+- poa_global: The plane of array irradiance, which is the amount of solar radiation that strikes a solar panel.
+- poa_global_now_is_zero: A boolean variable that is true if the poa_global is zero at the current time. This is used to help the model learn that the PV generation is zero at night.
+- capacity (kw): The capacity of the PV system in kw.
+- The model also has a feature to check if these variables are nans or not.
 
+The model also use the following variables, which are currently all set to nan
+- recent_power: The mean power over the last 30 minutes
+- h_mean: The mean of the recent pv data over the last 7 days
+- h_median: The median of the recent pv data over the last 7 days
+- h_max: The max of the recent pv data over the last 7 days
 
 ## Known restrictions
 
@@ -90,6 +109,7 @@ This may be because the model is trained expecting live PV data, but currently i
 - GFS: Global Forecast System
 - PV: Photovoltaic
 - MAE: Mean Absolute Error
+- [ICON](https://www.dwd.de/EN/ourservices/nwp_forecast_data/nwp_forecast_data.html): ICOsahedral Nonhydrostatic
 - KW: Kilowatt
 
 ## Contribution
