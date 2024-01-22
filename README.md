@@ -33,6 +33,10 @@ Binary installers for the latest released version are available at the Python Pa
 ```bash
 pip install quartz-solar-forecast
 ```
+You might need to install the following packages first
+```bash
+conda install -c conda-forge pyresample
+````
 
 ## Model
 
