@@ -37,6 +37,7 @@ You might need to install the following packages first
 ```bash
 conda install -c conda-forge pyresample
 ````
+This can solve the [bug: ___kmpc_for_static_fini](https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/issues/32)
 
 ## Model
 
