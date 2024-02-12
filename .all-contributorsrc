@@ -53,6 +53,15 @@
       "contributions": [
         "talk"
       ]
+    },
+    {
+      "login": "armenbod",
+      "name": "armenbod",
+      "avatar_url": "https://avatars.githubusercontent.com/u/84937223?v=4",
+      "profile": "https://github.com/armenbod",
+      "contributions": [
+        "content"
+      ]
     }
   ],
   "contributorsPerLine": 7,
