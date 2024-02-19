@@ -10,7 +10,7 @@ from quartz_solar_forecast.forecasts.v1 import forecast_v1
 
 
 
-def run_forecast(site: PVSite, ts: datetime | str, nwp_source: str = "icon") -> pd.DataFrame:
+def run_forecast(site: PVSite, ts: datetime | str = None, nwp_source: str = "icon") -> pd.DataFrame:
     """
     Run the forecast from NWP data
 
@@ -19,6 +19,10 @@ def run_forecast(site: PVSite, ts: datetime | str, nwp_source: str = "icon") -> 
     :param nwp_source: the nwp data source. Either "gfs" or "icon". Defaults to "icon"
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
+
+    # set timestamp to now if not provided
+    if ts is None:
+        ts = pd.Timestamp.now().round("15min")
 
     if isinstance(ts, str):
         ts = datetime.fromisoformat(ts)
