@@ -63,6 +63,15 @@
         "content",
         "code"
       ]
+    },
+    {
+      "login": "shreyasudaya",
+      "name": "Shreyas Udaya",
+      "avatar_url": "https://avatars.githubusercontent.com/u/94735680?v=4",
+      "profile": "https://github.com/shreyasudaya",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
