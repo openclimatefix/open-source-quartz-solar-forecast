@@ -116,7 +116,7 @@ def filter_timestamps_if_hf_files_exists(timestamps_full: pd.DatetimeIndex):
     fs = HfFileSystem()
     # print(fs.ls("datasets/openclimatefix/dwd-icon-eu/data/2022/4/11/", detail=False))
     for timestamp in timestamps_full:
-        timestamp_floor = timestamp.floor("6H")
+        timestamp_floor = timestamp.floor("6h")
         _, huggingface_file = make_hf_filename(timestamp_floor)
         huggingface_file = huggingface_file[14:]
 
