@@ -46,3 +46,6 @@ Once you're satisfied with your contribution, push your branch to your fork on G
 After submitting your pull request, you can request a review from the project maintainers or specific contributors by mentioning them in your PR comments. Once your pull request is approved, a project maintainer will merge it into the main branch.
 
 > Don't forget to keep your local repository and fork updated with the main project to ease future contributions.
+
+## Code Style
+For checking our coding style, please refer to [coding_style.md](https://github.com/openclimatefix/.github/blob/main/coding_style.md).
