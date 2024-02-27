@@ -81,6 +81,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "0xFrama",
+      "name": "Francesco",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30957828?v=4",
+      "profile": "https://github.com/0xFrama",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
