@@ -12,6 +12,9 @@ from quartz_solar_forecast.pydantic_models import PVSite
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
+# User needs to add their Enphase API details
+ENPHASE_API_KEY = 'user_enphase_api_key'
+ENPHASE_USER_ID = 'user_enphase_user_id'
 
 def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     """
@@ -111,20 +114,41 @@ def format_nwp_data(df: pd.DataFrame, nwp_source:str, site: PVSite):
     )
     return data_xr
 
+def get_enphase_data(enphase_user_id: str, enphase_api_key: str) -> float:
+    """
+    Get live PV generation data from Enphase API
+
+    :param enphase_user_id: User ID for Enphase API
+    :param enphase_api_key: API Key for Enphase API
+    :return: Live PV generation in Watt-hours, assumes to be a floating-point number
+    """
+    url = f'https://api.enphaseenergy.com/api/v2/systems/{enphase_user_id}/summary'
+    headers = {'Authorization': f'Bearer {enphase_api_key}'}
+
+    response = requests.get(url, headers=headers)
+    data = response.json()
+
+    # Extracting live generation data assuming it's in Watt-hours
+    live_generation_wh = data['current_power']['power']
+
+    return live_generation_wh
 
 def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     """
-    Make fake PV data for the site
+    Make PV data by combining Enphase live data and fake PV data
 
     Later we could add PV history here
 
     :param site: the PV site
     :param ts: the timestamp of the site
-    :return: The fake PV dataset in xarray form
+    :return: The combined PV dataset in xarray form
     """
 
-    # make fake pv data, this is where we could add history of a pv system
-    generation_wh = [[np.nan]]
+    # Fetch live Enphase data and store it in live_generation_wh
+    live_generation_wh = get_enphase_data(ENPHASE_USER_ID, ENPHASE_API_KEY)
+    
+    # Combine live Enphase data with fake PV data, this is where we could add history of a pv system
+    generation_wh = [[live_generation_wh]]
     lon = [site.longitude]
     lat = [site.latitude]
     timestamp = [ts]
