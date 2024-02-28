@@ -133,7 +133,7 @@ def get_enphase_data(enphase_user_id: str, enphase_api_key: str) -> float:
 
     return live_generation_wh
 
-def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
+def make_pv_data(site: PVSite, ts: pd.Timestamp, use_enphase_data: bool = False) -> xr.Dataset:
     """
     Make PV data by combining Enphase live data and fake PV data
 
@@ -141,11 +141,15 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
 
     :param site: the PV site
     :param ts: the timestamp of the site
+    :param use_enphase_data: Flag indicating whether to use live Enphase data or not
     :return: The combined PV dataset in xarray form
     """
 
-    # Fetch live Enphase data and store it in live_generation_wh
-    live_generation_wh = get_enphase_data(ENPHASE_USER_ID, ENPHASE_API_KEY)
+    if use_enphase_data:
+        # Fetch live Enphase data and store it in live_generation_wh
+        live_generation_wh = get_enphase_data(ENPHASE_USER_ID, ENPHASE_API_KEY)
+    else:
+        live_generation_wh = np.nan  # Default value if not using live Enphase data
     
     # Combine live Enphase data with fake PV data, this is where we could add history of a pv system
     generation_wh = [[live_generation_wh]]
