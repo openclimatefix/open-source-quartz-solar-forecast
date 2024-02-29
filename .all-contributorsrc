@@ -90,6 +90,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "roshnaeem",
+      "name": "Rosheen Naeem",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47316899?v=4",
+      "profile": "https://github.com/roshnaeem",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
