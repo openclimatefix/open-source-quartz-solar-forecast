@@ -9,6 +9,7 @@ import requests
 import xarray as xr
 
 from quartz_solar_forecast.pydantic_models import PVSite
+from inverters.enphase import get_enphase_data # Added import for get_enphase_data from /inverters/enphase.py
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -114,26 +115,7 @@ def format_nwp_data(df: pd.DataFrame, nwp_source:str, site: PVSite):
     )
     return data_xr
 
-def get_enphase_data(enphase_user_id: str, enphase_api_key: str) -> float:
-    """
-    Get live PV generation data from Enphase API
-
-    :param enphase_user_id: User ID for Enphase API
-    :param enphase_api_key: API Key for Enphase API
-    :return: Live PV generation in Watt-hours, assumes to be a floating-point number
-    """
-    url = f'https://api.enphaseenergy.com/api/v2/systems/{enphase_user_id}/summary'
-    headers = {'Authorization': f'Bearer {enphase_api_key}'}
-
-    response = requests.get(url, headers=headers)
-    data = response.json()
-
-    # Extracting live generation data assuming it's in Watt-hours
-    live_generation_wh = data['current_power']['power']
-
-    return live_generation_wh
-
-def make_pv_data(site: PVSite, ts: pd.Timestamp, use_enphase_data: bool = False) -> xr.Dataset:
+def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     """
     Make PV data by combining Enphase live data and fake PV data
 
@@ -141,16 +123,18 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp, use_enphase_data: bool = False)
 
     :param site: the PV site
     :param ts: the timestamp of the site
-    :param use_enphase_data: Flag indicating whether to use live Enphase data or not
     :return: The combined PV dataset in xarray form
     """
+
+    # Check if the site has an inverter and use_enphase_data flag accordingly
+    use_enphase_data = site.is_inverter
 
     if use_enphase_data:
         # Fetch live Enphase data and store it in live_generation_wh
         live_generation_wh = get_enphase_data(ENPHASE_USER_ID, ENPHASE_API_KEY)
     else:
         live_generation_wh = np.nan  # Default value if not using live Enphase data
-    
+
     # Combine live Enphase data with fake PV data, this is where we could add history of a pv system
     generation_wh = [[live_generation_wh]]
     lon = [site.longitude]
