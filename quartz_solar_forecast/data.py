@@ -10,7 +10,7 @@ import requests
 import xarray as xr
 
 from quartz_solar_forecast.pydantic_models import PVSite
-from inverters.enphase import get_enphase_data # Added import for get_enphase_data from /inverters/enphase.py
+from quartz_solar_forecast.inverters.enphase import get_enphase_data # Added import for get_enphase_data from /inverters/enphase.py
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
