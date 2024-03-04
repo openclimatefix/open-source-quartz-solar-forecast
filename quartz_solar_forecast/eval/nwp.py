@@ -81,7 +81,7 @@ def get_nwp_for_one_timestamp_one_location(
     # print(fs.ls("datasets/openclimatefix/dwd-icon-eu/data/2022/4/11/", detail=False))
 
     # round timestamp to 6 hours floor
-    timestamp_floor = timestamp.floor("6H")
+    timestamp_floor = timestamp.floor("6h")
     date_and_hour, huggingface_file = make_hf_filename(timestamp_floor)
 
     # dataset variables, note these are unique for ICON

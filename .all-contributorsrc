@@ -81,6 +81,33 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "0xFrama",
+      "name": "Francesco",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30957828?v=4",
+      "profile": "https://github.com/0xFrama",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "roshnaeem",
+      "name": "Rosheen Naeem",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47316899?v=4",
+      "profile": "https://github.com/roshnaeem",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "bikramb98",
+      "name": "Bikram Baruah",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24806286?v=4",
+      "profile": "https://github.com/bikramb98",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
