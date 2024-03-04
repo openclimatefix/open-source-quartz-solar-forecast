@@ -17,3 +17,7 @@ class PVSite(BaseModel):
         ge=0,
         le=360,
     )
+    is_inverter: bool = Field(
+        default=False,
+        description="Flag indicating whether the site has an inverter (e.g., Enphase). If True, use_enphase_data will be considered.",
+    )
