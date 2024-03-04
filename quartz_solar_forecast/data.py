@@ -2,6 +2,7 @@
 import json
 import ssl
 from datetime import datetime
+import os  # Add import for os module
 
 import numpy as np
 import pandas as pd
@@ -13,9 +14,12 @@ from inverters.enphase import get_enphase_data # Added import for get_enphase_da
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-# User needs to add their Enphase API details
-ENPHASE_API_KEY = 'user_enphase_api_key'
-ENPHASE_USER_ID = 'user_enphase_user_id'
+# Load environment variables from .env file
+from dotenv import load_dotenv
+
+# Assigning secrets from the .env file
+ENPHASE_API_KEY = os.getenv('ENPHASE_API_KEY')
+ENPHASE_USER_ID = os.getenv('ENPHASE_USER_ID')
 
 def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     """
