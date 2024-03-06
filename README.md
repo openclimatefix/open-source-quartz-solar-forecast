@@ -25,6 +25,22 @@ Which gives the following prediction
 
 ![https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/blob/main/predictions.png?raw=true](https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/blob/main/predictions.png?raw=true)
 
+## Generating Forecasts
+To generate solar forecasts and save them into a CSV file, follow these steps:
+1. Navigate to the scripts directory
+```bash
+cd scripts
+```
+2. Run the forecast_csv.py script with desired inputs
+```bash
+python forecast_csv.py
+```
+Replace the --init_time_freq, --start_datetime, --end_datetime, and --site_name with your desired forecast initialization frequency (in hours), start datetime, end datetime, and the name of the forecast or site, respectively.
+
+Output
+
+The script will generate solar forecasts at the specified intervals between the start and end datetimes. The results will be combined into a CSV file named using the site name, start and end datetimes, and the frequency of forecasts. This file will be saved in the scripts/csv_forecasts directory.
+
 ## Installation
 
 The source code is currently hosted on GitHub at: https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast
