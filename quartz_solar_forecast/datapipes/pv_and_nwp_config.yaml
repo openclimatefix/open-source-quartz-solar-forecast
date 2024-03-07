@@ -2,8 +2,8 @@ input_data:
   pv:
     pv_files_groups:
       - label: solar_sheffield_passiv
-        pv_filename: 'test.nc'
-        pv_metadata_filename: 'UK_PV_metadata.csv'
+        pv_filename: 'test.nc' # Available at https://github.com/openclimatefix/ocf_datapipes/blob/main/tests/data/pv/passiv/test.nc
+        pv_metadata_filename: 'UK_PV_metadata.csv' # Available at https://github.com/openclimatefix/ocf_datapipes/blob/main/tests/data/pv/passiv/UK_PV_metadata.csv
         get_center: false
         pv_image_size_meters_height: 10000000
         pv_image_size_meters_width: 10000000
@@ -13,7 +13,7 @@ input_data:
         - t
       nwp_image_size_pixels_height: 2
       nwp_image_size_pixels_width: 2
-      nwp_zarr_path: nwp_data/test.zarr
+      nwp_zarr_path: nwp_data/test.zarr # Available at https://github.com/openclimatefix/ocf_datapipes/tree/main/tests/data/nwp_data/test.zarr
       nwp_provider: "ukv"
       history_minutes: 60
       forecast_minutes: 120
