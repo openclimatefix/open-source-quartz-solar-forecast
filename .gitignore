@@ -1,1 +1,4 @@
 .env
+quartz_solar_forecast/datapipes/nwp_data/test.zarr
+quartz_solar_forecast/datapipes/UK_PV_metadata.csv
+quartz_solar_forecast/datapipes/test.nc
