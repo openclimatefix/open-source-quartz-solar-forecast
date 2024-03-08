@@ -3,6 +3,9 @@ import pandas as pd
 from datetime import datetime, timedelta
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
+import unittest
+from unittest.mock import patch
+from datetime import datetime
 
 def generate_forecast(init_time_freq, start_datetime, end_datetime, site_name):
     """
@@ -46,3 +49,44 @@ if __name__ == "__main__":
         end_datetime="2024-03-11 00:00:00",
         site_name="Test"
     )
+
+class TestGenerateForecast(unittest.TestCase):
+    def setUp(self):
+        self.site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
+        self.start_datetime = "2024-03-10 00:00:00"
+        self.end_datetime = "2024-03-12 00:00:00"
+        self.site_name = "Test"
+        self.init_time_freq = 6
+
+    @patch('__main__.run_forecast')
+    def test_generate_forecast(self, mock_run_forecast):
+        mock_df = pd.DataFrame({
+            'datetime': [
+                datetime(2024, 3, 10, 0, 0),
+                datetime(2024, 3, 10, 6, 0),
+                datetime(2024, 3, 10, 12, 0),
+                datetime(2024, 3, 10, 18, 0),
+                datetime(2024, 3, 11, 0, 0),
+                datetime(2024, 3, 11, 6, 0),
+                datetime(2024, 3, 11, 12, 0),
+                datetime(2024, 3, 11, 18, 0),
+                datetime(2024, 3, 12, 0, 0)
+            ],
+            'power_kw': [0.1, 0.5, 0.8, 0.6, 0.2, 0.7, 0.9, 0.4, 0.3]
+        })
+        mock_run_forecast.return_value = mock_df
+
+        generate_forecast(self.init_time_freq, self.start_datetime, self.end_datetime, self.site_name)
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        output_subdir = 'csv_forecasts'
+        output_dir = os.path.join(base_dir, output_subdir)
+        start_date = datetime.strptime(self.start_datetime, "%Y-%m-%d %H:%M:%S").date()
+        end_date = datetime.strptime(self.end_datetime, "%Y-%m-%d %H:%M:%S").date()
+        output_file_name = f"forecast_{self.site_name}_{start_date}_{end_date}.csv"
+        output_file_path = os.path.join(output_dir, output_file_name)
+
+        self.assertTrue(os.path.exists(output_file_path))
+        os.remove(output_file_path)
+
+if __name__ == '__main__':
+    unittest.main()
