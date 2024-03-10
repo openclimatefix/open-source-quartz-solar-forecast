@@ -9,15 +9,44 @@ through the forecaster then each forecast will be saved to a csv.
 # imports
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
+from datasets import load_dataset
 import pandas as pd
+
+# huggingface url
+url = "https://huggingface.co/datasets/openclimatefix/uk_pv/raw/main/metadata.csv"
+site_data = load_dataset('csv', data_files=url)
 
 # open forecasts.csv to output
 file_path = "quartz_solar_forecast/dataset/forecasts.csv"
 
-# initialize list of PV Sites
-sites = [
-    PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
+# initialize list of pv ids
+pv_ids = [
+    9531
 ]
+
+# initialize list of PV Sites
+sites = []
+
+# # get specific information given pv id
+# def get_info(pv_id):
+#     # Filter the site data for the given pv id
+#     filtered_data = site_data.filter(lambda example: example['ss_id'] == pv_id)
+
+#     # If there is no matching pv id in site data
+#     if len(filtered_data) == 0:
+#         return "No data found for the given ss_id."
+
+#     # Extract the latitude, longitude and capacity
+#     latitude = filtered_data['latitude_rounded'][0]
+#     longitude = filtered_data['longitude_rounded'][0]
+#     capacity = filtered_data['kwp'][0]
+
+#     return [latitude, longitude, capacity]
+
+# # get site data from metadata
+# for pv_id in pv_ids:
+#     row = get_info(pv_id)
+#     sites.append(PVSite(row[0], row[1], row[2]))
 
 # list for csv data
 csv_data = []
