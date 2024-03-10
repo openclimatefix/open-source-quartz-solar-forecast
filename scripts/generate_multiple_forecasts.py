@@ -19,11 +19,27 @@ sites = [
     PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
 ]
 
-# run prediction on multiple sites
+# list for csv data
+csv_data = []
+
+# run forecast on multiple sites
 for site in sites:
+    # run forecast for site
     predictions_df = run_forecast(site=site)
     
-    # write to the csv
-    predictions_df.to_csv(file_path, index=True)
+    # iterate through forecast rows
+    for index, row in predictions_df.iterrows():
+        # create list of site info and forecast
+        csv_row = [site.latitude, site.longitude, site.capacity_kwp,
+                   index.date(), index.time(), row['power_wh']]
+        csv_data.append(csv_row)
+
+# create dataframe for csv data
+csv_df = pd.DataFrame(csv_data, columns=['latitude', 'longitude', 
+                                       'capacity_kwp', 'date', 
+                                       'time', 'power_wh'])
+
+# write to csv
+csv_df.to_csv(file_path, index=False)
     
 print("complete")
