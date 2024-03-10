@@ -13,8 +13,7 @@ from datasets import load_dataset
 import pandas as pd
 
 # huggingface url
-url = "https://huggingface.co/datasets/openclimatefix/uk_pv/raw/main/metadata.csv"
-site_data = load_dataset('csv', data_files=url)
+site_data = load_dataset("openclimatefix/uk_pv")
 
 # open forecasts.csv to output
 file_path = "quartz_solar_forecast/dataset/forecasts.csv"
@@ -27,26 +26,26 @@ pv_ids = [
 # initialize list of PV Sites
 sites = []
 
-# # get specific information given pv id
-# def get_info(pv_id):
-#     # Filter the site data for the given pv id
-#     filtered_data = site_data.filter(lambda example: example['ss_id'] == pv_id)
+# get specific information given pv id
+def get_info(pv_id):
+    # Filter the site data for the given pv id
+    filtered_data = site_data.filter(lambda example: example['ss_id'] == pv_id)
 
-#     # If there is no matching pv id in site data
-#     if len(filtered_data) == 0:
-#         return "No data found for the given ss_id."
+    # If there is no matching pv id in site data
+    if len(filtered_data) == 0:
+        return "No data found for the given ss_id."
 
-#     # Extract the latitude, longitude and capacity
-#     latitude = filtered_data['latitude_rounded'][0]
-#     longitude = filtered_data['longitude_rounded'][0]
-#     capacity = filtered_data['kwp'][0]
+    # Extract the latitude, longitude and capacity
+    latitude = filtered_data['latitude_rounded'][0]
+    longitude = filtered_data['longitude_rounded'][0]
+    capacity = filtered_data['kwp'][0]
 
-#     return [latitude, longitude, capacity]
+    return [latitude, longitude, capacity]
 
-# # get site data from metadata
-# for pv_id in pv_ids:
-#     row = get_info(pv_id)
-#     sites.append(PVSite(row[0], row[1], row[2]))
+# get site data from metadata
+for pv_id in pv_ids:
+    row = get_info(pv_id)
+    sites.append(PVSite(row[0], row[1], row[2]))
 
 # list for csv data
 csv_data = []
