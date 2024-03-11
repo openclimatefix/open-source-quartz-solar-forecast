@@ -33,7 +33,7 @@ except:
     )
 
 
-def run_eval(testset_path: str = "quartz_solar_forecast/dataset/testset.csv"):
+def run_eval(testset_path: str = "dataset/testset.csv"):
 
     # load testset from csv
     testset = pd.read_csv(testset_path)
