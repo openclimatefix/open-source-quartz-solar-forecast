@@ -7,7 +7,7 @@ import unittest
 from unittest.mock import patch
 from datetime import datetime
 
-def generate_forecast(init_time_freq, start_datetime, end_datetime, site_name):
+def generate_forecast(init_time_freq, start_datetime, end_datetime, site_name, latitude, longitude, capacity_kwp):
     """
     Generates forecasts at specified intervals and saves them into a CSV file.
 
@@ -16,13 +16,16 @@ def generate_forecast(init_time_freq, start_datetime, end_datetime, site_name):
         start_datetime (str): The starting date and time for generating forecasts.
         end_datetime (str): The ending date and time for generating forecasts.
         site_name (str): The name of the site for which the forecasts are generated.
+        latitude (float): The latitude of the PV site.
+        longitude (float): The longitude of the PV site.
+        capacity_kwp (float): The capacity of the PV site in kilowatts peak (kWp).
     """
     start = datetime.strptime(start_datetime, "%Y-%m-%d %H:%M:%S")
     start_date = start.date()
     end = datetime.strptime(end_datetime, "%Y-%m-%d %H:%M:%S")
     end_date = end.date()
     all_forecasts = pd.DataFrame()
-    site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
+    site = PVSite(latitude=latitude, longitude=longitude, capacity_kwp=capacity_kwp)
 
     init_time = start
     while init_time <= end:
@@ -42,17 +45,23 @@ def generate_forecast(init_time_freq, start_datetime, end_datetime, site_name):
     print(f"Forecasts saved to {output_file_path}")
 
 if __name__ == "__main__":
-    # please change the site name, start_datetime and end_datetime as per your requirement
+    # please change the site name, start_datetime and end_datetime, latitude, longitude and capacity_kwp as per your requirement
     generate_forecast(
         init_time_freq=6, 
         start_datetime="2024-03-10 00:00:00",
         end_datetime="2024-03-11 00:00:00",
-        site_name="Test"
+        site_name="Test",
+        latitude=51.75,
+        longitude=-1.25,
+        capacity_kwp=1.25
     )
+
 
 class TestGenerateForecast(unittest.TestCase):
     def setUp(self):
-        self.site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
+        self.latitude = 51.75
+        self.longitude = -1.25
+        self.capacity_kwp = 1.25
         self.start_datetime = "2024-03-10 00:00:00"
         self.end_datetime = "2024-03-12 00:00:00"
         self.site_name = "Test"
@@ -76,7 +85,16 @@ class TestGenerateForecast(unittest.TestCase):
         })
         mock_run_forecast.return_value = mock_df
 
-        generate_forecast(self.init_time_freq, self.start_datetime, self.end_datetime, self.site_name)
+        generate_forecast(
+            self.init_time_freq,
+            self.start_datetime,
+            self.end_datetime,
+            self.site_name,
+            self.latitude,
+            self.longitude,
+            self.capacity_kwp
+        )
+
         base_dir = os.path.dirname(os.path.abspath(__file__))
         output_subdir = 'csv_forecasts'
         output_dir = os.path.join(base_dir, output_subdir)
