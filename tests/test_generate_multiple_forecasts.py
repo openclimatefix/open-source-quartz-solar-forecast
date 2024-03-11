@@ -4,11 +4,11 @@ import subprocess
 import random
 
 def test_generate_forecasts():
-    # Generate random PV IDs
-    pv_ids = [random.randint(1000, 9999) for _ in range(3)]
+    # Generate 100 random PV IDs between 1 and 50000
+    pv_ids = [random.randint(1, 50000) for _ in range(100)]
     
     # Define the command to run your script
-    command = "python scripts/generate_multiple_forecasts.py" + " ".join(map(str, pv_ids))
+    command = "python scripts/generate_multiple_forecasts.py " + " ".join(map(str, pv_ids))
 
     # Run your script
     subprocess.run(command, shell=True)
