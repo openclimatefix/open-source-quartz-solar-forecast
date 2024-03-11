@@ -80,6 +80,10 @@ def get_nwp_for_one_timestamp_one_location(
     # fs = HfFileSystem()
     # print(fs.ls("datasets/openclimatefix/dwd-icon-eu/data/2022/4/11/", detail=False))
 
+    # Ensure timestamp is a pd.Timestamp object
+    if not isinstance(timestamp, pd.Timestamp):
+        timestamp = pd.to_datetime(timestamp)
+
     # round timestamp to 6 hours floor
     timestamp_floor = timestamp.floor("6h")
     date_and_hour, huggingface_file = make_hf_filename(timestamp_floor)
@@ -172,3 +176,6 @@ def get_nwp_for_one_timestamp_one_location(
     return df
 
 
+testset_path = pd.read_csv("meta_results.csv")
+if __name__ == '__main__':
+    get_nwp(testset_path)
