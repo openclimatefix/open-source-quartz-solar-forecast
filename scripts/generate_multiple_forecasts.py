@@ -5,6 +5,8 @@ single csv. A list with several sites containing pv_id, latitude, longitude
 and capacity will be passed through the forecaster then each forecast will be saved 
 to a csv.
 
+Command to run: python scripts/generate_multiple_forecasts.py pv_id1 pv_id2 etc.
+
 """
 
 import sys
