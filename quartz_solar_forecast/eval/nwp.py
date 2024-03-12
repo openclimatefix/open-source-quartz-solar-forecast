@@ -174,9 +174,3 @@ def get_nwp_for_one_timestamp_one_location(
         print(f"Getting NWP for {timestamp} {pv_id}. Progress: {100*progress}%")
 
     return df
-
-
-testset_path = pd.read_csv("meta_results.csv")
-# to avoid runtime error on mac
-if __name__ == '__main__':
-    get_nwp(testset_path)
