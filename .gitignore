@@ -3,5 +3,3 @@ scripts/datapipes/test.nc
 scripts/datapipes/UK_PV_metadata.csv
 scripts/datapipes/nwp_data
 quartz_solar_forecast/data
-quartz_solar_forecast/eval/data
-quartz_solar_forecast/eval/meta_results.csv
