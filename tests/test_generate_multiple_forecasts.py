@@ -1,37 +1,60 @@
+"""
+
+Unit testing script for scripts/generate_multiple_forecasts.py
+
+"""
+
 import os
 import pandas as pd
+import unittest
 import subprocess
-import random
+from quartz_solar_forecast.pydantic_models import PVSite
 
+class TestGenerateForecasts(unittest.TestCase):
+    # set up test
+    def setUp(self):
+        # repeat dummy sites    
+        self.sites = {
+            # PV_ID: Site
+            12323: PVSite(latitude=50, longitude=0, capacity_kwp=7.5),
+            2324: PVSite(latitude=54, longitude=2, capacity_kwp=10),
+            1023: PVSite(latitude=48, longitude=-1, capacity_kwp=5),
+            3242: PVSite(latitude=46, longitude=10, capacity_kwp=10),
+            1453: PVSite(latitude=54, longitude=-8, capacity_kwp=2.5)
+        }
+        
+        self.output_dir = "test_forecasts"
+        os.makedirs(self.output_dir, exist_ok=True)
 
-def test_generate_forecasts():
-    # Generate 100 random PV IDs between 1 and 50000
-    pv_ids = [random.randint(1, 50000) for _ in range(100)]
+    # tear down files when done
+    def tearDown(self):
+        for file in os.listdir(self.output_dir):
+            file_path = os.path.join(self.output_dir, file)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
 
-    # Define the command to run your script
-    command = "python scripts/generate_multiple_forecasts.py " + " ".join(
-        map(str, pv_ids)
-    )
+    # run test forecasts
+    def test_generate_forecasts(self):
+        # Run the script
+        subprocess.run(["python", "scripts/generate_multiple_forecasts.py"])
 
-    # Run your script
-    subprocess.run(command, shell=True)
+        for pv_id, site in self.sites.items():
+            file_path = f"quartz_solar_forecast/dataset/forecast_{pv_id}.csv"
+            
+            # check if the created file exists
+            self.assertTrue(os.path.exists(file_path))
 
-    # Check if the output file is created
-    assert os.path.exists(
-        "quartz_solar_forecast/dataset/forecasts.csv"
-    ), "forecast.csv doesn't exist"
+            df = pd.read_csv(file_path)
 
-    # Load the output file
-    df = pd.read_csv("quartz_solar_forecast/dataset/forecasts.csv")
+            # Check if all columns are present
+            self.assertIn("pv_id", df.columns)
+            self.assertIn("latitude", df.columns)
+            self.assertIn("longitude", df.columns)
+            self.assertIn("capacity_kwp", df.columns)
+            self.assertIn("forecast creation time", df.columns)
+            self.assertIn("forecast date", df.columns)
+            self.assertIn("forecast time", df.columns)
+            self.assertIn("power_wh", df.columns)
 
-    # Check if the output file has the correct columns
-    expected_columns = ["latitude", "longitude", "capacity_kwp", "date", "time", "power_wh"]
-    assert all(
-        [col in df.columns for col in expected_columns]
-    ), "missing columns in forecast.csv"
-    
-    # Delete everything in forecasts.csv
-    open("quartz_solar_forecast/dataset/forecasts.csv", "w").close()
-
-if __name__ == "__main__":
-    test_generate_forecasts()
+if __name__ == '__main__':
+    unittest.main()

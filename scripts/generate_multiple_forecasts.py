@@ -5,48 +5,14 @@ single csv. A list with several sites containing pv_id, latitude, longitude
 and capacity will be passed through the forecaster then each forecast will be saved 
 to a csv.
 
-Command to run: python scripts/generate_multiple_forecasts.py pv_id1 pv_id2 etc.
-
 """
 
-import sys
 import pandas as pd
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
+from datetime import datetime
 
-# file paths
-site_data_path = "quartz_solar_forecast/dataset/metadata.csv"
-output_path = "quartz_solar_forecast/dataset/forecasts.csv"
-
-
-def get_pv_site_data(site_data_path, pv_ids):
-    """Retrieve specific pv_site data from metadata."""
-    sites = {}
-    df = pd.read_csv(site_data_path)
-
-    # iterate through pv ids
-    for pv_id in pv_ids:
-        row = df[df["ss_id"] == pv_id]
-
-        if not row.empty:
-            # make new site
-            site = PVSite(
-                latitude=row["latitude_rounded"].values[0],
-                longitude=row["longitude_rounded"].values[0],
-                capacity_kwp=row["kwp"].values[0],
-                # Add tilt and orientation here
-            )
-
-            # add site to sites dictionary
-            sites[pv_id] = site
-        else:
-            # skip pv_id if it isn't in metadata
-            print(f"Warning: PV ID {pv_id} not found in metadata. Skipping.")
-
-    return sites
-
-
-def generate_forecasts(sites, output_path):
+def generate_forecasts(sites):
     """Generate forecasts for pv_sites."""
     csv_data = []
 
@@ -61,35 +27,42 @@ def generate_forecasts(sites, output_path):
                 site.latitude,
                 site.longitude,
                 site.capacity_kwp,
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 index.date(),
                 index.time(),
                 row["power_wh"],
             ]
             csv_data.append(csv_row)
+    
+        csv_df = pd.DataFrame(
+            csv_data,
+            columns=[
+                "pv_id",
+                "latitude",
+                "longitude",
+                "capacity_kwp",
+                "forecast creation time",
+                "forecast date",
+                "forecast time",
+                "power_wh",
+            ],
+        )
+        
 
-    csv_df = pd.DataFrame(
-        csv_data,
-        columns=[
-            "pv_id",
-            "latitude",
-            "longitude",
-            "capacity_kwp",
-            "date",
-            "time",
-            "power_wh",
-        ],
-    )
-
-    # write to csv
-    csv_df.to_csv(output_path, index=False)
-
+        # write to a new csv
+        csv_df.to_csv(
+            f"quartz_solar_forecast/dataset/forecast_{pv_id}.csv", index=False
+        )
 
 if __name__ == "__main__":
-    pv_ids = [int(arg) for arg in sys.argv[1:]]
+    # dummy sites for now
+    sites = {
+        # PV_ID: Site
+        12323: PVSite(latitude=50, longitude=0, capacity_kwp=23),
+        2324: PVSite(latitude=54, longitude=2, capacity_kwp=10),
+        1023: PVSite(latitude=48, longitude=-1, capacity_kwp=5),
+        3242: PVSite(latitude=46, longitude=10, capacity_kwp=10),
+        1453: PVSite(latitude=54, longitude=-8, capacity_kwp=2.5)
+    }
 
-    if not pv_ids:
-        print("Please provide PV IDs as command-line arguments.")
-        sys.exit(1)
-
-    sites = get_pv_site_data(site_data_path, pv_ids)
-    generate_forecasts(sites, output_path)
+    generate_forecasts(sites)
