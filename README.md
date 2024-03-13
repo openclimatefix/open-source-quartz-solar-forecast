@@ -70,6 +70,35 @@ The model also uses the following variables, which are currently all set to nan
 - h_median: The median of the recent pv data over the last 7 days
 - h_max: The max of the recent pv data over the last 7 days
 
+## Running Multiple Forecasts
+To run multiple forecasts and save the results, 
+1. Navigate to the scripts directory
+```bash
+cd scripts
+```
+2. Run the generate_multiple_forecasts.py script with the specified pv ids as arguments
+```bash
+python generate_multiple_forecasts.py pv_id1 pv_id2 etc.
+```
+
+To run it from a different python file, use this code
+```bash
+import subprocess
+
+pv_ids = [] # add pv_ids into list
+
+# Define the command to run your script
+command = "python scripts/generate_multiple_forecasts.py " + " ".join(
+    map(str, pv_ids)
+)
+
+# Run the script
+subprocess.run(command, shell=True)
+```
+
+The script will generate future forecasts for the specified pv ids and save them to 
+dataset/forecasts.csv.
+
 ## Known restrictions
 
 - The model is trained on [UK MetOffice](https://www.metoffice.gov.uk/services/data/met-office-weather-datahub) NWPs, but when running inference we use [GFS](https://www.ncei.noaa.gov/products/weather-climate-models/global-forecast) data from [Open-meteo](https://open-meteo.com/). The differences between GFS and UK MetOffice could led to some odd behaviours.
