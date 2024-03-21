@@ -25,8 +25,8 @@ def run_forecast(site: PVSite, ts: datetime | str = None, nwp_source: str = "ico
     if isinstance(ts, str):
         ts = datetime.fromisoformat(ts)
 
-    # make pv and nwp data from GFS
-    nwp_xr = get_nwp(site=site, ts=ts)
+    # make pv and nwp data from nwp_source
+    nwp_xr = get_nwp(site=site, ts=ts, nwp_source=nwp_source)
     pv_xr = make_pv_data(site=site, ts=ts)
 
     # load and run models
