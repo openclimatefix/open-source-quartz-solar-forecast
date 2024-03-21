@@ -108,6 +108,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Hapyr",
+      "name": "Jakob Gebler",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23398802?v=4",
+      "profile": "https://github.com/Hapyr",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
