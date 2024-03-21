@@ -117,6 +117,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "ombhojane",
+      "name": "Om Bhojane",
+      "avatar_url": "https://avatars.githubusercontent.com/u/82753658?v=4",
+      "profile": "https://github.com/ombhojane",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
