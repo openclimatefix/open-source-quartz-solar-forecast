@@ -76,28 +76,14 @@ To run multiple forecasts and save the results,
 ```bash
 cd scripts
 ```
-2. Run the generate_multiple_forecasts.py script with the specified pv ids as arguments
+2. Add new sites to the "sites" dictionary on line 60. 
+
+3. Run 
 ```bash
-python generate_multiple_forecasts.py pv_id1 pv_id2 etc.
+python generate_multiple_forecasts.py
 ```
 
-To run it from a different python file, use this code
-```bash
-import subprocess
-
-pv_ids = [] # add pv_ids into list
-
-# Define the command to run your script
-command = "python scripts/generate_multiple_forecasts.py " + " ".join(
-    map(str, pv_ids)
-)
-
-# Run the script
-subprocess.run(command, shell=True)
-```
-
-The script will generate future forecasts for the specified pv ids and save them to 
-dataset/forecasts.csv.
+4. For each site, a new csv will be saved to the "dataset" folder. The csv will be titled forecast_[pv_id].csv.
 
 ## Known restrictions
 

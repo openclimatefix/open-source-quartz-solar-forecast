@@ -14,10 +14,11 @@ from datetime import datetime
 
 def generate_forecasts(sites):
     """Generate forecasts for pv_sites."""
-    csv_data = []
 
     # run forecast for each pv site
     for pv_id, site in sites.items():
+        csv_data = []  # Initialize csv_data here
+
         predictions_df = run_forecast(site=site)
 
         # add to csv data
