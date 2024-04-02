@@ -108,6 +108,33 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Hapyr",
+      "name": "Jakob Gebler",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23398802?v=4",
+      "profile": "https://github.com/Hapyr",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "ombhojane",
+      "name": "Om Bhojane",
+      "avatar_url": "https://avatars.githubusercontent.com/u/82753658?v=4",
+      "profile": "https://github.com/ombhojane",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mrchrisadams",
+      "name": "Chris Adams",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17906?v=4",
+      "profile": "http://chrisadams.me.uk",
+      "contributions": [
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
