@@ -33,7 +33,7 @@ except:
     )
 
 
-def run_eval(testset_path: str = "../dataset/testset.csv", visualize: bool = False):
+def run_eval(testset_path: str = "dataset/testset.csv", visualize: bool = False):
 
     # load testset from csv
     testset = pd.read_csv(testset_path)
