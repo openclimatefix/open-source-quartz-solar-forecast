@@ -9,6 +9,10 @@ import pandas as pd
 import requests
 import xarray as xr
 
+import openmeteo_requests
+import requests_cache
+from retry_requests import retry
+
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.inverters.enphase import get_enphase_data # Added import for get_enphase_data from /inverters/enphase.py
 
@@ -31,78 +35,111 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     :return: nwp forecast in xarray
     """
 
+    # Setup the Open-Meteo API client with cache and retry on error
+    cache_session = requests_cache.CachedSession('.cache', expire_after = -1)
+    retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
+    openmeteo = openmeteo_requests.Client(session = retry_session)
+
+    # Define the variables we want. Visibility is handled separately after the main request
     variables = [
-        "visibility",
-        "windspeed_10m",
-        "temperature_2m",
-        "precipitation",
-        "shortwave_radiation",
-        "direct_radiation",
-        "cloudcover_low",
-        "cloudcover_mid",
-        "cloudcover_high",
+        "temperature_2m", 
+        "precipitation", 
+        "cloud_cover_low", 
+        "cloud_cover_mid", 
+        "cloud_cover_high", 
+        "wind_speed_10m", 
+        "shortwave_radiation", 
+        "direct_radiation"
     ]
 
     start = ts.date()
-    end = start + pd.Timedelta(days=7)
+    end = start + pd.Timedelta(days=2)
 
-    # Getting NWP, from OPEN METEO
-    url_nwp_source = None
-    if nwp_source == "icon":
-        url_nwp_source = "dwd-icon"
-    elif nwp_source == "gfs":
-        url_nwp_source = "gfs"
+    url = ""
+
+    # check whether the time stamp is more than 3 months in the past
+    if (datetime.now() - ts).days > 90:
+        print("Warning: The requested timestamp is more than 3 months in the past. The weather data are provided by a reanalyse model and not ICON or GFS.")
+
+        def ask_to_continue():
+            while True:
+                user_input = input("Do you want to continue? [Y/n]: ").strip().lower()
+                if user_input in ['y', 'yes', '']:
+                    return True
+                elif user_input in ['n', 'no']:
+                    return False
+                else:
+                    print("Invalid input. Please enter 'Y' to continue or 'n' to exit.")
+
+        if not ask_to_continue():
+            return None
+        
+        # load data from open-meteo Historical Weather API
+        url = "https://archive-api.open-meteo.com/v1/archive"
+
     else:
-        raise Exception(f'Source ({nwp_source}) must be either "icon" or "gfs"')
 
-    # Pull data from the nwp_source provided 
-    url = (
-        f"https://api.open-meteo.com/v1/{url_nwp_source}?"
-        f"latitude={site.latitude}&longitude={site.longitude}"
-        f"&hourly={','.join(variables)}"
-        f"&start_date={start}&end_date={end}"
-    )
-    r = requests.get(url)
-    d = json.loads(r.text)
+        # Getting NWP from open meteo weather forecast API by ICON or GFS model within the last 3 months
+        url_nwp_source = None
+        if nwp_source == "icon":
+            url_nwp_source = "dwd-icon"
+        elif nwp_source == "gfs":
+            url_nwp_source = "gfs"
+        else:
+            raise Exception(f'Source ({nwp_source}) must be either "icon" or "gfs"')
 
-    # If the nwp_source is ICON, get visibility data from GFS as its not available for icon on Open Meteo
-    if nwp_source == "icon":
-        url = (
-            f"https://api.open-meteo.com/v1/gfs?"
-            f"latitude={site.latitude}&longitude={site.longitude}"
-            f"&hourly=visibility"
-            f"&start_date={start}&end_date={end}"
-        )
-        r_gfs = requests.get(url)
-        d_gfs = json.loads(r_gfs.text)
+        url = f"https://api.open-meteo.com/v1/{url_nwp_source}"
 
-        # extract visibility data from gfs reponse
-        gfs_visibility_data = d_gfs["hourly"]["visibility"]
+    params = {
+    	"latitude": site.latitude,
+    	"longitude": site.longitude,
+    	"start_date": f"{start}",
+    	"end_date": f"{end}",
+    	"hourly": variables
+    }
+    response = openmeteo.weather_api(url, params=params)
+    hourly = response[0].Hourly()
 
-        # add visibility to the icon reponse to make a complete json file 
-        d["hourly"]["visibility"] = gfs_visibility_data
+    hourly_data = {"time": pd.date_range(
+    	start = pd.to_datetime(hourly.Time(), unit = "s", utc = False),
+    	end = pd.to_datetime(hourly.TimeEnd(), unit = "s", utc = False),
+    	freq = pd.Timedelta(seconds = hourly.Interval()),
+    	inclusive = "left"
+    )}
+
+    # variables index as in the variables array of the request
+    hourly_data["t"] = hourly.Variables(0).ValuesAsNumpy()
+    hourly_data["prate"] = hourly.Variables(1).ValuesAsNumpy()
+    hourly_data["lcc"] = hourly.Variables(2).ValuesAsNumpy()
+    hourly_data["mcc"] = hourly.Variables(3).ValuesAsNumpy()
+    hourly_data["hcc"] = hourly.Variables(4).ValuesAsNumpy()
+    hourly_data["si10"] = hourly.Variables(5).ValuesAsNumpy()
+    hourly_data["dswrf"] = hourly.Variables(6).ValuesAsNumpy()
+    hourly_data["dlwrf"] = hourly.Variables(7).ValuesAsNumpy()
+
+    # handle visibility 
+    if (datetime.now() - ts).days <= 90:
+        # load data from open-meteo gfs model
+        params = {
+        	"latitude": site.latitude,
+        	"longitude": site.longitude,
+        	"start_date": f"{start}",
+        	"end_date": f"{end}",
+        	"hourly": variables
+        }
+        data_vis_gfs = openmeteo.weather_api("https://api.open-meteo.com/v1/gfs", params=params)[0].Hourly().Variables(0).ValuesAsNumpy()
+        hourly_data["vis"] = data_vis_gfs
+    else:
+        # set to maximum visibility possible
+        hourly_data["vis"] = 24000
+
+    df = pd.DataFrame(data = hourly_data)
+    df = df.set_index("time")
 
     # convert data into xarray
-    df = pd.DataFrame(d["hourly"])
-    df["time"] = pd.to_datetime(df["time"])
-    df = df.rename(
-        columns={
-            "visibility": "vis",
-            "windspeed_10m": "si10",
-            "temperature_2m": "t",
-            "precipitation": "prate",
-            "shortwave_radiation": "dswrf",
-            "direct_radiation": "dlwrf",
-            "cloudcover_low": "lcc",
-            "cloudcover_mid": "mcc",
-            "cloudcover_high": "hcc",
-        }
-    )
-    df = df.set_index("time")
     data_xr = format_nwp_data(df, nwp_source, site)
 
     return data_xr
-
 
 def format_nwp_data(df: pd.DataFrame, nwp_source:str, site: PVSite):
     data_xr = xr.DataArray(
