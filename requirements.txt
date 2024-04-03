@@ -4,3 +4,5 @@ pv-site-prediction==0.1.17
 pydantic==2.6.2
 huggingface_hub== 0.17.3 # only for evaluation
 python-dotenv==1.0.1
+seaborn==0.13.2 # only for evaluation visualization
+matplotlib==3.8.3 # only for evaluation visualization
