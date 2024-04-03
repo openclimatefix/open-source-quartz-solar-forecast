@@ -79,7 +79,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/36108149?v=4",
       "profile": "http://github.com/aryanbhosale",
       "contributions": [
-        "doc"
+        "doc",
+        "code"
       ]
     },
     {
@@ -125,6 +126,24 @@
       "profile": "https://github.com/ombhojane",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "mrchrisadams",
+      "name": "Chris Adams",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17906?v=4",
+      "profile": "http://chrisadams.me.uk",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "mudrap17",
+      "name": "Mudra Patel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/76879120?v=4",
+      "profile": "https://github.com/mudrap17",
+      "contributions": [
+        "doc"
       ]
     }
   ],

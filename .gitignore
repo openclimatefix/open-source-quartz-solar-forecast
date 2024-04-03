@@ -2,3 +2,4 @@ scripts/datapipes/test.nc
 scripts/datapipes/UK_PV_metadata.csv
 scripts/datapipes/nwp_data
 quartz_solar_forecast/data
+.env
