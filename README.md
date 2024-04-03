@@ -135,6 +135,11 @@ This may be because the model is trained expecting live PV data, but currently i
 - [ICON](https://www.dwd.de/EN/ourservices/nwp_forecast_data/nwp_forecast_data.html): ICOsahedral Nonhydrostatic
 - KW: Kilowatt
 
+## FOSDEM
+FOSDEM is a free event for software developers to meet, share ideas and collaborate. Every year, thousands of developers of free and open source software from all over the world gather at the event in Brussels.
+OCF presented Quartz Solar Forecast project at FOSDEM 2024. The link to the original FOSDEM video is availble at [Quartz Solar OS: Building an open source AI solar forecast for everyone](https://fosdem.org/2024/schedule/event/fosdem-2024-2960-quartz-solar-os-building-an-open-source-ai-solar-forecast-for-everyone/).
+It is also available on [YouTube](https://www.youtube.com/watch?v=NAZ2VeiN1N8)
+
 ## Contribution
 
 We welcome other models.
