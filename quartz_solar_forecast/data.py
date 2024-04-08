@@ -60,19 +60,6 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     # check whether the time stamp is more than 3 months in the past
     if (datetime.now() - ts).days > 90:
         print("Warning: The requested timestamp is more than 3 months in the past. The weather data are provided by a reanalyse model and not ICON or GFS.")
-
-        def ask_to_continue():
-            while True:
-                user_input = input("Do you want to continue? [Y/n]: ").strip().lower()
-                if user_input in ['y', 'yes', '']:
-                    return True
-                elif user_input in ['n', 'no']:
-                    return False
-                else:
-                    print("Invalid input. Please enter 'Y' to continue or 'n' to exit.")
-
-        if not ask_to_continue():
-            return None
         
         # load data from open-meteo Historical Weather API
         url = "https://archive-api.open-meteo.com/v1/archive"
