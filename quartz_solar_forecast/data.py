@@ -122,8 +122,8 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
         hourly_data["vis"] = 24000.0
 
     df = pd.DataFrame(data = hourly_data)
-    df = df.astype('float32')
     df = df.set_index("time")
+    df = df.astype('float64')
 
     # convert data into xarray
     data_xr = format_nwp_data(df, nwp_source, site)
