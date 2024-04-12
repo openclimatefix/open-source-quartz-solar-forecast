@@ -19,7 +19,8 @@ from dotenv import load_dotenv
 
 # Assigning secrets from the .env file
 ENPHASE_API_KEY = os.getenv('ENPHASE_API_KEY')
-ENPHASE_USER_ID = os.getenv('ENPHASE_USER_ID')
+ENPHASE_SYSTEM_ID = os.getenv('ENPHASE_SYSTEM_ID')
+ENPHASE_ACCESS_TOKEN = os.getenv('ENPHASE_ACCESS_TOKEN')
 
 def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     """
@@ -122,20 +123,16 @@ def format_nwp_data(df: pd.DataFrame, nwp_source:str, site: PVSite):
 def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     """
     Make PV data by combining Enphase live data and fake PV data
-
     Later we could add PV history here
-
     :param site: the PV site
     :param ts: the timestamp of the site
     :return: The combined PV dataset in xarray form
     """
-
     # Check if the site has an inverter and use_enphase_data flag accordingly
     use_enphase_data = site.is_inverter
-
     if use_enphase_data:
         # Fetch live Enphase data and store it in live_generation_wh
-        live_generation_wh = get_enphase_data(ENPHASE_USER_ID, ENPHASE_API_KEY)
+        live_generation_wh = get_enphase_data(ENPHASE_SYSTEM_ID, ENPHASE_API_KEY, ENPHASE_ACCESS_TOKEN)
     else:
         live_generation_wh = np.nan  # Default value if not using live Enphase data
 
@@ -145,20 +142,18 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     lat = [site.latitude]
     timestamp = [ts]
     pv_id = [1]
-
     da = xr.DataArray(
         data=generation_wh,
         dims=["pv_id", "timestamp"],
         coords=dict(
-            longitude=(["pv_id"], lon),
-            latitude=(["pv_id"], lat),
+            longitude=("pv_id", lon),
+            latitude=("pv_id", lat),
             timestamp=timestamp,
             pv_id=pv_id,
-            kwp=(["pv_id"], [site.capacity_kwp]),
-            tilt=(["pv_id"], [site.tilt]),
-            orientation=(["pv_id"], [site.orientation]),
+            kwp=("pv_id", [site.capacity_kwp]),
+            tilt=("pv_id", [site.tilt]),
+            orientation=("pv_id", [site.orientation]),
         ),
     )
     da = da.to_dataset(name="generation_wh")
-
     return da
