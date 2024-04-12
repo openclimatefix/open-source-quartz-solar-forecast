@@ -146,13 +146,13 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
         data=generation_wh,
         dims=["pv_id", "timestamp"],
         coords=dict(
-            longitude=("pv_id", lon),
-            latitude=("pv_id", lat),
+            longitude=(["pv_id"], lon),
+            latitude=(["pv_id"], lat),
             timestamp=timestamp,
             pv_id=pv_id,
-            kwp=("pv_id", [site.capacity_kwp]),
-            tilt=("pv_id", [site.tilt]),
-            orientation=("pv_id", [site.orientation]),
+            kwp=(["pv_id"], [site.capacity_kwp]),
+            tilt=(["pv_id"], [site.tilt]),
+            orientation=(["pv_id"], [site.orientation]),
         ),
     )
     da = da.to_dataset(name="generation_wh")
