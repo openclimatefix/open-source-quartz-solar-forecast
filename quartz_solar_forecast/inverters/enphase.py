@@ -16,5 +16,5 @@ def get_enphase_data(enphase_system_id: str, enphase_api_key: str, enphase_acces
     response = requests.get(url, headers=headers)
     data = response.json()
     # Extracting live generation data assuming it's in Watt-hours
-    live_generation_wh = data['production']['total_energy']
+    live_generation_wh = data['current_power']['power']
     return live_generation_wh
