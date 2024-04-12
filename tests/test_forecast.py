@@ -7,8 +7,8 @@ def test_run_forecast():
     site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
 
     # run model with icon and gfs nwp
-    predications_df_gfs = run_forecast(site=site, ts='2023-10-30', nwp_source="gfs")
-    predications_df_icon = run_forecast(site=site, ts='2023-10-30', nwp_source="icon")
+    predications_df_gfs = run_forecast(site=site, ts='2023-12-30', nwp_source="gfs")
+    predications_df_icon = run_forecast(site=site, ts='2023-12-30', nwp_source="icon")
 
     print("\nPrediction based on GFS NWP\n")
     print(predications_df_gfs)
