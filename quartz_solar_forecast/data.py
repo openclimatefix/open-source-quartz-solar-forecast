@@ -2,7 +2,7 @@
 import json
 import ssl
 from datetime import datetime
-import os  # Add import for os module
+import os  
 
 import numpy as np
 import pandas as pd
@@ -10,14 +10,12 @@ import requests
 import xarray as xr
 
 from quartz_solar_forecast.pydantic_models import PVSite
-from quartz_solar_forecast.inverters.enphase import get_enphase_data # Added import for get_enphase_data from /inverters/enphase.py
+from quartz_solar_forecast.inverters.enphase import get_enphase_data
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-# Load environment variables from .env file
 from dotenv import load_dotenv
 
-# Assigning secrets from the .env file
 ENPHASE_API_KEY = os.getenv('ENPHASE_API_KEY')
 ENPHASE_SYSTEM_ID = os.getenv('ENPHASE_SYSTEM_ID')
 ENPHASE_ACCESS_TOKEN = os.getenv('ENPHASE_ACCESS_TOKEN')
@@ -123,13 +121,16 @@ def format_nwp_data(df: pd.DataFrame, nwp_source:str, site: PVSite):
 def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     """
     Make PV data by combining Enphase live data and fake PV data
+
     Later we could add PV history here
+
     :param site: the PV site
     :param ts: the timestamp of the site
     :return: The combined PV dataset in xarray form
     """
     # Check if the site has an inverter and use_enphase_data flag accordingly
     use_enphase_data = site.is_inverter
+
     if use_enphase_data:
         # Fetch live Enphase data and store it in live_generation_wh
         live_generation_wh = get_enphase_data(ENPHASE_SYSTEM_ID, ENPHASE_API_KEY, ENPHASE_ACCESS_TOKEN)
@@ -142,6 +143,7 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     lat = [site.latitude]
     timestamp = [ts]
     pv_id = [1]
+
     da = xr.DataArray(
         data=generation_wh,
         dims=["pv_id", "timestamp"],
@@ -156,4 +158,5 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
         ),
     )
     da = da.to_dataset(name="generation_wh")
+
     return da
