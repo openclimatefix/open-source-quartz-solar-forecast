@@ -118,7 +118,7 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
         hourly_data["vis"] = data_vis_gfs
     else:
         # set to maximum visibility possible
-        hourly_data["vis"] = 24000
+        hourly_data["vis"] = 24000.0
 
     df = pd.DataFrame(data = hourly_data)
     df = df.set_index("time")
