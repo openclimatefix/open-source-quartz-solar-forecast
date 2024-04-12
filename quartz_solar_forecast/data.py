@@ -94,6 +94,7 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     	inclusive = "left"
     )}
 
+
     # variables index as in the variables array of the request
     hourly_data["t"] = hourly.Variables(0).ValuesAsNumpy()
     hourly_data["prate"] = hourly.Variables(1).ValuesAsNumpy()
@@ -121,6 +122,7 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
         hourly_data["vis"] = 24000.0
 
     df = pd.DataFrame(data = hourly_data)
+    df = df.astype('float32')
     df = df.set_index("time")
 
     # convert data into xarray
