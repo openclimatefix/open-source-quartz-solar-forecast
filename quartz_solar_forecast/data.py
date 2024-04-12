@@ -53,7 +53,7 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     ]
 
     start = ts.date()
-    end = start + pd.Timedelta(days=2)
+    end = start + pd.Timedelta(days=7)
 
     url = ""
 
@@ -112,7 +112,7 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
         	"longitude": site.longitude,
         	"start_date": f"{start}",
         	"end_date": f"{end}",
-        	"hourly": variables
+        	"hourly": "visibility"
         }
         data_vis_gfs = openmeteo.weather_api("https://api.open-meteo.com/v1/gfs", params=params)[0].Hourly().Variables(0).ValuesAsNumpy()
         hourly_data["vis"] = data_vis_gfs
