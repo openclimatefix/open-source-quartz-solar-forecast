@@ -25,8 +25,6 @@ def get_enphase_access_token():
     response.raise_for_status()
     return response.json()["access_token"]
 
-import requests
-
 def get_enphase_data(enphase_system_id: str) -> float:
     """
     Get live PV generation data from Enphase API v4
