@@ -16,9 +16,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 from dotenv import load_dotenv
 
-ENPHASE_API_KEY = os.getenv('ENPHASE_API_KEY')
 ENPHASE_SYSTEM_ID = os.getenv('ENPHASE_SYSTEM_ID')
-ENPHASE_ACCESS_TOKEN = os.getenv('ENPHASE_ACCESS_TOKEN')
 
 def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     """
@@ -133,7 +131,7 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
 
     if use_enphase_data:
         # Fetch live Enphase data and store it in live_generation_wh
-        live_generation_wh = get_enphase_data(ENPHASE_SYSTEM_ID, ENPHASE_API_KEY, ENPHASE_ACCESS_TOKEN)
+        live_generation_wh = get_enphase_data(ENPHASE_SYSTEM_ID)
     else:
         live_generation_wh = np.nan  # Default value if not using live Enphase data
 
