@@ -12,10 +12,26 @@ def test_run_forecast():
     predications_df_gfs = run_forecast(site=site, ts=ts, nwp_source="gfs")
     predications_df_icon = run_forecast(site=site, ts=ts, nwp_source="icon")
 
-    print("\nPrediction based on GFS NWP\n")
+    print("\n Prediction based on GFS NWP\n")
     print(predications_df_gfs)
-    print(f"Max: {predications_df_gfs['power_wh'].max()}")
+    print(f" Max: {predications_df_gfs['power_wh'].max()}")
 
-    print("\nPrediction based on ICON NWP\n")
+    print("\n Prediction based on ICON NWP\n")
     print(predications_df_icon)
-    print(f"Max: {predications_df_icon['power_wh'].max()}")
+    print(f" Max: {predications_df_icon['power_wh'].max()}")
+
+    ts = datetime.today() - timedelta(days=190)
+
+    # run model with icon and gfs nwp
+    predications_df_gfs = run_forecast(site=site, ts=ts, nwp_source="gfs")
+    predications_df_icon = run_forecast(site=site, ts=ts, nwp_source="icon")
+
+    print("\nPrediction for a date more than 180 days in the past")
+
+    print("\n Prediction based on GFS NWP\n")
+    print(predications_df_gfs)
+    print(f" Max: {predications_df_gfs['power_wh'].max()}")
+
+    print("\n Prediction based on ICON NWP\n")
+    print(predications_df_icon)
+    print(f" Max: {predications_df_icon['power_wh'].max()}")
