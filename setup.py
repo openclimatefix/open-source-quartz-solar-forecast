@@ -10,7 +10,7 @@ install_requires = (this_directory / "requirements.txt").read_text().splitlines(
 
 setup(
     name="quartz_solar_forecast",
-    version="1.0.26",
+    version="1.0.27",
     license="MIT",
     author="Peter Dudfield",
     author_email="info@openclimatefix.org",
