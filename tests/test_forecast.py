@@ -20,7 +20,7 @@ def test_run_forecast():
     print(predications_df_icon)
     print(f" Max: {predications_df_icon['power_wh'].max()}")
 
-    ts = datetime.today() - timedelta(days=190)
+    ts = datetime.today() - timedelta(days=200)
 
     # run model with icon and gfs nwp
     predications_df_gfs = run_forecast(site=site, ts=ts, nwp_source="gfs")
@@ -35,3 +35,4 @@ def test_run_forecast():
     print("\n Prediction based on ICON NWP\n")
     print(predications_df_icon)
     print(f" Max: {predications_df_icon['power_wh'].max()}")
+test_run_forecast()
