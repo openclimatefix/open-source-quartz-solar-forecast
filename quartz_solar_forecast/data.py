@@ -2,7 +2,7 @@
 import json
 import ssl
 from datetime import datetime
-import os  # Add import for os module
+import os  
 
 import numpy as np
 import pandas as pd
@@ -14,16 +14,13 @@ import requests_cache
 from retry_requests import retry
 
 from quartz_solar_forecast.pydantic_models import PVSite
-from quartz_solar_forecast.inverters.enphase import get_enphase_data # Added import for get_enphase_data from /inverters/enphase.py
+from quartz_solar_forecast.inverters.enphase import get_enphase_data
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-# Load environment variables from .env file
 from dotenv import load_dotenv
 
-# Assigning secrets from the .env file
-ENPHASE_API_KEY = os.getenv('ENPHASE_API_KEY')
-ENPHASE_USER_ID = os.getenv('ENPHASE_USER_ID')
+ENPHASE_SYSTEM_ID = os.getenv('ENPHASE_SYSTEM_ID')
 
 def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     """
@@ -155,13 +152,12 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     :param ts: the timestamp of the site
     :return: The combined PV dataset in xarray form
     """
-
     # Check if the site has an inverter and use_enphase_data flag accordingly
     use_enphase_data = site.is_inverter
 
     if use_enphase_data:
         # Fetch live Enphase data and store it in live_generation_wh
-        live_generation_wh = get_enphase_data(ENPHASE_USER_ID, ENPHASE_API_KEY)
+        live_generation_wh = get_enphase_data(ENPHASE_SYSTEM_ID)
     else:
         live_generation_wh = np.nan  # Default value if not using live Enphase data
 
