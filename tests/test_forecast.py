@@ -35,4 +35,3 @@ def test_run_forecast():
     print("\n Prediction based on ICON NWP\n")
     print(predications_df_icon)
     print(f" Max: {predications_df_icon['power_wh'].max()}")
-test_run_forecast()
