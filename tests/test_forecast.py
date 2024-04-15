@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 def test_run_forecast():
     # make input data
     site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
-
     ts = datetime.today() - timedelta(weeks=2)
 
     # run model with icon and gfs nwp
@@ -20,6 +19,10 @@ def test_run_forecast():
     print(predications_df_icon)
     print(f" Max: {predications_df_icon['power_wh'].max()}")
 
+def test_run_forecast_historical():
+
+    # model input data creation
+    site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
     ts = datetime.today() - timedelta(days=200)
 
     # run model with icon and gfs nwp
@@ -35,3 +38,4 @@ def test_run_forecast():
     print("\n Prediction based on ICON NWP\n")
     print(predications_df_icon)
     print(f" Max: {predications_df_icon['power_wh'].max()}")
+    
