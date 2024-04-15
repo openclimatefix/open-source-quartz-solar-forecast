@@ -6,7 +6,7 @@ def test_run_forecast():
     # make input data
     site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
 
-    ts = datetime.today() - timedelta(days=2)
+    ts = datetime.today() - timedelta(weeks=2)
 
     # run model with icon and gfs nwp
     predications_df_gfs = run_forecast(site=site, ts=ts, nwp_source="gfs")
