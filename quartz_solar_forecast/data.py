@@ -15,6 +15,7 @@ from retry_requests import retry
 
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.inverters.enphase import get_enphase_data
+from quartz_solar_forecast.inverters.solaredge import get_site_coordinates, get_site_list, get_solaredge_data
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -144,24 +145,32 @@ def format_nwp_data(df: pd.DataFrame, nwp_source:str, site: PVSite):
 
 def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     """
-    Make PV data by combining Enphase live data and fake PV data
-
-    Later we could add PV history here
-
+    Make PV data by combining live data from SolarEdge or Enphase and fake PV data.
+    Later we could add PV history here.
     :param site: the PV site
     :param ts: the timestamp of the site
     :return: The combined PV dataset in xarray form
     """
-    # Check if the site has an inverter and use_enphase_data flag accordingly
-    use_enphase_data = site.is_inverter
+    if site.inverter_type == 'solaredge':
+        # Fetch the list of site IDs associated with the account
+        site_ids = get_site_list()
 
-    if use_enphase_data:
-        # Fetch live Enphase data and store it in live_generation_wh
+        # Find the site ID that matches the site's latitude and longitude
+        matching_site_ids = [s_id for s_id in site_ids if abs(site.latitude - lat) < 1e-6 and abs(site.longitude - lon) < 1e-6 for lat, lon in get_site_coordinates(s_id)]
+        if not matching_site_ids:
+            raise ValueError("Site not found in the list of associated sites.")
+        elif len(matching_site_ids) > 1:
+            raise ValueError("Multiple sites found matching the given latitude and longitude.")
+        else:
+            site_id = matching_site_ids[0]
+
+        live_generation_wh = get_solaredge_data(site_id)
+    elif site.inverter_type == 'enphase':
         live_generation_wh = get_enphase_data(ENPHASE_SYSTEM_ID)
     else:
-        live_generation_wh = np.nan  # Default value if not using live Enphase data
+        live_generation_wh = np.nan  # Default value if not using live data
 
-    # Combine live Enphase data with fake PV data, this is where we could add history of a pv system
+    # Combine live data with fake PV data, this is where we could add history of a PV system
     generation_wh = [[live_generation_wh]]
     lon = [site.longitude]
     lat = [site.latitude]
@@ -182,5 +191,4 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
         ),
     )
     da = da.to_dataset(name="generation_wh")
-
     return da
