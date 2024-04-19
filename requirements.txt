@@ -4,3 +4,6 @@ pv-site-prediction==0.1.17
 pydantic==2.6.2
 huggingface_hub== 0.17.3 # only for evaluation
 python-dotenv==1.0.1
+openmeteo-requests==1.2.0
+requests-cache==1.2.0
+retry-requests==2.0.0
