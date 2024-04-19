@@ -82,7 +82,7 @@ if __name__ == "__main__":
         # Add more sites as needed, with format (pv_id, latitude, longitude, capacity)
     ]
     forecast_date = "2023-11-01"  # Forecast date
-    output_file = "pv_forecasts.csv"  # Output file name
+    output_file = "multi_site_pv_forecasts.csv"  # Output file name
 
     # Generate forecasts for the given sites and forecast date
     forecasts = generate_forecasts(sites_info, forecast_date)
