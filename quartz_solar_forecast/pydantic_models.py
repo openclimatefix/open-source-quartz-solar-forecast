@@ -20,7 +20,7 @@ class PVSite(BaseModel):
         le=360,
     )
     inverter_type: str = Field(
-        ...,
+        default=None,
         description="The type of inverter used, either 'solaredge' or 'enphase'",
-        choices=["solaredge", "enphase"],
+        choices=["solaredge", "enphase", None],
     )

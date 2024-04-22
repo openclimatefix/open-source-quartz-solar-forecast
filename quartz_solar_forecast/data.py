@@ -151,10 +151,10 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     :param ts: the timestamp of the site
     :return: The combined PV dataset in xarray form
     """
+    # Check if the site has an inverter type specified
     if site.inverter_type == 'solaredge':
         # Fetch the list of site IDs associated with the account
         site_ids = get_site_list()
-
         # Find the site ID that matches the site's latitude and longitude
         matching_site_ids = [s_id for s_id in site_ids if abs(site.latitude - lat) < 1e-6 and abs(site.longitude - lon) < 1e-6 for lat, lon in get_site_coordinates(s_id)]
         if not matching_site_ids:
@@ -163,12 +163,12 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
             raise ValueError("Multiple sites found matching the given latitude and longitude.")
         else:
             site_id = matching_site_ids[0]
-
-        live_generation_wh = get_solaredge_data(site_id)
+            live_generation_wh = get_solaredge_data(site_id)
     elif site.inverter_type == 'enphase':
         live_generation_wh = get_enphase_data(ENPHASE_SYSTEM_ID)
     else:
-        live_generation_wh = np.nan  # Default value if not using live data
+        # If no inverter type is specified, use the default value
+        live_generation_wh = np.nan
 
     # Combine live data with fake PV data, this is where we could add history of a PV system
     generation_wh = [[live_generation_wh]]
