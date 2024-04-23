@@ -3,7 +3,9 @@ from pydantic import BaseModel, Field
 
 class PVSite(BaseModel):
     latitude: float = Field(..., description="the latitude of the site", ge=-90, le=90)
-    longitude: float = Field(..., description="the longitude of the site", ge=-180, le=180)
+    longitude: float = Field(
+        ..., description="the longitude of the site", ge=-180, le=180
+    )
     capacity_kwp: float = Field(..., description="the capacity [kwp] of the site", ge=0)
     tilt: float = Field(
         default=35,
@@ -17,7 +19,8 @@ class PVSite(BaseModel):
         ge=0,
         le=360,
     )
-    is_inverter: bool = Field(
-        default=False,
-        description="Flag indicating whether the site has an inverter (e.g., Enphase). If True, use_enphase_data will be considered.",
+    inverter_type: str = Field(
+        default=None,
+        description="The type of inverter used, either 'solaredge' or 'enphase'",
+        choices=["solaredge", "enphase", None],
     )
