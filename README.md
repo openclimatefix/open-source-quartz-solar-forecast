@@ -15,15 +15,16 @@ The current model uses GFS or ICON NWPs to predict the solar generation at a sit
 ```python
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
+from datetime import datetime
 
 # make a pv site object
 site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
 
-# run model, uses ICON NWP data by default
-predictions_df = run_forecast(site=site, ts='2023-11-01')
+# run model for today, using ICON NWP data
+predictions_df = run_forecast(site=site, ts=datetime.today(), nwp_source="icon")
 ```
 
-Which gives the following prediction
+which should result in a time series similar to this one: 
 
 ![https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/blob/main/predictions.png?raw=true](https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/blob/main/predictions.png?raw=true)
 
