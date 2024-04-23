@@ -91,7 +91,7 @@ The model also uses the following variables, which are currently all set to nan
 ## Known restrictions
 
 - The model is trained on [UK MetOffice](https://www.metoffice.gov.uk/services/data/met-office-weather-datahub) NWPs, but when running inference we use [GFS](https://www.ncei.noaa.gov/products/weather-climate-models/global-forecast) data from [Open-meteo](https://open-meteo.com/). The differences between GFS and UK MetOffice could led to some odd behaviours.
-- It looks like the GFS data on Open-Meteo is only available for free for the last 3 months. 
+- Depending, whether the timestamp for the prediction lays more than 90 days in the past or not, different data sources for the NWP are used. If we predict within the last 90 days, we can use ICON or GFS from the open-meteo Weather Forecast API. Since ICON doesn't provide visibility, this parameter is queried from GFS in any case. If the date for the prediction is further back in time, a reanalysis model of historical data is used (open-meteo | Historical Weather API). The historical weather API doesn't't provide visibility at all, that's why it's set to a maximum of 24000 meter in this case. This can lead to some loss of precision.
 
 ## Evaluation
 
