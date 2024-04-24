@@ -151,6 +151,13 @@ def get_nwp_for_one_timestamp_one_location(
         }
     )
 
+    # change dswrf and dlwrf to hourly mean, rather than forecast mean
+    df["dswrf_cumsum"] = df["dswrf"]*range(1, len(df)+1)
+    df["dlwrf"][1:] = df["dswrf_cumsum"].diff()[1:]
+    df["dlwrf_cumsum"] = df["dlwrf"] * range(1, len(df) + 1)
+    df["dlwrf"][1:] = df["dlwrf_cumsum"].diff()[1:]
+    df = df.drop(columns=["dswrf_cumsum", "dlwrf_cumsum"])
+
     # add visbility for the moment
     # TODO
     df["vis"] = 10000
