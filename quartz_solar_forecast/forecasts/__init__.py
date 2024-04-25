@@ -6,3 +6,5 @@ The model is a gradient boosted tree model and uses 9 NWP variables from the UK 
 It is trained on 25,000 PV sites with over 5 years of PV history, which is available [here](https://huggingface.co/datasets/openclimatefix/uk_pv).
 
 """
+from .v1 import forecast_v1
+from .v2 import TryolabsSolarPowerPredictor
