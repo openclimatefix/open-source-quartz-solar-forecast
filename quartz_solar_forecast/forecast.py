@@ -71,7 +71,7 @@ def check_model_file_is_ocf_model(obj: object) -> bool:
     return isinstance(obj, tuple) and obj[0] == RecentHistoryModel and obj[1] is dict
 
 
-def predict_solar_power(
+def run_forecast(
     site: PVSite,
     model: str = None,
     ts: datetime | str = None,
