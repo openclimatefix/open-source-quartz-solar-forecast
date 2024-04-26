@@ -90,6 +90,6 @@ def get_enphase_data(enphase_system_id: str) -> float:
     data = response.json()
 
     # Extracting live generation data assuming it's in Watt-hours
-    live_generation_wh = data['current_power']['power']
+    live_generation_wh = data['current_power']
     
     return live_generation_wh
