@@ -189,11 +189,15 @@ def change_from_forecast_mean_to_hourly_mean(df: pd.DataFrame, variable: str = "
 
     # change the forecast mean to cumsum
     variable_cumsum = f"{variable}_cumsum"
-    df[variable_cumsum] = df[variable] * range(1, len(df) + 1)
+    df[variable_cumsum] = df[variable] * range(0, len(df))
 
     # take the difference
-    df[variable][1:] = df[variable_cumsum].diff()[1:].astype(np.float32)
+    df.loc[1:, variable] = df[variable_cumsum].diff()[1:].astype(np.float32)
 
     # drop the cumsum column
     df = df.drop(columns=[variable_cumsum])
+
+    # clip zero
+    df[variable] = df[variable].clip(lower=0)
+
     return df

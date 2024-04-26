@@ -21,11 +21,11 @@ def test_get_nwp():
 
 
 def test_change_from_forecast_mean_to_hourly_mean():
-    test_set_df = pd.DataFrame(data=[0, 0.5, 1, 1.5, 5], columns=["data"])
+    test_set_df = pd.DataFrame(data=[0, 1, 1.5, 2, 6], columns=["data"])
     df_hourly = change_from_forecast_mean_to_hourly_mean(test_set_df, variable="data")
 
     assert df_hourly["data"].values[0] == 0
     assert df_hourly["data"].values[1] == 1
     assert df_hourly["data"].values[2] == 2
     assert df_hourly["data"].values[3] == 3
-    assert df_hourly["data"].values[4] == 19
+    assert df_hourly["data"].values[4] == 18
