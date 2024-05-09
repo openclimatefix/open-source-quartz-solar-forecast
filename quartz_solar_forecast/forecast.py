@@ -60,7 +60,7 @@ def predict_tryolabs(
     ]
     predictions = predictions.reset_index(drop=True)
     predictions.set_index("date", inplace=True)
-
+    print("Predictions finished.")
     return predictions
 
 
