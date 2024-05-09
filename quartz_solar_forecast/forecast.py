@@ -33,8 +33,8 @@ def predict_ocf(
 
 
 def predict_tryolabs(
-    site: PVSite, model=None, ts: datetime | str = None, nwp_source: str = "icon"
-):
+    site: PVSite, model=None, ts: datetime | str = None):#, nwp_source: str = "icon"
+#):
     """Run the forecast with the tryolabs model"""
     solar_power_predictor = TryolabsSolarPowerPredictor(model=model)
 
@@ -42,8 +42,9 @@ def predict_tryolabs(
         start_date = pd.Timestamp.now().strftime("%Y-%m-%d")
         start_time = pd.Timestamp.now().floor("15min")
     else:
-        start_time = pd.to_datetime(ts)
-
+        start_date = pd.Timestamp(ts).strftime("%Y-%m-%d")
+        start_time = pd.Timestamp(ts).floor("15min")
+  
     end_time = start_time + pd.Timedelta(hours=48)
 
     predictions = solar_power_predictor.predict_power_output(
@@ -136,7 +137,7 @@ def run_forecast(
         loaded_model.load_model(model)
         print("Making predictions ...")
        
-        return predict_tryolabs(site, loaded_model, ts, nwp_source)
+        return predict_tryolabs(site, loaded_model, ts)#, nwp_source)
 
     
     raise ValueError(f"Unsupported model type: {type(model)}")
