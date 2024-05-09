@@ -2,6 +2,9 @@ from datetime import datetime
 
 import pandas as pd
 import pickle
+import zipfile
+import gdown
+import os.path
 
 from quartz_solar_forecast.data import get_nwp, make_pv_data
 from quartz_solar_forecast.forecasts import forecast_v1, TryolabsSolarPowerPredictor
@@ -61,19 +64,46 @@ def predict_tryolabs(
     return predictions
 
 
-def check_model_file_is_tryolabs_model(obj: object) -> bool:
+def check_model_file_is_tryolabs_model(model_str: str) -> bool:
     """Check if the model file is a tryolabs model"""
-    return isinstance(obj, XGBRegressor)
+    return model_str.split(".")[-1]=="ubj"
+    
 
-
-def check_model_file_is_ocf_model(obj: object) -> bool:
+def check_model_file_is_ocf_model(model_str: str) -> bool:
     """Check if the model file is an OCF model"""
-    return isinstance(obj, tuple) and obj[0] == RecentHistoryModel and obj[1] is dict
+    return model_str.split(".")[-1]=="pkl"
+
+def download_model(filename: str, file_id: str):
+    """
+    Download model from google drive.
+
+    Parameters
+    ----------
+    filename : str
+        The name of the model to be saved
+    file_id: 
+        Google id of the model
+    """
+    gdown.download(f'https://drive.google.com/uc?id={file_id}', filename, quiet=False)
+
+def decompress_zipfile(filename: str):
+    """
+    Extract all files contained in a .zip file to the current directory.
+    filename must not contain .zip extension, it will be added automatically by this function
+
+    Parameters
+    ----------
+    filename : str
+        The name of the .zip file to be decompressed
+    """
+    with zipfile.ZipFile(filename, "r") as zip_file:
+        zip_file.extractall()
 
 
 def run_forecast(
     site: PVSite,
     model: str = None,
+    file_id: str = None,
     ts: datetime | str = None,
     nwp_source: str = "icon",
 ) -> pd.DataFrame:
@@ -89,17 +119,24 @@ def run_forecast(
     if not model:
         return predict_ocf(site=site, model=None, ts=ts, nwp_source=nwp_source)
 
-    # check file path is pkl
-    if not model.endswith(".pkl"):
-        raise ValueError("Model file must be a .pkl file")
-
-    with open(model, "rb") as f:
-        model = pickle.load(f)
-
-    if check_model_file_is_tryolabs_model(model):
-        return predict_tryolabs(site, model, ts, nwp_source)
-
     if check_model_file_is_ocf_model(model):
+        with open(model, "rb") as f:
+            model = pickle.load(f)
         return predict_ocf(site, model, ts, nwp_source)
 
+    if check_model_file_is_tryolabs_model(model):
+        zipfile_model = model + ".zip"
+        if not os.path.isfile(zipfile_model):
+            print("Downloading model ...")
+            download_model(filename=zipfile_model, file_id=file_id)
+        print("Preparing model ...")
+        decompress_zipfile(zipfile_model)
+        print("Loading model ...")
+        loaded_model = XGBRegressor()
+        loaded_model.load_model(model)
+        print("Making predictions ...")
+       
+        return predict_tryolabs(site, loaded_model, ts, nwp_source)
+
+    
     raise ValueError(f"Unsupported model type: {type(model)}")

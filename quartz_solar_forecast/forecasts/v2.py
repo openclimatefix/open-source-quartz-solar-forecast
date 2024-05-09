@@ -1,5 +1,4 @@
 import datetime
-import os
 import pandas as pd
 
 from quartz_solar_forecast.weather import WeatherService
@@ -121,13 +120,16 @@ class TryolabsSolarPowerPredictor:
             Transformed DataFrame ready for prediction.
         """
         df.loc[:, self.DATE_COLUMN] = pd.to_datetime(df[self.DATE_COLUMN])
-        df["year"] = df[self.DATE_COLUMN].dt.year
-        df["month"] = df[self.DATE_COLUMN].dt.month
-        df["day"] = df[self.DATE_COLUMN].dt.day
-        df["hour"] = df[self.DATE_COLUMN].dt.hour
-        df["minute"] = df[self.DATE_COLUMN].dt.minute
-
-        COLUMNS_TO_DROP = ["minute", "day", "year"]
+        df["date_year"] = df[self.DATE_COLUMN].dt.year
+        df["date_month"] = df[self.DATE_COLUMN].dt.month
+        df["date_day"] = df[self.DATE_COLUMN].dt.day
+        df["date_hour"] = df[self.DATE_COLUMN].dt.hour
+        df["date_minute"] = df[self.DATE_COLUMN].dt.minute
+        
+        COLUMNS_TO_DROP = ["date_minute", "date_year",
+                           "terrestrial_radiation",
+                           "shortwave_radiation",
+                           "direct_normal_irradiance"]
 
         df = df.drop(columns=COLUMNS_TO_DROP)
 
@@ -170,6 +172,8 @@ class TryolabsSolarPowerPredictor:
         predictions = self.model.predict(cleaned_data.drop(columns=[self.DATE_COLUMN]))
         predictions_df = pd.DataFrame(predictions, columns=["prediction"])
         final_data = cleaned_data.join(predictions_df)
+        # set night predictions to 0
+        final_data.loc[final_data["is_day"]==0, "prediction"] = 0
         df = final_data[[self.DATE_COLUMN, "prediction"]]
         df = df.rename(columns={"prediction": "power_kw"})
         return df
