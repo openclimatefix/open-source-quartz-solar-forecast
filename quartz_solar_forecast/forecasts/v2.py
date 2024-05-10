@@ -75,6 +75,7 @@ class TryolabsSolarPowerPredictor:
         three_months_ago = datetime.datetime.today() - datetime.timedelta(days=3 * 30)
 
         if start_date_datetime < three_months_ago:
+            weather_data = None
             print(
                 f"Start date ({start_date}) is more than 3 months ago, no",
                 "forecast data available.",
@@ -84,24 +85,24 @@ class TryolabsSolarPowerPredictor:
                 latitude, longitude, start_date, end_date
             )
 
-        PANEL_COLUMNS = [
-            "latitude_rounded",
-            "longitude_rounded",
-            "orientation",
-            "tilt",
-            "kwp",
-        ]
+            PANEL_COLUMNS = [
+                "latitude_rounded",
+                "longitude_rounded",
+                "orientation",
+                "tilt",
+                "kwp",
+            ]
 
-        weather_data["latitude_rounded"] = latitude
-        weather_data["longitude_rounded"] = longitude
-        weather_data["orientation"] = orientation
-        weather_data["tilt"] = tilt
-        weather_data["kwp"] = kwp
+            weather_data["latitude_rounded"] = latitude
+            weather_data["longitude_rounded"] = longitude
+            weather_data["orientation"] = orientation
+            weather_data["tilt"] = tilt
+            weather_data["kwp"] = kwp
 
-        cols = PANEL_COLUMNS + [
-            col for col in weather_data.columns if col not in PANEL_COLUMNS
-        ]
-        weather_data = weather_data[cols]
+            cols = PANEL_COLUMNS + [
+                col for col in weather_data.columns if col not in PANEL_COLUMNS
+            ]
+            weather_data = weather_data[cols]
 
         return weather_data
 
