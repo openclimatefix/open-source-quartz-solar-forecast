@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import pandas as pd
-import pickle
 import zipfile
 import gdown
 import os.path
@@ -65,16 +64,7 @@ def predict_tryolabs(
     return predictions
 
 
-def check_model_file_is_tryolabs_model(model_str: str) -> bool:
-    """Check if the model file is a tryolabs model"""
-    return model_str.split(".")[-1]=="ubj"
-    
-
-def check_model_file_is_ocf_model(model_str: str) -> bool:
-    """Check if the model file is an OCF model"""
-    return model_str.split(".")[-1]=="pkl"
-
-def download_model(filename: str, file_id: str):
+def download_model(filename, file_id):
     """
     Download model from google drive.
 
@@ -83,14 +73,15 @@ def download_model(filename: str, file_id: str):
     filename : str
         The name of the model to be saved
     file_id: 
-        Google id of the model
+        Google id of the model file
     """
     gdown.download(f'https://drive.google.com/uc?id={file_id}', filename, quiet=False)
+
 
 def decompress_zipfile(filename: str):
     """
     Extract all files contained in a .zip file to the current directory.
-    filename must not contain .zip extension, it will be added automatically by this function
+    filename must contain .zip extension
 
     Parameters
     ----------
@@ -103,8 +94,7 @@ def decompress_zipfile(filename: str):
 
 def run_forecast(
     site: PVSite,
-    model: str = None,
-    file_id: str = None,
+    model: str = "tryolabs",
     ts: datetime | str = None,
     nwp_source: str = "icon",
 ) -> pd.DataFrame:
@@ -112,32 +102,34 @@ def run_forecast(
     Predict solar power output for a given site using a specified model.
 
     :param site: the PV site
-    :param model: the model to use for prediction
+    :param model: the model to use for prediction, choose between "ocf" and "tryolabs",
+                    by default "tryolabs" is used
     :param ts: the timestamp of the site. If None, defaults to the current timestamp rounded down to 15 minutes.
-    :param nwp_source: the nwp data source. Either "gfs" or "icon". Defaults to "icon"
+    :param nwp_source: the nwp data source. Either "gfs" or "icon". Defaults to "icon" 
+                       (only relevant if model=="ocf")
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
-    if not model:
-        return predict_ocf(site=site, model=None, ts=ts, nwp_source=nwp_source)
 
-    if check_model_file_is_ocf_model(model):
-        with open(model, "rb") as f:
-            model = pickle.load(f)
-        return predict_ocf(site, model, ts, nwp_source)
+    if model == "ocf":
+        return predict_ocf(site, None, ts, nwp_source)
+              
+    if model == "tryolabs":
+        
+        model_file = "model_10_202405.ubj"
+        file_id = "1O34gyQ67rvrP9VFkNaagTDM9IP4iqAjM"
+        zipfile_model = model_file + ".zip"
 
-    if check_model_file_is_tryolabs_model(model):
-        zipfile_model = model + ".zip"
         if not os.path.isfile(zipfile_model):
             print("Downloading model ...")
-            download_model(filename=zipfile_model, file_id=file_id)
-        print("Preparing model ...")
-        decompress_zipfile(zipfile_model)
+            download_model(zipfile_model, file_id)
+        if not os.path.isfile(model_file):
+            print("Preparing model ...")
+            decompress_zipfile(zipfile_model)
         print("Loading model ...")
         loaded_model = XGBRegressor()
-        loaded_model.load_model(model)
+        loaded_model.load_model(model_file)
         print("Making predictions ...")
        
-        return predict_tryolabs(site, loaded_model, ts)#, nwp_source)
-
-    
-    raise ValueError(f"Unsupported model type: {type(model)}")
+        return predict_tryolabs(site, loaded_model, ts)
+      
+    raise ValueError(f"Unsupported model: {model}. Choose between 'tryolabs' or 'ocf'")
