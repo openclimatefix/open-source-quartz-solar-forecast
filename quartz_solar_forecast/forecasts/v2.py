@@ -75,7 +75,6 @@ class TryolabsSolarPowerPredictor:
         three_months_ago = datetime.datetime.today() - datetime.timedelta(days=3 * 30)
 
         if start_date_datetime < three_months_ago:
-            weather_data = None
             print(
                 f"Start date ({start_date}) is more than 3 months ago, no",
                 "forecast data available.",
@@ -104,7 +103,7 @@ class TryolabsSolarPowerPredictor:
             ]
             weather_data = weather_data[cols]
 
-        return weather_data
+            return weather_data
 
     def clean(self, df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -169,12 +168,13 @@ class TryolabsSolarPowerPredictor:
             DataFrame containing timestamps and predicted power output in kW for every 15 minutes.
         """
         data = self.get_data(latitude, longitude, start_date, kwp, orientation, tilt)
-        cleaned_data = self.clean(data)
-        predictions = self.model.predict(cleaned_data.drop(columns=[self.DATE_COLUMN]))
-        predictions_df = pd.DataFrame(predictions, columns=["prediction"])
-        final_data = cleaned_data.join(predictions_df)
-        # set night predictions to 0
-        final_data.loc[final_data["is_day"]==0, "prediction"] = 0
-        df = final_data[[self.DATE_COLUMN, "prediction"]]
-        df = df.rename(columns={"prediction": "power_wh"})
-        return df
+        if data is not None:
+            cleaned_data = self.clean(data)
+            predictions = self.model.predict(cleaned_data.drop(columns=[self.DATE_COLUMN]))
+            predictions_df = pd.DataFrame(predictions, columns=["prediction"])
+            final_data = cleaned_data.join(predictions_df)
+            # set night predictions to 0
+            final_data.loc[final_data["is_day"]==0, "prediction"] = 0
+            df = final_data[[self.DATE_COLUMN, "prediction"]]
+            df = df.rename(columns={"prediction": "power_wh"})
+            return df
