@@ -120,12 +120,14 @@ class TryolabsSolarPowerPredictor:
             Transformed DataFrame ready for prediction.
         """
         df.loc[:, self.DATE_COLUMN] = pd.to_datetime(df[self.DATE_COLUMN])
-        df["date_year"] = df[self.DATE_COLUMN].dt.year
-        df["date_month"] = df[self.DATE_COLUMN].dt.month
-        df["date_day"] = df[self.DATE_COLUMN].dt.day
-        df["date_hour"] = df[self.DATE_COLUMN].dt.hour
-        df["date_minute"] = df[self.DATE_COLUMN].dt.minute
-        
+
+        df.loc[:,"date_year"] = df[self.DATE_COLUMN].dt.year
+        df.loc[:,"date_month"] = df[self.DATE_COLUMN].dt.month
+        df.loc[:,"date_day"] = df[self.DATE_COLUMN].dt.day
+        df.loc[:,"date_hour"] = df[self.DATE_COLUMN].dt.hour
+        df.loc[:,"date_minute"] = df[self.DATE_COLUMN].dt.minute
+
+
         COLUMNS_TO_DROP = ["date_minute", "date_year",
                            "terrestrial_radiation",
                            "shortwave_radiation",
