@@ -115,8 +115,8 @@ def run_forecast(
               
     if model == "tryolabs":
         
-        model_file = "model_10_202405.ubj"
-        file_id = "1O34gyQ67rvrP9VFkNaagTDM9IP4iqAjM"
+        model_file = "model_10_1.ubj"
+        file_id = "1PIriCDVkz7-y2qnt7GJYyZ0ToAGpgPXb"
         zipfile_model = model_file + ".zip"
 
         if not os.path.isfile(zipfile_model):
@@ -132,4 +132,4 @@ def run_forecast(
        
         return predict_tryolabs(site, loaded_model, ts)
       
-    raise ValueError(f"Unsupported model: {model}. Choose between 'tryolabs' or 'ocf'")
+    raise ValueError(f"Unsupported model: {model}. Choose between 'tryolabs' and 'ocf'")
