@@ -55,13 +55,14 @@ def predict_tryolabs(
         tilt=site.tilt,
     )
 
-    predictions = predictions[
-        (predictions["date"] >= start_time) & (predictions["date"] < end_time)
-    ]
-    predictions = predictions.reset_index(drop=True)
-    predictions.set_index("date", inplace=True)
-    print("Predictions finished.")
-    return predictions
+    if predictions is not None:
+        predictions = predictions[
+            (predictions["date"] >= start_time) & (predictions["date"] < end_time)
+        ]
+        predictions = predictions.reset_index(drop=True)
+        predictions.set_index("date", inplace=True)
+        print("Predictions finished.")
+        return predictions
 
 
 def download_model(filename, file_id):
