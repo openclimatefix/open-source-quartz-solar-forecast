@@ -116,8 +116,9 @@ def run_forecast(
               
     if model == "tryolabs":
         
-        model_file = "model_10_1.ubj"
-        file_id = "1PIriCDVkz7-y2qnt7GJYyZ0ToAGpgPXb"
+        model_file = "model_10_202405.ubj"
+        #file_id = "1PIriCDVkz7-y2qnt7GJYyZ0ToAGpgPXb"
+        file_id = "1O34gyQ67rvrP9VFkNaagTDM9IP4iqAjM"
         zipfile_model = model_file + ".zip"
 
         if not os.path.isfile(zipfile_model):
