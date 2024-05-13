@@ -32,8 +32,7 @@ def predict_ocf(
 
 
 def predict_tryolabs(
-    site: PVSite, model=None, ts: datetime | str = None):#, nwp_source: str = "icon"
-#):
+    site: PVSite, model=None, ts: datetime | str = None):
     """Run the forecast with the tryolabs model"""
     solar_power_predictor = TryolabsSolarPowerPredictor(model=model)
 
@@ -117,7 +116,6 @@ def run_forecast(
     if model == "tryolabs":
         
         model_file = "model_10_202405.ubj"
-        #file_id = "1PIriCDVkz7-y2qnt7GJYyZ0ToAGpgPXb"
         file_id = "1O34gyQ67rvrP9VFkNaagTDM9IP4iqAjM"
         zipfile_model = model_file + ".zip"
 
