@@ -13,7 +13,7 @@ Open Climate Fix also provides a commercial PV forecast, please get in touch at 
 
 We recently presented the Quartz Solar Forecast project at FOSDEM 2024 (Free and Open source Software Developers' European Meeting), providing an introduction to Open Climate Fix's motivation for this project and its impact on aiding organizations in resource optimization. To learn more about predictive model's functionality, visit here: [Video Recording](https://www.youtube.com/watch?v=NAZ2VeiN1N8)
 
-The current model uses GFS or ICON NWPs to predict the solar generation at a site
+The current model uses weather input features achieved from [open-meteo](https://open-meteo.com/) to predict the solar generation at a site given by its latitude and longitude
 
 ```python
 from quartz_solar_forecast.forecast import run_forecast
@@ -75,7 +75,7 @@ This can solve the [bug: \_\_\_kmpc_for_static_fini](https://github.com/openclim
 
 ## Model
 
-The default model is an XGBoost model and uses the following Numerical Weather Predictions (NWP) input features achieved from [open-meteo](https://open-meteo.com/) variables and additional information about the time, location and specifics about the panel. 
+The default model is an XGBoost model and uses the following Numerical Weather Predictions (NWP) input features achieved from [open-meteo](https://open-meteo.com/) variables and additional information about the time, location and specifics about the panel. The weather features used are listed below. 
 
 * Temperature at 2m (ºC)
 * Relative Humidity at 2m (%)
@@ -86,18 +86,18 @@ The default model is an XGBoost model and uses the following Numerical Weather P
 * Cloud Cover Low (%)
 * Cloud Cover Mid (%)
 * Cloud Cover High (%)
-* Wind Speed at 10m (km/h): Wind speed measured at a height of 10 meters above ground level. Important for understanding weather conditions and potential impacts on solar panels.
+* Wind Speed at 10m (km/h)
 * Wind Direction (10m)
 * Is day or Night
 * Direct Solar Radiation (W/m2)
 * Diffusive Solar Radiation DHI (W/m2)
 
-The model was trained and evaluated on 1147 solar panels and tested on 37 independent locations. An intensive hyperparameter tuning was performed. The model provides a feature importance list. Different metrics were calculated and analyzed. Finally the model was evaluated using the Mean Absolute Error (MAE). The MAE over the entire test data is $0.12 kW$, when the night times are excluded the MAE is $0.21kW$. A plot with the MAE for each panel in the test set is shown in the figure below.
+The model was trained and evaluated on 1147 solar panels and tested on 37 independent locations. An intensive hyperparameter tuning was performed. The model provides a feature importance list. Different metrics were calculated and analyzed. Finally the model was evaluated using the Mean Absolute Error (MAE). The MAE over the entire test data is $0.12$ kW, when the night times are excluded the MAE is $0.21$ kW. A plot with the MAE for each panel in the test set is shown in the figure below.
 
-![images/mae_test.png]
+![MAE](images/mae_test.png)
 *Mean absolute error for the panels in the test set.*
 
-When using ```model="ocf"``` in ```run_forecast(site=site, model="ocf", ts=datetime.today())```, the previous version is used. This is a Gradient Boosting model and uses 9 NWP variables. It is trained on 25,000 PV sites with 3 years of PV history, which is available [here](https://huggingface.co/datasets/openclimatefix/uk_pv). The training of this model is handled in [pv-site-prediction](https://github.com/openclimatefix/pv-site-prediction). We however recommend using the default model, because the previous version shows less accurate results and additionally has data inconsistencies of the input features between training and validation.
+When using ```model="ocf"``` in ```run_forecast(site=site, model="ocf", ts=datetime.today())```, the previous version is used. This is a Gradient Boosting model and uses 9 NWP variables. It is trained on 25,000 PV sites with 3 years of PV history, which is available [here](https://huggingface.co/datasets/openclimatefix/uk_pv). The training of this model is handled in [pv-site-prediction](https://github.com/openclimatefix/pv-site-prediction). We however recommend using the default model, because the previous version shows less accurate results and additionally has data inconsistencies of the input features between training and inference.
 
 ## Known restrictions
 
