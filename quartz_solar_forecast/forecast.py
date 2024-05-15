@@ -64,7 +64,7 @@ def predict_tryolabs(
         return predictions
 
 
-def download_model(filename, file_id):
+def download_model(filename: str, file_id: str):
     """
     Download model from google drive.
 
