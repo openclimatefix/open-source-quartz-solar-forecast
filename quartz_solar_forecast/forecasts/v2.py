@@ -1,9 +1,13 @@
 import datetime
 import pandas as pd
+import zipfile
+import gdown
+import os.path
 
 from quartz_solar_forecast.weather import WeatherService
 
 from xgboost.sklearn import XGBRegressor
+
 
 class TryolabsSolarPowerPredictor:
     """
@@ -17,6 +21,10 @@ class TryolabsSolarPowerPredictor:
 
     Methods
     -------
+    load_model -> None:
+
+        Downloads the model from Google Drive and decropresses it if necessary
+    
     predict_power_output(latitude: float, longitude: float, start_date: str, kwp: float,
         orientation: float, tilt: float) -> pd.DataFrame:
 
@@ -24,14 +32,58 @@ class TryolabsSolarPowerPredictor:
     """
     DATE_COLUMN = "date"
 
-    def __init__(self, model: XGBRegressor) -> None:
+    def _download_model(self, filename: str, file_id: str) -> None:
         """
+        Download model from google drive.
+
         Parameters
         ----------
-        model : XGBRegressor
-            Trained XGBoost model for predicting solar power output.
+        filename : str
+            The name of the model to be saved
+        file_id: 
+            Google id of the model file
         """
-        self.model = model
+        gdown.download(f'https://drive.google.com/uc?id={file_id}', filename, quiet=False)
+
+    def _decompress_zipfile(self, filename: str) -> None:
+        """
+        Extract all files contained in a .zip file to the current directory.
+        filename must contain .zip extension
+
+        Parameters
+        ----------
+        filename : str
+            The name of the .zip file to be decompressed
+        """
+        with zipfile.ZipFile(filename, "r") as zip_file:
+            zip_file.extractall()
+
+    def load_model(
+        self, 
+        model_file: str = "model_10_202405.ubj",
+        file_id: str = "1O34gyQ67rvrP9VFkNaagTDM9IP4iqAjM"
+    ) -> XGBRegressor:
+        """
+        Download and decompress model from Google Drive
+        Parameters
+        ----------
+        model_file: str
+            The name of the model as string
+        file_id: str
+            Google id to download the file
+        """
+        zipfile_model = model_file + ".zip"
+
+        if not os.path.isfile(zipfile_model):
+            print("Downloading model ...")
+            self._download_model(zipfile_model, file_id)
+        if not os.path.isfile(model_file):
+            print("Preparing model ...")
+            self._decompress_zipfile(zipfile_model)
+        print("Loading model ...")
+        loaded_model = XGBRegressor()
+        loaded_model.load_model(model_file)
+        self.model = loaded_model 
 
     def get_data(
         self,
@@ -168,6 +220,7 @@ class TryolabsSolarPowerPredictor:
         pd.DataFrame
             DataFrame containing timestamps and predicted power output in kW for every 15 minutes.
         """
+
         data = self.get_data(latitude, longitude, start_date, kwp, orientation, tilt)
         if data is not None:
             cleaned_data = self.clean(data)

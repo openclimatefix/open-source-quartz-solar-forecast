@@ -1,15 +1,11 @@
 from datetime import datetime
 
 import pandas as pd
-import zipfile
-import gdown
-import os.path
 
 from quartz_solar_forecast.data import get_nwp, make_pv_data
 from quartz_solar_forecast.forecasts import forecast_v1, TryolabsSolarPowerPredictor
 from quartz_solar_forecast.pydantic_models import PVSite
-from psp.models.recent_history import RecentHistoryModel
-from xgboost.sklearn import XGBRegressor
+
 
 def predict_ocf(
     site: PVSite, model=None, ts: datetime | str = None, nwp_source: str = "icon"
@@ -32,17 +28,20 @@ def predict_ocf(
 
 
 def predict_tryolabs(
-    site: PVSite, model=None, ts: datetime | str = None):
+    site: PVSite, ts: datetime | str = None):
     """Run the forecast with the tryolabs model"""
-    solar_power_predictor = TryolabsSolarPowerPredictor(model=model)
 
+    solar_power_predictor = TryolabsSolarPowerPredictor()
+
+    solar_power_predictor.load_model()
+    
     if ts is None:
         start_date = pd.Timestamp.now().strftime("%Y-%m-%d")
         start_time = pd.Timestamp.now().floor("15min")
     else:
         start_date = pd.Timestamp(ts).strftime("%Y-%m-%d")
         start_time = pd.Timestamp(ts).floor("15min")
-  
+
     end_time = start_time + pd.Timedelta(hours=48)
 
     predictions = solar_power_predictor.predict_power_output(
@@ -64,37 +63,9 @@ def predict_tryolabs(
         return predictions
 
 
-def download_model(filename: str, file_id: str):
-    """
-    Download model from google drive.
-
-    Parameters
-    ----------
-    filename : str
-        The name of the model to be saved
-    file_id: 
-        Google id of the model file
-    """
-    gdown.download(f'https://drive.google.com/uc?id={file_id}', filename, quiet=False)
-
-
-def decompress_zipfile(filename: str):
-    """
-    Extract all files contained in a .zip file to the current directory.
-    filename must contain .zip extension
-
-    Parameters
-    ----------
-    filename : str
-        The name of the .zip file to be decompressed
-    """
-    with zipfile.ZipFile(filename, "r") as zip_file:
-        zip_file.extractall()
-
-
 def run_forecast(
     site: PVSite,
-    model: str = "tryolabs",
+    model: str = "ocf",
     ts: datetime | str = None,
     nwp_source: str = "icon",
 ) -> pd.DataFrame:
@@ -114,22 +85,6 @@ def run_forecast(
         return predict_ocf(site, None, ts, nwp_source)
               
     if model == "tryolabs":
-        
-        model_file = "model_10_202405.ubj"
-        file_id = "1O34gyQ67rvrP9VFkNaagTDM9IP4iqAjM"
-        zipfile_model = model_file + ".zip"
-
-        if not os.path.isfile(zipfile_model):
-            print("Downloading model ...")
-            download_model(zipfile_model, file_id)
-        if not os.path.isfile(model_file):
-            print("Preparing model ...")
-            decompress_zipfile(zipfile_model)
-        print("Loading model ...")
-        loaded_model = XGBRegressor()
-        loaded_model.load_model(model_file)
-        print("Making predictions ...")
-       
-        return predict_tryolabs(site, loaded_model, ts)
+        return predict_tryolabs(site, ts)
       
     raise ValueError(f"Unsupported model: {model}. Choose between 'tryolabs' and 'ocf'")
