@@ -92,7 +92,7 @@ The default model is an XGBoost model and uses the following Numerical Weather P
 * Direct Solar Radiation (W/m2)
 * Diffusive Solar Radiation DHI (W/m2)
 
-The model was trained and evaluated on 1147 solar panels and tested on 37 independent locations. An intensive hyperparameter tuning was performed. The model provides a feature importance list. A plot with the Mean Absolute Error (MAE) for each panel in the test set is shown in the figure below.
+The model was trained and evaluated on 1147 solar panels and tested on 37 independent locations. An intensive hyperparameter tuning was performed. The model provides a feature importance list. Different metrics were calculated and analyzed. Finally the model was evaluated using the Mean Absolute Error (MAE). The MAE over the entire test data is $0.12 kW$, when the night times are excluded the MAE is $0.21kW$. A plot with the MAE for each panel in the test set is shown in the figure below.
 
 ![images/mae_test.png]
 *Mean absolute error for the panels in the test set.*
@@ -106,12 +106,6 @@ When using ```model="ocf"``` in ```run_forecast(site=site, model="ocf", ts=datet
 
 In general, we recommend using the default model and restricting predictions for the period of the last 90 days.
 
-## Evaluation
-
-To evaluate the model we use the [UK PV](https://huggingface.co/datasets/openclimatefix/uk_pv) dataset and the [ICON NWP](https://huggingface.co/datasets/openclimatefix/dwd-icon-eu) dataset.
-All the data is publicly available and the evaluation script can be run with the following command
-
-Different metrics were calculated and analyzed. Finally the model was evaluated using the MAE. The MAE over the entire test data is $0.12 kW$, when the night times are excluded the MAE is $0.21kW$.
 
 ## FOSDEM
 
