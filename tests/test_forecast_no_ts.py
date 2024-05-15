@@ -20,7 +20,7 @@ def test_run_forecast_no_ts():
 
     current_ts = pd.Timestamp.now().floor("15min")
     # run tryolabs model with no ts
-    predications_df = run_forecast(site=site)
+    predications_df = run_forecast(site=site, model="tryolabs")
     # check current ts agrees with dataset
     assert predications_df.index.min() == current_ts
 
