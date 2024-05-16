@@ -123,13 +123,6 @@ The second option is an XGBoost model and uses the following Numerical Weather P
 - Direct Solar Radiation (W/m2)
 - Diffusive Solar Radiation DHI (W/m2)
 
-The model was trained and evaluated on 1147 solar panels and tested on 37 independent locations. An intensive hyperparameter tuning was performed. The model provides a feature importance list. Different metrics were calculated and analyzed. Finally the model was evaluated using the Mean Absolute Error (MAE). The MAE over the entire test data is $0.12$ kW, when the night times are excluded the MAE is $0.21$ kW. A plot with the MAE for each panel in the test set is shown in the figure below.
-
-![MAE](images/mae_test.png)
-_Mean absolute error for the panels in the test set._
-
-When using `model="tryolabs"` in `run_forecast(site=site, model="tryolabs", ts=datetime.today())`, the XGBoost model is used.
-
 ## Known restrictions
 
 - The model is trained on [UK MetOffice](https://www.metoffice.gov.uk/services/data/met-office-weather-datahub) NWPs, but when running inference we use [GFS](https://www.ncei.noaa.gov/products/weather-climate-models/global-forecast) data from [Open-meteo](https://open-meteo.com/). The differences between GFS and UK MetOffice could led to some odd behaviours.
@@ -138,6 +131,8 @@ When using `model="tryolabs"` in `run_forecast(site=site, model="tryolabs", ts=d
 - When using the XGBoost model, only predictions within the last 90 days are available for data consistency.
 
 ## Evaluation
+
+**Gradient Boostin Model**
 
 To evaluate the model we use the [UK PV](https://huggingface.co/datasets/openclimatefix/uk_pv) dataset and the [ICON NWP](https://huggingface.co/datasets/openclimatefix/dwd-icon-eu) dataset.
 All the data is publicly available and the evaluation script can be run with the following command
@@ -159,6 +154,15 @@ This contains 50 PV sites, which 50 unique timestamps. The data is from 2021.
 | 9 - 16   | 0.161 +- 0.01 | 5       |
 | 17 - 24  | 0.173 +- 0.01 | 5.3     |
 | 24 - 48  | 0.201 +- 0.01 | 6.1     |
+
+**XGBoost**
+
+The model was trained and evaluated on 1147 solar panels and tested on 37 independent locations. An intensive hyperparameter tuning was performed. The model provides a feature importance list. Different metrics were calculated and analyzed. Finally the model was evaluated using the Mean Absolute Error (MAE). The MAE over the entire test data is $0.12$ kW, when the night times are excluded the MAE is $0.21$ kW. A plot with the MAE for each panel in the test set is shown in the figure below.
+
+![MAE](images/mae_test.png)
+_Mean absolute error for the panels in the test set._
+
+When using `model="tryolabs"` in `run_forecast(site=site, model="tryolabs", ts=datetime.today())`, the XGBoost model is used.
 
 ## Abbreviations
 
