@@ -132,7 +132,7 @@ The second option is an XGBoost model and uses the following Numerical Weather P
 
 ## Evaluation
 
-**Gradient Boostin Model**
+**Gradient Boosting Model**
 
 To evaluate the model we use the [UK PV](https://huggingface.co/datasets/openclimatefix/uk_pv) dataset and the [ICON NWP](https://huggingface.co/datasets/openclimatefix/dwd-icon-eu) dataset.
 All the data is publicly available and the evaluation script can be run with the following command
