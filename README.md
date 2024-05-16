@@ -77,7 +77,9 @@ This can solve the [bug: \_\_\_kmpc_for_static_fini](https://github.com/openclim
 
 Two models are currently available to make predictions.
 
-The default model uses GFS or ICON NWPs to predict the solar generation at a site.
+**Gradient Boosting Model** (default)
+
+The model uses GFS or ICON NWPs to predict the solar generation at a site.
 It is a gradient boosted tree model and uses 9 NWP variables.
 It is trained on 25,000 PV sites with over 5 years of PV history, which is available [here](https://huggingface.co/datasets/openclimatefix/uk_pv).
 The training of this model is handled in [pv-site-prediction](https://github.com/openclimatefix/pv-site-prediction)
@@ -106,6 +108,8 @@ The 9 NWP variables, from Open-Meteo documentation, are mentioned above with the
 - h_median: The median of the recent pv data over the last 7 days
 - h_max: The max of the recent pv data over the last 7 days
 
+**XGBoost**
+
 The second option is an XGBoost model and uses the following Numerical Weather Predictions (NWP) input features achieved from [open-meteo](https://open-meteo.com/) variables and additional information about the time, location and specifics about the panel. The weather features used are listed below.
 
 - Temperature at 2m (ºC)
@@ -123,6 +127,8 @@ The second option is an XGBoost model and uses the following Numerical Weather P
 - Direct Solar Radiation (W/m2)
 - Diffusive Solar Radiation DHI (W/m2)
 
+To use this model specify `model="tryolabs"` in `run_forecast(site=site, model="tryolabs", ts=datetime.today()).
+
 ## Known restrictions
 
 - The model is trained on [UK MetOffice](https://www.metoffice.gov.uk/services/data/met-office-weather-datahub) NWPs, but when running inference we use [GFS](https://www.ncei.noaa.gov/products/weather-climate-models/global-forecast) data from [Open-meteo](https://open-meteo.com/). The differences between GFS and UK MetOffice could led to some odd behaviours.
@@ -132,7 +138,7 @@ The second option is an XGBoost model and uses the following Numerical Weather P
 
 ## Evaluation
 
-**Gradient Boosting Model**
+**Gradient Boosting Model** (default)
 
 To evaluate the model we use the [UK PV](https://huggingface.co/datasets/openclimatefix/uk_pv) dataset and the [ICON NWP](https://huggingface.co/datasets/openclimatefix/dwd-icon-eu) dataset.
 All the data is publicly available and the evaluation script can be run with the following command
@@ -155,6 +161,14 @@ This contains 50 PV sites, which 50 unique timestamps. The data is from 2021.
 | 17 - 24  | 0.173 +- 0.01 | 5.3     |
 | 24 - 48  | 0.201 +- 0.01 | 6.1     |
 
+If we exclude nighttime, then the average MAE [%] from 0 to 36 forecast hours is 13.0%.
+
+Notes:
+
+- The MAE in % is the MAE divided by the capacity of the PV site. We acknowledge there are a number of different ways to do this.
+- It is slightly surprising that the 0-hour forecast horizon and the 24-48 hour horizon have a similar MAE.
+  This may be because the model is trained expecting live PV data, but currently in this project we provide no live PV data.
+
 **XGBoost**
 
 The model was trained and evaluated on 1147 solar panels and tested on 37 independent locations. An intensive hyperparameter tuning was performed. The model provides a feature importance list. Different metrics were calculated and analyzed. Finally the model was evaluated using the Mean Absolute Error (MAE). The MAE over the entire test data is $0.12$ kW, when the night times are excluded the MAE is $0.21$ kW. A plot with the MAE for each panel in the test set is shown in the figure below.
@@ -162,7 +176,9 @@ The model was trained and evaluated on 1147 solar panels and tested on 37 indepe
 ![MAE](images/mae_test.png)
 _Mean absolute error for the panels in the test set._
 
-When using `model="tryolabs"` in `run_forecast(site=site, model="tryolabs", ts=datetime.today())`, the XGBoost model is used.
+Notes:
+
+- The evaluation per horizon is not available for this model, as it is not provided by the open-meteo data.
 
 ## Abbreviations
 
