@@ -13,7 +13,7 @@ Open Climate Fix also provides a commercial PV forecast, please get in touch at 
 
 We recently presented the Quartz Solar Forecast project at FOSDEM 2024 (Free and Open source Software Developers' European Meeting), providing an introduction to Open Climate Fix's motivation for this project and its impact on aiding organizations in resource optimization. To learn more about predictive model's functionality, visit here: [Video Recording](https://www.youtube.com/watch?v=NAZ2VeiN1N8)
 
-The current model uses weather input features achieved from [open-meteo](https://open-meteo.com/) to predict the solar generation at a site given by its latitude and longitude
+The current model uses GFS or ICON NWPs to predict the solar generation at a site
 
 ```python
 from quartz_solar_forecast.forecast import run_forecast
@@ -23,7 +23,7 @@ from datetime import datetime
 # make a pv site object
 site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
 
-# run model for today
+# run model for today, using ICON NWP data
 predictions_df = run_forecast(site=site, ts=datetime.today(), nwp_source="icon")
 ```
 
@@ -149,6 +149,9 @@ python scripts/run_evaluation.py
 
 The test dataset we used is defined in `quartz_solar_forecast/dataset/testset.csv`.
 This contains 50 PV sites, which 50 unique timestamps. The data is from 2021.
+
+The results of the evaluation are as follows The MAE is 0.1906 kw across all horizons.
+
 
 | Horizons | MAE [kw]      | MAE [%] |
 | -------- | ------------- | ------- |
