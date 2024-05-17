@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pandas as pd
 
@@ -47,9 +47,6 @@ def predict_tryolabs(
 
     # instantiate class to make predictions
     solar_power_predictor = TryolabsSolarPowerPredictor()
-
-    # download the model from google drive and decompress if necessary
-    solar_power_predictor.load_model()
     
     # set start and end time, if no time is given use current time
     if ts is None:
@@ -60,19 +57,30 @@ def predict_tryolabs(
         start_time = pd.Timestamp(ts).floor("15min")
 
     end_time = start_time + pd.Timedelta(hours=48)
+    start_date_datetime = datetime.strptime(start_date, "%Y-%m-%d")
 
-    # make predictions
-    predictions = solar_power_predictor.predict_power_output(
-        latitude=site.latitude,
-        longitude=site.longitude,
-        start_date=start_date,
-        kwp=site.capacity_kwp,
-        orientation=site.orientation,
-        tilt=site.tilt,
-    )
+    # Check if the start date is more than 3 months ago
+    three_months_ago = datetime.today() - timedelta(days=3 * 30)
 
-    # postprocessing of the dataframe
-    if predictions is not None:
+    if start_date_datetime < three_months_ago:
+        print(
+            f"Start date ({start_date}) is more than 3 months ago, no",
+            "forecast data available.",
+        )
+    else:
+        # download the model from google drive and decompress if necessary
+        solar_power_predictor.load_model()
+        # make predictions
+        predictions = solar_power_predictor.predict_power_output(
+            latitude=site.latitude,
+            longitude=site.longitude,
+            start_date=start_date,
+            kwp=site.capacity_kwp,
+            orientation=site.orientation,
+            tilt=site.tilt,
+        )
+
+        # postprocessing of the dataframe
         predictions = predictions[
             (predictions["date"] >= start_time) & (predictions["date"] < end_time)
         ]
