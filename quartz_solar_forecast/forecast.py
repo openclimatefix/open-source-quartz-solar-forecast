@@ -111,7 +111,8 @@ def run_forecast(
     if model == "ocf":
         return predict_ocf(site, None, ts, nwp_source)
               
-    if model == "tryolabs":
+    elif model == "tryolabs":
         return predict_tryolabs(site, ts)
-      
-    raise ValueError(f"Unsupported model: {model}. Choose between 'tryolabs' and 'ocf'")
+    
+    else:  
+        raise ValueError(f"Unsupported model: {model}. Choose between 'tryolabs' and 'ocf'")
