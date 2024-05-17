@@ -45,10 +45,13 @@ def predict_tryolabs(
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
 
+    # instantiate class to make predictions
     solar_power_predictor = TryolabsSolarPowerPredictor()
 
+    # download the model from google drive and decompress if necessary
     solar_power_predictor.load_model()
     
+    # set start and end time, if no time is given use current time
     if ts is None:
         start_date = pd.Timestamp.now().strftime("%Y-%m-%d")
         start_time = pd.Timestamp.now().floor("15min")
@@ -58,6 +61,7 @@ def predict_tryolabs(
 
     end_time = start_time + pd.Timedelta(hours=48)
 
+    # make predictions
     predictions = solar_power_predictor.predict_power_output(
         latitude=site.latitude,
         longitude=site.longitude,
@@ -67,6 +71,7 @@ def predict_tryolabs(
         tilt=site.tilt,
     )
 
+    # postprocessing of the dataframe
     if predictions is not None:
         predictions = predictions[
             (predictions["date"] >= start_time) & (predictions["date"] < end_time)
