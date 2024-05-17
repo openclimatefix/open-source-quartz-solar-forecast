@@ -18,7 +18,6 @@ def test_run_forecast_no_ts():
     print(f"Current time: {current_ts}")
     print(f"Max: {predications_df['power_wh'].max()}")
 
-    current_ts = pd.Timestamp.now().floor("15min")
     # run tryolabs model with no ts
     predications_df = run_forecast(site=site, model="tryolabs")
     # check current ts agrees with dataset
