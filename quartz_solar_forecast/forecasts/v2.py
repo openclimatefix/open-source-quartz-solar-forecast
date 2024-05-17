@@ -8,6 +8,7 @@ from quartz_solar_forecast.weather import WeatherService
 
 from xgboost.sklearn import XGBRegressor
 
+from . import constants
 
 class TryolabsSolarPowerPredictor:
     """
@@ -60,8 +61,8 @@ class TryolabsSolarPowerPredictor:
 
     def load_model(
         self, 
-        model_file: str = "model_10_202405.ubj",
-        file_id: str = "1O34gyQ67rvrP9VFkNaagTDM9IP4iqAjM"
+        model_file: str = constants.MODEL_FILE,
+        file_id: str = constants.FILE_ID
     ) -> XGBRegressor:
         """
         Download and decompress model from Google Drive

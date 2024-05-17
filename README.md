@@ -110,7 +110,7 @@ The 9 NWP variables, from Open-Meteo documentation, are mentioned above with the
 
 **XGBoost**
 
-The second option is an XGBoost model and uses the following Numerical Weather Predictions (NWP) input features achieved from [open-meteo](https://open-meteo.com/) variables and additional information about the time, location and specifics about the panel. The weather features used are listed below.
+The second option is an XGBoost model and uses the following Numerical Weather Predictions (NWP) input features achieved from [open-meteo](https://open-meteo.com/) variables. Different types of data is provided by open-meteo. To train this model hourly forecast data of [the historical weather API](https://open-meteo.com/en/docs/historical-weather-api) was used. The time period is restricted by the availabilty of the target solar enegery data of the panels and covers the time between 2018 and 2021. Additional information about the time, location and specifics about the panel are used. The weather features used are listed below.
 
 - Temperature at 2m (ºC)
 - Relative Humidity at 2m (%)
@@ -151,7 +151,6 @@ The test dataset we used is defined in `quartz_solar_forecast/dataset/testset.cs
 This contains 50 PV sites, which 50 unique timestamps. The data is from 2021.
 
 The results of the evaluation are as follows The MAE is 0.1906 kw across all horizons.
-
 
 | Horizons | MAE [kw]      | MAE [%] |
 | -------- | ------------- | ------- |
