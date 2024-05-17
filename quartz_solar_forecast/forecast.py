@@ -10,7 +10,15 @@ from quartz_solar_forecast.pydantic_models import PVSite
 def predict_ocf(
     site: PVSite, model=None, ts: datetime | str = None, nwp_source: str = "icon"
 ):
-    """Run the forecast with the OCF model"""
+    """
+    Run the forecast with the OCF model
+    
+    :param site: the PV site
+    :param model: the model to use for prediction
+    :param ts: the timestamp of the site. If None, defaults to the current timestamp rounded down to 15 minutes.
+    :param nwp_source: the nwp data source. Either "gfs" or "icon". Defaults to "icon" 
+    :return: The PV forecast of the site for time (ts) for 48 hours
+    """
     if ts is None:
         ts = pd.Timestamp.now().round("15min")
 
@@ -29,7 +37,13 @@ def predict_ocf(
 
 def predict_tryolabs(
     site: PVSite, ts: datetime | str = None):
-    """Run the forecast with the tryolabs model"""
+    """
+    Run the forecast with the tryolabs model
+    
+    :param site: the PV site
+    :param ts: the timestamp of the site. If None, defaults to the current timestamp rounded down to 15 minutes.
+    :return: The PV forecast of the site for time (ts) for 48 hours
+    """
 
     solar_power_predictor = TryolabsSolarPowerPredictor()
 
@@ -74,7 +88,7 @@ def run_forecast(
 
     :param site: the PV site
     :param model: the model to use for prediction, choose between "ocf" and "tryolabs",
-                    by default "tryolabs" is used
+                    by default "ocf" is used
     :param ts: the timestamp of the site. If None, defaults to the current timestamp rounded down to 15 minutes.
     :param nwp_source: the nwp data source. Either "gfs" or "icon". Defaults to "icon" 
                        (only relevant if model=="ocf")
