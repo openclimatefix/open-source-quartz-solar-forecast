@@ -103,24 +103,32 @@ def get_enphase_access_token():
 
 
 def get_enphase_data(enphase_system_id: str) -> float:
-    """
+    """ 
     Get live PV generation data from Enphase API v4
-
     :param enphase_system_id: System ID for Enphase API
     :return: Live PV generation in Watt-hours, assumes to be a floating-point number
     """
     api_key = os.getenv('ENPHASE_API_KEY')
     access_token = get_enphase_access_token()
-
-    print("ACCESS TOKEN: ", access_token)
-    print("API KEY: ", api_key)
+    # print("ACCESS TOKEN: ", access_token)
+    # print("API KEY: ", api_key)
 
     conn = http.client.HTTPSConnection("api.enphaseenergy.com")
     headers = {
-        "Authorization": f"Bearer {access_token}",
-        "key": api_key
+        "Authorization": f"Bearer {str(access_token)}",
+        "key": str(api_key)
     }
-    conn.request("GET", f"/api/v4/systems/{enphase_system_id}/live_data", headers=headers)
+
+    # Add the system_id and duration parameters to the URL
+    url = f"/api/v4/systems/{enphase_system_id}/live_data?system_id={enphase_system_id}"
+    conn.request("GET", url, headers=headers)
+
+    # Printing the GET request
+    print(f"Request: GET {url}")
+    print("Headers:")
+    for header, value in headers.items():
+        print(f"{header}: {value}")
+
     res = conn.getresponse()
     data = res.read()
 
@@ -129,10 +137,8 @@ def get_enphase_data(enphase_system_id: str) -> float:
 
     # Convert the decoded data into JSON format
     data_json = json.loads(decoded_data)
-
     print("LIVE DATA: ", data_json)
 
     # Extracting live generation data assuming it's in Watt-hours
     live_generation_wh = data_json['current_power']['power']
-
     return live_generation_wh
