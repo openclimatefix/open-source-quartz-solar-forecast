@@ -97,6 +97,7 @@ def get_enphase_access_token():
     data_json = json.loads(decoded_data)
     access_token = data_json["access_token"]
     # print(access_token)
+    # print(f"The type of access_token is: {type(access_token)}")
 
     return access_token
 
@@ -111,14 +112,27 @@ def get_enphase_data(enphase_system_id: str) -> float:
     api_key = os.getenv('ENPHASE_API_KEY')
     access_token = get_enphase_access_token()
 
-    url = f"https://api.enphaseenergy.com/api/v4/{enphase_system_id}/summary"
-    headers = {"Authorization": f"Bearer {access_token}", "key": api_key}
+    print("ACCESS TOKEN: ", access_token)
+    print("API KEY: ", api_key)
 
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    data = response.json()
+    conn = http.client.HTTPSConnection("api.enphaseenergy.com")
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "key": api_key
+    }
+    conn.request("GET", f"/api/v4/systems/{enphase_system_id}/live_data", headers)
+    res = conn.getresponse()
+    data = res.read()
+
+    # Decode the data read from the response
+    decoded_data = data.decode("utf-8")
+
+    # Convert the decoded data into JSON format
+    data_json = json.loads(decoded_data)
+
+    print("LIVE DATA: ", data_json)
 
     # Extracting live generation data assuming it's in Watt-hours
-    live_generation_wh = data["current_power"]
+    live_generation_wh = data_json['current_power']['power']
 
     return live_generation_wh
