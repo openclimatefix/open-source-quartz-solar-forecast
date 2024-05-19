@@ -120,7 +120,7 @@ def get_enphase_data(enphase_system_id: str) -> float:
         "Authorization": f"Bearer {access_token}",
         "key": api_key
     }
-    conn.request("GET", f"/api/v4/systems/{enphase_system_id}/live_data", headers)
+    conn.request("GET", f"/api/v4/systems/{enphase_system_id}/live_data", headers=headers)
     res = conn.getresponse()
     data = res.read()
 
