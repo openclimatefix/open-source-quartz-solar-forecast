@@ -1,11 +1,10 @@
 import requests
+import http.client
 import os
+import json
+import base64
 
 from dotenv import load_dotenv
-
-ENPHASE_CLIENT_ID = os.getenv('ENPHASE_CLIENT_ID')
-ENPHASE_CLIENT_SECRET = os.getenv('ENPHASE_CLIENT_SECRET')
-ENPHASE_API_KEY = os.getenv('ENPHASE_API_KEY')
 
 import os
 from urllib.parse import urlencode
@@ -18,14 +17,18 @@ def get_enphase_auth_url():
     :return: Authentication URL
     """
     client_id = os.getenv('ENPHASE_CLIENT_ID')
-    redirect_uri = 'https://api.enphaseenergy.com/oauth/redirect_uri' # Or your own redirect URI
+
+    redirect_uri = (
+        "https://api.enphaseenergy.com/oauth/redirect_uri"  # Or your own redirect URI
+    )
     params = {
-        'response_type': 'code',
-        'client_id': client_id,
-        'redirect_uri': redirect_uri,
+        "response_type": "code",
+        "client_id": client_id,
+        "redirect_uri": redirect_uri,
     }
-    auth_url = f'https://api.enphaseenergy.com/oauth/authorize?{urlencode(params)}'
+    auth_url = f"https://api.enphaseenergy.com/oauth/authorize?{urlencode(params)}"
     return auth_url
+
 
 def get_enphase_authorization_code(auth_url):
     """
@@ -36,12 +39,15 @@ def get_enphase_authorization_code(auth_url):
     """
     # Open the authorization URL in a browser
     print(f"Please visit the following URL and authorize the application: {auth_url}")
-    print("After authorization, you will be redirected to a URL with the authorization code.")
+    print(
+        "After authorization, you will be redirected to a URL with the authorization code."
+    )
     print("Please copy and paste the full redirect URL here:")
     redirect_url = input()
     # Extract the authorization code from the redirect URL
-    code = redirect_url.split('?code=')[1]
+    code = redirect_url.split("?code=")[1]
     return code
+
 
 def get_enphase_access_token():
     """
@@ -49,24 +55,51 @@ def get_enphase_access_token():
     :param None
     :return: Access Token
     """
+        
+    client_id = os.getenv('ENPHASE_CLIENT_ID')
+    client_secret = os.getenv('ENPHASE_CLIENT_SECRET')
 
     auth_url = get_enphase_auth_url()
     auth_code = get_enphase_authorization_code(auth_url)
 
-    url = "https://api.enphaseenergy.com/oauth/token"
-    headers = {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": f"Basic {(ENPHASE_CLIENT_ID + ':' + ENPHASE_CLIENT_SECRET).encode().decode('utf-8')}",
-    }
-    data = {
-        'grant_type': 'authorization_code',
-        'code': auth_code,
-        'redirect_uri': 'https://api.enphaseenergy.com/oauth/redirect_uri', # Or your own redirect URI
-    }
+    # Combine the client ID and secret with a colon separator
+    credentials = f"{client_id}:{client_secret}"
 
-    response = requests.post(url, headers=headers, data=data)
-    response.raise_for_status()
-    return response.json()["access_token"]
+    # Encode the credentials as bytes
+    credentials_bytes = credentials.encode("utf-8")
+
+    # Base64 encode the bytes
+    encoded_credentials = base64.b64encode(credentials_bytes)
+
+    # Convert the encoded bytes to a string
+    encoded_credentials_str = encoded_credentials.decode("utf-8")
+    # print("Base64 encoded credentials:", encoded_credentials_str)
+
+    conn = http.client.HTTPSConnection("api.enphaseenergy.com")
+    payload = ""
+    headers = {
+        "Authorization": f"Basic {encoded_credentials_str}"
+    }
+    conn.request(
+        "POST",
+        f"/oauth/token?grant_type=authorization_code&redirect_uri=https://api.enphaseenergy.com/oauth/redirect_uri&code={auth_code}",
+        payload,
+        headers,
+    )
+    res = conn.getresponse()
+    data = res.read()
+
+    # Decode the data read from the response
+    decoded_data = data.decode("utf-8")
+    # print("UTF-8 DECODED DATA:\n", data.decode("utf-8"))
+
+    # Convert the decoded data into JSON format
+    data_json = json.loads(decoded_data)
+    access_token = data_json["access_token"]
+    # print(access_token)
+
+    return access_token
+
 
 def get_enphase_data(enphase_system_id: str) -> float:
     """
@@ -75,21 +108,17 @@ def get_enphase_data(enphase_system_id: str) -> float:
     :param enphase_system_id: System ID for Enphase API
     :return: Live PV generation in Watt-hours, assumes to be a floating-point number
     """
-    auth_url = get_enphase_auth_url()
-    auth_code = get_enphase_authorization_code(auth_url)
-    access_token = get_enphase_access_token(auth_code)
+    api_key = os.getenv('ENPHASE_API_KEY')
+    access_token = get_enphase_access_token()
 
-    url = f'https://api.enphaseenergy.com/api/v4/{enphase_system_id}/summary'
-    headers = {
-        'Authorization': f'Bearer {access_token}',
-        'key': ENPHASE_API_KEY
-    }
+    url = f"https://api.enphaseenergy.com/api/v4/{enphase_system_id}/summary"
+    headers = {"Authorization": f"Bearer {access_token}", "key": api_key}
 
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     data = response.json()
 
     # Extracting live generation data assuming it's in Watt-hours
-    live_generation_wh = data['current_power']
-    
+    live_generation_wh = data["current_power"]
+
     return live_generation_wh
