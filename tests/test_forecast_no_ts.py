@@ -10,7 +10,7 @@ def test_run_forecast_no_ts():
     current_ts = pd.Timestamp.now().round("15min")
 
     # run ocf model with no ts
-    predications_df = run_forecast(site=site, model="ocf")
+    predications_df = run_forecast(site=site, model="gb")
     # check current ts agrees with dataset
     assert predications_df.index.min() == current_ts
 
@@ -19,7 +19,7 @@ def test_run_forecast_no_ts():
     print(f"Max: {predications_df['power_wh'].max()}")
 
     # run tryolabs model with no ts
-    predications_df = run_forecast(site=site, model="tryolabs")
+    predications_df = run_forecast(site=site, model="xgb")
     # check current ts agrees with dataset
     assert predications_df.index.min() == current_ts
 

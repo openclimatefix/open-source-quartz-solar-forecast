@@ -127,7 +127,7 @@ The second option is an XGBoost model and uses the following Numerical Weather P
 - Direct Solar Radiation (W/m2)
 - Diffusive Solar Radiation DHI (W/m2)
 
-To use this model specify `model="tryolabs"` in `run_forecast(site=site, model="tryolabs", ts=datetime.today())`.
+To use this model specify `model="tryolabs"` in `run_forecast(site=site, model="xgb", ts=datetime.today())`.
 
 ## Model Comparisons
 

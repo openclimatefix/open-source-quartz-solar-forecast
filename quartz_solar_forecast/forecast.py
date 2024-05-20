@@ -92,7 +92,7 @@ def predict_tryolabs(
 
 def run_forecast(
     site: PVSite,
-    model: str = "ocf",
+    model: str = "gb",
     ts: datetime | str = None,
     nwp_source: str = "icon",
 ) -> pd.DataFrame:
@@ -108,11 +108,11 @@ def run_forecast(
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
 
-    if model == "ocf":
+    if model == "gb":
         return predict_ocf(site, None, ts, nwp_source)
               
-    elif model == "tryolabs":
+    elif model == "xgb":
         return predict_tryolabs(site, ts)
     
     else:  
-        raise ValueError(f"Unsupported model: {model}. Choose between 'tryolabs' and 'ocf'")
+        raise ValueError(f"Unsupported model: {model}. Choose between 'xgb' and 'gb'")

@@ -32,9 +32,9 @@ def test_run_forecast_historical():
     ts = datetime.today() - timedelta(days=200)
 
     # run model with icon and gfs nwp
-    predications_df_gfs = run_forecast(site=site, ts=ts, model="ocf", nwp_source="gfs")
-    predications_df_icon = run_forecast(site=site, ts=ts, model="ocf", nwp_source="icon")
-    predications_df_tryolabs = run_forecast(site=site, ts=ts)
+    predications_df_gfs = run_forecast(site=site, ts=ts, model="gb", nwp_source="gfs")
+    predications_df_icon = run_forecast(site=site, ts=ts, model="gb", nwp_source="icon")
+    predications_df_tryolabs = run_forecast(site=site, ts=ts, model="xgb")
 
     print("\nPrediction for a date more than 180 days in the past")
 
