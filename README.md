@@ -129,6 +129,13 @@ The second option is an XGBoost model and uses the following Numerical Weather P
 
 To use this model specify `model="tryolabs"` in `run_forecast(site=site, model="tryolabs", ts=datetime.today()).
 
+## Model Comparisons
+
+The following plot shows example predictions of both models for the same time period. Additionally for the Gradient Boosting model (default) the results from the two different data sources are shown.
+
+![model comparison](images/model_data_comparison.png)
+_Predictions using the two different models and different data sources._
+
 ## Known restrictions
 
 - The model is trained on [UK MetOffice](https://www.metoffice.gov.uk/services/data/met-office-weather-datahub) NWPs, but when running inference we use [GFS](https://www.ncei.noaa.gov/products/weather-climate-models/global-forecast) data from [Open-meteo](https://open-meteo.com/). The differences between GFS and UK MetOffice could led to some odd behaviours.
