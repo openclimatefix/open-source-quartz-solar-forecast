@@ -11,7 +11,7 @@ def predict_ocf(
     site: PVSite, model=None, ts: datetime | str = None, nwp_source: str = "icon"
 ):
     """
-    Run the forecast with the OCF model
+    Run the forecast with the gb model
     
     :param site: the PV site
     :param model: the model to use for prediction
@@ -38,7 +38,7 @@ def predict_ocf(
 def predict_tryolabs(
     site: PVSite, ts: datetime | str = None):
     """
-    Run the forecast with the tryolabs model
+    Run the forecast with the xgb model
     
     :param site: the PV site
     :param ts: the timestamp of the site. If None, defaults to the current timestamp rounded down to 15 minutes.
@@ -104,7 +104,7 @@ def run_forecast(
                     by default "ocf" is used
     :param ts: the timestamp of the site. If None, defaults to the current timestamp rounded down to 15 minutes.
     :param nwp_source: the nwp data source. Either "gfs" or "icon". Defaults to "icon" 
-                       (only relevant if model=="ocf")
+                       (only relevant if model=="gb")
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
 
