@@ -120,7 +120,7 @@ def get_enphase_data(enphase_system_id: str) -> float:
     }
 
     # Add the system_id and duration parameters to the URL
-    url = f"/api/v4/systems/{enphase_system_id}/live_data?system_id={enphase_system_id}"
+    url = f"/api/v4/systems/{enphase_system_id}/live_data"
     conn.request("GET", url, headers=headers)
 
     # Printing the GET request
