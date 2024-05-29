@@ -92,8 +92,8 @@ class TryolabsSolarPowerPredictor:
         longitude: float,
         start_date: str,
         kwp: float,
-        orientation: float,
-        tilt: float,
+        orientation: float = 180,
+        tilt: float = 30,
     ) -> pd.DataFrame:
         """
         Fetches weather data for the given location and date range, and prepares it for prediction.
@@ -186,8 +186,8 @@ class TryolabsSolarPowerPredictor:
         longitude: float,
         start_date: str,
         kwp: float,
-        orientation: float,
-        tilt: float,
+        orientation: float = 180,
+        tilt: float = 30,
     ) -> pd.DataFrame:
         """
         Predicts solar power output for the specified parameters.
