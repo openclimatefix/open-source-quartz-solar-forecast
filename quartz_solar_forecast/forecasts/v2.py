@@ -35,7 +35,7 @@ class TryolabsSolarPowerPredictor:
 
     def _download_model(self, filename: str, file_id: str) -> None:
         """
-        Download model from google drive.
+        Download model from google drive and save it to the root of the repo.
 
         Parameters
         ----------
