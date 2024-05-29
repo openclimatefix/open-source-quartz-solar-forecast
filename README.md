@@ -110,24 +110,24 @@ The 9 NWP variables, from Open-Meteo documentation, are mentioned above with the
 
 **XGBoost**
 
-The second option is an XGBoost model and uses the following Numerical Weather Predictions (NWP) input features achieved from [open-meteo](https://open-meteo.com/) variables. Different types of data is provided by open-meteo. To train this model hourly forecast data of [the historical weather API](https://open-meteo.com/en/docs/historical-weather-api) was used. The time period is restricted by the availabilty of the target solar enegery data of the panels and covers the time between 2018 and 2021. Additional information about the time, location and specifics about the panel are used. The weather features used are listed below.
+The second option is an XGBoost model and uses the following Numerical Weather Predictions (NWP) input features achieved from [open-meteo](https://open-meteo.com/) variables. Different types of data is provided by open-meteo. To train this model hourly forecast data of [the historical weather API](https://open-meteo.com/en/docs/historical-weather-api) was used. The time period is restricted by the availabilty of the target solar enegery data of the panels and covers the time between 2018 and 2021. Additional information about the time, location and specifics about the panel are used. The weather features used are listed below, with the description given by open-meteo.
 
-- Temperature at 2m (ºC)
-- Relative Humidity at 2m (%)
-- Dewpoint at 2m (ºC)
-- Precipitation (rain + snow) (mm)
-- Surface Pressure (hPa)
-- Cloud Cover Total (%)
-- Cloud Cover Low (%)
-- Cloud Cover Mid (%)
-- Cloud Cover High (%)
-- Wind Speed at 10m (km/h)
-- Wind Direction (10m)
-- Is day or Night
-- Direct Solar Radiation (W/m2)
-- Diffusive Solar Radiation DHI (W/m2)
+- Temperature at 2m (ºC): Air temperature at 2 meters above ground
+- Relative Humidity at 2m (%): Relative humidity at 2 meters above ground
+- Dewpoint at 2m (ºC): Dew point temperature at 2 meters above ground
+- Precipitation (rain + snow) (mm): Total precipitation (rain, showers, snow) sum of the preceding hour
+- Surface Pressure (hPa): Atmospheric air pressure reduced to mean sea level (msl) or pressure at surface. Typically pressure on mean sea level is used in meteorology. Surface pressure gets lower with increasing elevation.
+- Cloud Cover Total (%): Total cloud cover as an area fraction
+- Cloud Cover Low (%): Low level clouds and fog up to 3 km altitude
+- Cloud Cover Mid (%): Mid level clouds from 3 to 8 km altitude
+- Cloud Cover High (%): High level clouds from 8 km altitude
+- Wind Speed at 10m (km/h): Wind speed at 10, 80, 120 or 180 meters above ground. Wind speed on 10 meters is the standard level.
+- Wind Direction (10m): Wind direction at 10 meters above ground
+- Is day or Night: 1 if the current time step has daylight, 0 at night
+- Direct Solar Radiation (W/m2): Direct solar radiation as average of the preceding hour on the horizontal plane and the normal plane (perpendicular to the sun)
+- Diffusive Solar Radiation DHI (W/m2): Diffuse solar radiation as average of the preceding hour
 
-To use this model specify `model="tryolabs"` in `run_forecast(site=site, model="xgb", ts=datetime.today())`.
+To use this model specify `model="xgb"` in `run_forecast(site=site, model="xgb", ts=datetime.today())`.
 
 ## Model Comparisons
 
