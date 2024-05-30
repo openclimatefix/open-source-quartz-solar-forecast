@@ -154,6 +154,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Ludecan",
+      "name": "Pablo Alfaro",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17169248?v=4",
+      "profile": "https://github.com/Ludecan",
+      "contributions": [
+        "review"
+      ]
     }
   ],
   "contributorsPerLine": 7,
