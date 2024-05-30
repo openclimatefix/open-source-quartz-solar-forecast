@@ -236,6 +236,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mudrap17"><img src="https://avatars.githubusercontent.com/u/76879120?v=4?s=100" width="100px;" alt="Mudra Patel"/><br /><sub><b>Mudra Patel</b></sub></a><br /><a href="https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/commits?author=mudrap17" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/diegomarvid"><img src="https://avatars.githubusercontent.com/u/33181424?v=4?s=100" width="100px;" alt="Diego Marvid"/><br /><sub><b>Diego Marvid</b></sub></a><br /><a href="https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/commits?author=diegomarvid" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/froukje"><img src="https://avatars.githubusercontent.com/u/10419258?v=4?s=100" width="100px;" alt="Frauke Albrecht"/><br /><sub><b>Frauke Albrecht</b></sub></a><br /><a href="https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/commits?author=froukje" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
