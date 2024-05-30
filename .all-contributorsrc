@@ -145,6 +145,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "froukje",
+      "name": "Frauke Albrecht",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10419258?v=4",
+      "profile": "https://github.com/froukje",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
