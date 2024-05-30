@@ -165,7 +165,6 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
             site_id = matching_site_ids[0]
             live_generation_wh = get_solaredge_data(site_id)
     elif site.inverter_type == 'enphase':
-        # print("System ID: ", system_id)
         live_generation_wh = get_enphase_data(system_id)
     else:
         # If no inverter type is specified, use the default value
