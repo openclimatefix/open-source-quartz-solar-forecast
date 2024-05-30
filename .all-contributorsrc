@@ -145,6 +145,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "diegomarvid",
+      "name": "Diego Marvid",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33181424?v=4",
+      "profile": "https://github.com/diegomarvid",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
