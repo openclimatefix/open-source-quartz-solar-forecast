@@ -1,9 +1,7 @@
 # Quartz Solar Forecast
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-[![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](#contributors-)
-
+[![All Contributors](https://img.shields.io/badge/all_contributors-16-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 The aim of the project is to build an open source PV forecast that is free and easy to use.
@@ -237,6 +235,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mudrap17"><img src="https://avatars.githubusercontent.com/u/76879120?v=4?s=100" width="100px;" alt="Mudra Patel"/><br /><sub><b>Mudra Patel</b></sub></a><br /><a href="https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/commits?author=mudrap17" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/froukje"><img src="https://avatars.githubusercontent.com/u/10419258?v=4?s=100" width="100px;" alt="Frauke Albrecht"/><br /><sub><b>Frauke Albrecht</b></sub></a><br /><a href="https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/commits?author=froukje" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
