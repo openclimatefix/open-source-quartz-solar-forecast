@@ -5,7 +5,10 @@ from datetime import datetime, timedelta
 
 def main():
     # make input data
-    site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25, inverter_type="enphase")
+    site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
+    # for enphase testing
+    # site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25, inverter_type="enphase")
+
     
     ts = datetime.today() - timedelta(weeks=1)
     predictions_df = run_forecast(site=site, ts=ts, nwp_source="icon")

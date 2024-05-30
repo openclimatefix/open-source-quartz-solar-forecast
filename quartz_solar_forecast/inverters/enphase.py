@@ -3,6 +3,7 @@ import http.client
 import os
 import json
 import base64
+from datetime import datetime, timedelta
 
 from dotenv import load_dotenv
 
@@ -113,6 +114,15 @@ def get_enphase_data(enphase_system_id: str) -> float:
     # print("ACCESS TOKEN: ", access_token)
     # print("API KEY: ", api_key)
 
+    # Set the start time to 30mins from now
+    start_at = int((datetime.now() - timedelta(minutes=30)).timestamp())
+
+    # start_date = "2024-05-24"
+    # end_date = "2024-05-25"
+
+    # Set the granularity to day
+    granularity = "day"
+
     conn = http.client.HTTPSConnection("api.enphaseenergy.com")
     headers = {
         "Authorization": f"Bearer {str(access_token)}",
@@ -120,14 +130,14 @@ def get_enphase_data(enphase_system_id: str) -> float:
     }
 
     # Add the system_id and duration parameters to the URL
-    url = f"/api/v4/systems/{enphase_system_id}/live_data"
+    url = f"/api/v4/systems/{enphase_system_id}/telemetry/production_micro?start_at={start_at}&granularity={granularity}"
     conn.request("GET", url, headers=headers)
 
-    # Printing the GET request
-    print(f"Request: GET {url}")
-    print("Headers:")
-    for header, value in headers.items():
-        print(f"{header}: {value}")
+    # # Printing the GET request
+    # print(f"Request: GET {url}")
+    # print("Headers:")
+    # for header, value in headers.items():
+    #     print(f"{header}: {value}")
 
     res = conn.getresponse()
     data = res.read()
@@ -137,7 +147,7 @@ def get_enphase_data(enphase_system_id: str) -> float:
 
     # Convert the decoded data into JSON format
     data_json = json.loads(decoded_data)
-    print("LIVE DATA: ", data_json)
+    print("DATA: ", data_json)
 
     # Extracting live generation data assuming it's in Watt-hours
     live_generation_wh = data_json['current_power']['power']
