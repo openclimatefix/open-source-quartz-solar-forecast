@@ -21,7 +21,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 from dotenv import load_dotenv
 
-ENPHASE_SYSTEM_ID = os.getenv('ENPHASE_SYSTEM_ID')
+system_id = os.getenv('ENPHASE_SYSTEM_ID')
 
 def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     """
@@ -165,7 +165,7 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
             site_id = matching_site_ids[0]
             live_generation_wh = get_solaredge_data(site_id)
     elif site.inverter_type == 'enphase':
-        live_generation_wh = get_enphase_data(ENPHASE_SYSTEM_ID)
+        live_generation_wh = get_enphase_data(system_id)
     else:
         # If no inverter type is specified, use the default value
         live_generation_wh = np.nan
