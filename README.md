@@ -1,7 +1,9 @@
 # Quartz Solar Forecast
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-17-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 The aim of the project is to build an open source PV forecast that is free and easy to use.
@@ -131,7 +133,7 @@ To use this model specify `model="xgb"` in `run_forecast(site=site, model="xgb",
 
 The following plot shows example predictions of both models for the same time period. Additionally for the Gradient Boosting model (default) the results from the two different data sources are shown.
 
-![model comparison](images/model_data_comparison.png)
+![model comparison](images/model_data_comparison_hr.png)
 _Predictions using the two different models and different data sources._
 
 ## Known restrictions
@@ -139,7 +141,7 @@ _Predictions using the two different models and different data sources._
 - The model is trained on [UK MetOffice](https://www.metoffice.gov.uk/services/data/met-office-weather-datahub) NWPs, but when running inference we use [GFS](https://www.ncei.noaa.gov/products/weather-climate-models/global-forecast) data from [Open-meteo](https://open-meteo.com/). The differences between GFS and UK MetOffice could led to some odd behaviours.
 - Depending, whether the timestamp for the prediction lays more than 90 days in the past or not, different data sources for the NWP are used. If we predict within the last 90 days, we can use ICON or GFS from the open-meteo Weather Forecast API. Since ICON doesn't provide visibility, this parameter is queried from GFS in any case. If the date for the prediction is further back in time, a reanalysis model of historical data is used (open-meteo | Historical Weather API). The historical weather API doesn't't provide visibility at all, that's why it's set to a maximum of 24000 meter in this case. This can lead to some loss of precision.
 - The model was trained and tested only over the UK, applying it to other geographical regions should be done with caution.
-- When using the XGBoost model, only predictions within the last 90 days are available for data consistency.
+- When using the XGBoost model, only hourly predictions within the last 90 days are available for data consistency.
 
 ## Evaluation
 
