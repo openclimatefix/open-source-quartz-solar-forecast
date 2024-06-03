@@ -124,7 +124,7 @@ class TryolabsSolarPowerPredictor:
 
         weather_service = WeatherService()
 
-        weather_data = weather_service.get_15_minutely_weather(
+        weather_data = weather_service.get_hourly_weather(
             latitude, longitude, start_date, end_date
         )
 

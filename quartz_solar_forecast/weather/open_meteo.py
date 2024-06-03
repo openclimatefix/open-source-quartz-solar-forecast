@@ -99,7 +99,7 @@ class WeatherService:
                 f"Invalid date format or range. Please use YYYY-MM-DD and ensure end_date is greater than start_date. Error: {str(e)}"
             )
 
-    def get_15_minutely_weather(
+    def get_hourly_weather(
         self, latitude: float, longitude: float, start_date: str, end_date: str
     ) -> pd.DataFrame:
         """
