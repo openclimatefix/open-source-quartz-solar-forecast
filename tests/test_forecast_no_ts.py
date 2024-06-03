@@ -8,7 +8,7 @@ def test_run_forecast_no_ts():
     site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
 
     current_ts = pd.Timestamp.now().round("15min")
-    current_hr = pd.Timestamp.now()
+    current_hr = pd.Timestamp.now().round(freq='h')
 
     # run gradient boosting model with no ts
     predications_df = run_forecast(site=site, model="gb")

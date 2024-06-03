@@ -51,10 +51,10 @@ def predict_tryolabs(
     # set start and end time, if no time is given use current time
     if ts is None:
         start_date = pd.Timestamp.now().strftime("%Y-%m-%d")
-        start_time = pd.Timestamp.now()
+        start_time = pd.Timestamp.now().round(freq='h')
     else:
         start_date = pd.Timestamp(ts).strftime("%Y-%m-%d")
-        start_time = pd.Timestamp(ts)
+        start_time = pd.Timestamp(ts).round(freq='h')
 
     end_time = start_time + pd.Timedelta(hours=48)
     start_date_datetime = datetime.strptime(start_date, "%Y-%m-%d")
