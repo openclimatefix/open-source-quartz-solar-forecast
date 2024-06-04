@@ -43,7 +43,7 @@ class WeatherService:
         str
             The URL for the OpenMeteo API.
         """
-        url = "https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&minutely_15={variables}&start_date={start_date}&end_date={end_date}&timezone=GMT".format(
+        url = "https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&hourly={variables}&start_date={start_date}&end_date={end_date}&timezone=GMT".format(
             latitude=latitude,
             longitude=longitude,
             variables=",".join(variables),
@@ -99,11 +99,11 @@ class WeatherService:
                 f"Invalid date format or range. Please use YYYY-MM-DD and ensure end_date is greater than start_date. Error: {str(e)}"
             )
 
-    def get_15_minutely_weather(
+    def get_hourly_weather(
         self, latitude: float, longitude: float, start_date: str, end_date: str
     ) -> pd.DataFrame:
         """
-        Get 15 minutely weather data ranging from 3 months ago up to 15 days ahead (forecast).
+        Get hourly weather data ranging from 3 months ago up to 15 days ahead (forecast).
 
         Parameters
         ----------
@@ -150,7 +150,7 @@ class WeatherService:
         ]
         url = self._build_url(latitude, longitude, start_date, end_date, variables)
         response = requests.get(url)
-        data = response.json()["minutely_15"]
+        data = response.json()["hourly"]
 
         df = pd.DataFrame(data)
         df["time"] = pd.to_datetime(df["time"])
