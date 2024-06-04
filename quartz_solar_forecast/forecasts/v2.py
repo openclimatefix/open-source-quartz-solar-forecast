@@ -220,7 +220,9 @@ class TryolabsSolarPowerPredictor:
         predictions_df = pd.DataFrame(predictions, columns=["prediction"])
         final_data = cleaned_data.join(predictions_df)
         # set night predictions to 0
-        final_data.loc[final_data["is_day"]==0, "prediction"] = 0
+        final_data.loc[final_data["is_day"] == 0, "prediction"] = 0
+        # set negative output to 0
+        final_data.loc[final_data["prediction"] < 0, "prediction"] = 0
         df = final_data[[self.DATE_COLUMN, "prediction"]]
         df = df.rename(columns={"prediction": "power_wh"})
         return df
