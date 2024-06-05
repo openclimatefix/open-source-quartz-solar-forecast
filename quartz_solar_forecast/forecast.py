@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 from quartz_solar_forecast.data import get_nwp, make_pv_data
-from quartz_solar_forecast.forecasts import forecast_v1_1, TryolabsSolarPowerPredictor
+from quartz_solar_forecast.forecasts import forecast_v1_tilt_orientation, TryolabsSolarPowerPredictor
 from quartz_solar_forecast.pydantic_models import PVSite
 
 
@@ -30,7 +30,7 @@ def predict_ocf(
     pv_xr = make_pv_data(site=site, ts=ts)
 
     # load and run models
-    pred_df = forecast_v1_1(nwp_source, nwp_xr, pv_xr, ts, model=model)
+    pred_df = forecast_v1_tilt_orientation(nwp_source, nwp_xr, pv_xr, ts, model=model)
 
     return pred_df
 
