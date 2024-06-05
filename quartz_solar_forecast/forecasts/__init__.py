@@ -7,4 +7,5 @@ It is trained on 25,000 PV sites with over 5 years of PV history, which is avail
 
 """
 from .v1 import forecast_v1
+from .v1_tilt_orientation import forecast_v1_tilt_orientation
 from .v2 import TryolabsSolarPowerPredictor
