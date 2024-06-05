@@ -17,7 +17,7 @@ def forecast_v1_tilt_orientation(nwp_source:str, nwp_xr:xr.Dataset, pv_xr:xr.Dat
     """
 
     if model is None:
-        model = load_model(f"{dir_path}/../models/model-0.3.1.pkl")
+        model = load_model(f"{dir_path}/../models/model-0.4.0.pkl")
 
     # format pv and nwp data
     pv_data_source = NetcdfPvDataSource(
