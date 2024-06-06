@@ -1,13 +1,12 @@
-import requests
 import http.client
 import os
+import pandas as pd
 import json
 import base64
 from datetime import datetime, timedelta
 
 from dotenv import load_dotenv
 
-import os
 from urllib.parse import urlencode
 
 def get_enphase_auth_url():
@@ -99,7 +98,7 @@ def get_enphase_access_token():
     return access_token
 
 
-def get_enphase_data(enphase_system_id: str) -> float:
+def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
     """ 
     Get live PV generation data from Enphase API v4
     :param enphase_system_id: System ID for Enphase API
@@ -132,8 +131,22 @@ def get_enphase_data(enphase_system_id: str) -> float:
 
     # Convert the decoded data into JSON format
     data_json = json.loads(decoded_data)
+    
+    # Initialize an empty list to store the data
+    data_list = []
 
-    ### TO-DO
-    # Extracting live generation data assuming it's in Watt-hours
-    live_generation_wh = data_json['current_power']['power']
-    return live_generation_wh
+    # Loop through the intervals and collect the data for the last 30 minutes
+    for interval in data_json['intervals']:
+        end_at = interval['end_at']
+        if end_at >= start_at:
+            timestamp = datetime.fromtimestamp(end_at).strftime('%Y-%m-%d %H:%M:%S')
+
+            # Append the data to the list
+            data_list.append({"timestamp": timestamp, "power_kw": interval['powr']})
+
+    # Convert the list to a DataFrame
+    live_generation_kw = pd.DataFrame(data_list)
+
+    live_generation_kw["timestamp"] = pd.to_datetime(live_generation_kw["timestamp"])
+
+    return live_generation_kw

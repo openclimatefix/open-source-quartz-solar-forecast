@@ -24,7 +24,7 @@ def forecast_v1(nwp_source:str, nwp_xr:xr.Dataset, pv_xr:xr.Dataset, ts:pd.Times
         pv_xr,
         id_dim_name="pv_id",
         timestamp_dim_name="timestamp",
-        rename={"generation_wh": "power", "kwp": "capacity"},
+        rename={"generation_kw": "power", "kwp": "capacity"},
         ignore_pv_ids=[],
     )
     # make NwpDataSource
@@ -38,6 +38,6 @@ def forecast_v1(nwp_source:str, nwp_xr:xr.Dataset, pv_xr:xr.Dataset, ts:pd.Times
 
     # format into timerange and put into pd dataframe
     times = pd.date_range(start=x.ts, periods=len(pred.powers), freq="15min")
-    pred_df = pd.DataFrame({"power_wh": pred.powers}, index=times)
+    pred_df = pd.DataFrame({"power_kw": pred.powers}, index=times)
 
     return pred_df
