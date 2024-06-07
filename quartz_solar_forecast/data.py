@@ -151,6 +151,8 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     :param ts: the timestamp of the site
     :return: The combined PV dataset in xarray form
     """
+    live_generation_kw = None  # Initialize live_generation_kw to None
+
     # Check if the site has an inverter type specified
     if site.inverter_type == 'solaredge':
         # Fetch the list of site IDs associated with the SolarEdge account
@@ -166,18 +168,17 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
             live_generation_kw = get_solaredge_data(site_id)
     elif site.inverter_type == 'enphase':
         live_generation_kw = get_enphase_data(system_id)
-
-        if live_generation_kw is not None:
-            # get the most recent data
-            recent_pv_data = live_generation_kw[live_generation_kw['timestamp'] <= ts]
-            power_kw = np.array([np.array(recent_pv_data["power_kw"].values, dtype=np.float64)])
-            timestamp = recent_pv_data['timestamp'].values
-        else:
-            # make fake pv data, this is where we could add history of a pv system
-            power_kw = [[np.nan]]
-            timestamp = [ts]
     else:
-        # If no inverter type is specified, use the default value
+        # If no inverter type is specified or not recognized, set live_generation_kw to None
+        live_generation_kw = None
+
+    if live_generation_kw is not None:
+        # get the most recent data
+        recent_pv_data = live_generation_kw[live_generation_kw['timestamp'] <= ts]
+        power_kw = np.array([np.array(recent_pv_data["power_kw"].values, dtype=np.float64)])
+        timestamp = recent_pv_data['timestamp'].values
+    else:
+        # make fake pv data, this is where we could add history of a pv system
         power_kw = [[np.nan]]
         timestamp = [ts]
 
