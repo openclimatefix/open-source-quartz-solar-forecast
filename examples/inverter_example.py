@@ -10,7 +10,7 @@ pd.options.plotting.backend = "plotly"
 
 def main():
 
-    ts = ts = pd.to_datetime(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    ts = pd.to_datetime(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
     # make input data with live enphase data
     site_live = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25, inverter_type="enphase")
