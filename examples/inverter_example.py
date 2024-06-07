@@ -7,7 +7,6 @@ from quartz_solar_forecast.pydantic_models import PVSite
 # Set plotly backend to be plotly, you might have to install plotly
 pd.options.plotting.backend = "plotly"
 
-
 def main():
 
     ts = pd.to_datetime(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
@@ -32,7 +31,6 @@ def main():
         labels={"value": "Power (kW)", "index": "Time"},
     )
     fig.show(renderer="browser")
-
 
 if __name__ == "__main__":
     main()

@@ -142,7 +142,7 @@ def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
             timestamp = datetime.fromtimestamp(end_at).strftime('%Y-%m-%d %H:%M:%S')
 
             # Append the data to the list
-            data_list.append({"timestamp": timestamp, "power_kw": interval['powr']})
+            data_list.append({"timestamp": timestamp, "power_kw": interval['powr']/1000})
 
     # Convert the list to a DataFrame
     live_generation_kw = pd.DataFrame(data_list)
