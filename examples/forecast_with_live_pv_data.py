@@ -3,6 +3,7 @@ import pandas as pd
 
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
+from datetime import datetime
 
 # set plotly backend to be plotly, you might have to install plotly
 pd.options.plotting.backend = "plotly"
@@ -10,9 +11,9 @@ pd.options.plotting.backend = "plotly"
 
 def main():
 
-    ts = pd.Timestamp("2024-01-30 12:00")
+    ts = pd.to_datetime(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     recent_pv_data = pd.DataFrame(
-        {"timestamp": ["2024-01-30 11:30", "2024-01-30 11:45"], "power_kw": [0.7, 0.7]}
+        {"timestamp": ["2024-06-07 16:25", "2024-06-07 16:30", "2024-06-07 16:35", "2024-06-07 16:40", "2024-06-07 16:45"], "power_kw": [384, 430, 796, 502, 647]}
     )
     recent_pv_data["timestamp"] = pd.to_datetime(recent_pv_data["timestamp"])
 

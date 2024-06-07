@@ -123,10 +123,15 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp, recent_pv_data: pd.DataFrame | 
     :return: The fake PV dataset in xarray form
     """
     if recent_pv_data is not None:
+        # print("recent_pv_data: ", recent_pv_data)
+        print(ts)
         # get the most recent data
         recent_pv_data = recent_pv_data[recent_pv_data['timestamp'] <= ts]
-        power_kw = np.array([np.array(recent_pv_data["power_kw"].values)])
+        power_kw = np.array([np.array(recent_pv_data["power_kw"].values, dtype=np.float64)])
         timestamp = recent_pv_data['timestamp'].values
+
+        # print("power_kw: ", power_kw)
+        # print("timestamp: ", timestamp)
     else:
         # make fake pv data, this is where we could add history of a pv system
         power_kw = [[np.nan]]
@@ -146,5 +151,5 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp, recent_pv_data: pd.DataFrame | 
         ),
     )
     da = da.to_dataset(name="generation_wh")
-
+    print(da)
     return da
