@@ -172,10 +172,6 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
             recent_pv_data = live_generation_kw[live_generation_kw['timestamp'] <= ts]
             power_kw = np.array([np.array(recent_pv_data["power_kw"].values, dtype=np.float64)])
             timestamp = recent_pv_data['timestamp'].values
-            
-            lon = [site.longitude] * len(power_kw)
-            lat = [site.latitude] * len(power_kw)
-            pv_id = [1] * len(power_kw)
         else:
             # make fake pv data, this is where we could add history of a pv system
             power_kw = [[np.nan]]
@@ -184,18 +180,15 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
         # If no inverter type is specified, use the default value
         power_kw = [[np.nan]]
         timestamp = [ts]
-        lon = [site.longitude] * len(power_kw)
-        lat = [site.latitude] * len(power_kw)
-        pv_id = [1] * len(power_kw)
 
     da = xr.DataArray(
         data=power_kw,
         dims=["pv_id", "timestamp"],
         coords=dict(
-            longitude=(["pv_id"], lon),
-            latitude=(["pv_id"], lat),
+            longitude=(["pv_id"], [site.longitude]),
+            latitude=(["pv_id"], [site.latitude]),
             timestamp=timestamp,
-            pv_id=pv_id,
+            pv_id=[1],
             kwp=(["pv_id"], [site.capacity_kwp]),
             tilt=(["pv_id"], [site.tilt]),
             orientation=(["pv_id"], [site.orientation]),
