@@ -11,9 +11,9 @@ pd.options.plotting.backend = "plotly"
 
 def main():
 
-    ts = pd.to_datetime(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    ts = pd.Timestamp("2024-01-30 12:00")
     recent_pv_data = pd.DataFrame(
-        {"timestamp": ["2024-06-07 16:25", "2024-06-07 16:30", "2024-06-07 16:35", "2024-06-07 16:40", "2024-06-07 16:45"], "power_kw": [384, 430, 796, 502, 647]}
+        {"timestamp": ["2024-01-30 11:30", "2024-01-30 11:45"], "power_kw": [0.7, 0.7]}
     )
     recent_pv_data["timestamp"] = pd.to_datetime(recent_pv_data["timestamp"])
 
