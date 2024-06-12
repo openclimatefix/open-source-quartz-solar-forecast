@@ -3,13 +3,16 @@ import pandas as pd
 from datetime import datetime
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
+from datetime import datetime, timezone
 
 # Set plotly backend to be plotly, you might have to install plotly
 pd.options.plotting.backend = "plotly"
 
 def main():
 
-    ts = pd.to_datetime(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    timestamp = datetime.now().timestamp()
+    timestamp_str = datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+    ts = pd.to_datetime(timestamp_str)
 
     # make input data with live enphase data
     site_live = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25, inverter_type="enphase")

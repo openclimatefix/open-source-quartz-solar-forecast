@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import json
 import base64
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from dotenv import load_dotenv
 
@@ -107,11 +107,11 @@ def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
     api_key = os.getenv('ENPHASE_API_KEY')
     access_token = get_enphase_access_token()
 
-    # Set the start time to 30mins from now
-    start_at = int((datetime.now() - timedelta(minutes=30)).timestamp())
+    # Set the start time to 1 week from now
+    start_at = int((datetime.now() - timedelta(weeks=1)).timestamp())
 
-    # Set the granularity to day
-    granularity = "day"
+    # Set the granularity to week
+    granularity = "week"
 
     conn = http.client.HTTPSConnection("api.enphaseenergy.com")
     headers = {
@@ -139,7 +139,7 @@ def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
     for interval in data_json['intervals']:
         end_at = interval['end_at']
         if end_at >= start_at:
-            timestamp = datetime.fromtimestamp(end_at).strftime('%Y-%m-%d %H:%M:%S')
+            timestamp = datetime.fromtimestamp(end_at, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
 
             # Append the data to the list
             data_list.append({"timestamp": timestamp, "power_kw": interval['powr']/1000})
@@ -147,6 +147,7 @@ def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
     # Convert the list to a DataFrame
     live_generation_kw = pd.DataFrame(data_list)
 
+    # Convert to UTC
     live_generation_kw["timestamp"] = pd.to_datetime(live_generation_kw["timestamp"])
 
     return live_generation_kw
