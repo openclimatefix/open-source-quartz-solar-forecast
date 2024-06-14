@@ -5,12 +5,6 @@ from unittest.mock import patch
 from datetime import datetime
 from quartz_solar_forecast.pydantic_models import PVSite
 
-# Mock data for testing
-mock_enphase_data_df = pd.DataFrame({
-    'timestamp': [pd.Timestamp('2023-06-14 12:00:00'), pd.Timestamp('2023-06-14 12:30:00')],
-    'power_kw': [8.7, 9.3]
-})
-
 def mock_enphase_data(*args, **kwargs):
     return pd.DataFrame({
         'timestamp': [
