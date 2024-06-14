@@ -14,15 +14,15 @@ def test_run_forecast():
 
     print("\n Prediction based on GFS NWP\n")
     print(predications_df_gfs)
-    print(f" Max: {predications_df_gfs['power_wh'].max()}")
+    print(f" Max: {predications_df_gfs['power_kw'].max()}")
 
     print("\n Prediction based on ICON NWP\n")
     print(predications_df_icon)
-    print(f" Max: {predications_df_icon['power_wh'].max()}")
+    print(f" Max: {predications_df_icon['power_kw'].max()}")
 
     print("\n Prediction based on XGB\n")
     print(predications_df_xgb)
-    print(f" Max: {predications_df_xgb['power_wh'].max()}")
+    print(f" Max: {predications_df_xgb['power_kw'].max()}")
 
 
 def test_run_forecast_historical():
@@ -40,11 +40,11 @@ def test_run_forecast_historical():
 
     print("\n Prediction based on GFS NWP\n")
     print(predications_df_gfs)
-    print(f" Max: {predications_df_gfs['power_wh'].max()}")
+    print(f" Max: {predications_df_gfs['power_kw'].max()}")
 
     print("\n Prediction based on ICON NWP\n")
     print(predications_df_icon)
-    print(f" Max: {predications_df_icon['power_wh'].max()}")
+    print(f" Max: {predications_df_icon['power_kw'].max()}")
     
     print("\n Prediction based on XGB\n")
     print(predications_df_xgb)

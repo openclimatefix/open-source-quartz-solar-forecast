@@ -224,5 +224,5 @@ class TryolabsSolarPowerPredictor:
         # set negative output to 0
         final_data.loc[final_data["prediction"] < 0, "prediction"] = 0
         df = final_data[[self.DATE_COLUMN, "prediction"]]
-        df = df.rename(columns={"prediction": "power_wh"})
+        df = df.rename(columns={"prediction": "power_kw"})
         return df

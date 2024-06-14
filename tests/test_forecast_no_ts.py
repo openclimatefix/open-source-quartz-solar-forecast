@@ -17,7 +17,7 @@ def test_run_forecast_no_ts():
 
     print(predications_df)
     print(f"Current time: {current_ts}")
-    print(f"Max: {predications_df['power_wh'].max()}")
+    print(f"Max: {predications_df['power_kw'].max()}")
 
     # run xgb model with no ts
     predications_df = run_forecast(site=site, model="xgb")
@@ -26,4 +26,4 @@ def test_run_forecast_no_ts():
 
     print(predications_df)
     print(f"Current time: {current_ts}")
-    print(f"Max: {predications_df['power_wh'].max()}")
+    print(f"Max: {predications_df['power_kw'].max()}")

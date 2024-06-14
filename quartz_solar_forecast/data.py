@@ -151,9 +151,11 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     :param ts: the timestamp of the site
     :return: The combined PV dataset in xarray form
     """
+    live_generation_kw = None  # Initialize live_generation_kw to None
+
     # Check if the site has an inverter type specified
     if site.inverter_type == 'solaredge':
-        # Fetch the list of site IDs associated with the account
+        # Fetch the list of site IDs associated with the SolarEdge account
         site_ids = get_site_list()
         # Find the site ID that matches the site's latitude and longitude
         matching_site_ids = [s_id for s_id in site_ids if abs(site.latitude - lat) < 1e-6 and abs(site.longitude - lon) < 1e-6 for lat, lon in get_site_coordinates(s_id)]
@@ -163,32 +165,36 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
             raise ValueError("Multiple sites found matching the given latitude and longitude.")
         else:
             site_id = matching_site_ids[0]
-            live_generation_wh = get_solaredge_data(site_id)
+            live_generation_kw = get_solaredge_data(site_id)
     elif site.inverter_type == 'enphase':
-        live_generation_wh = get_enphase_data(system_id)
+        live_generation_kw = get_enphase_data(system_id)
     else:
-        # If no inverter type is specified, use the default value
-        live_generation_wh = np.nan
+        # If no inverter type is specified or not recognized, set live_generation_kw to None
+        live_generation_kw = None
 
-    # Combine live data with fake PV data, this is where we could add history of a PV system
-    generation_wh = [[live_generation_wh]]
-    lon = [site.longitude]
-    lat = [site.latitude]
-    timestamp = [ts]
-    pv_id = [1]
+    if live_generation_kw is not None:
+        # get the most recent data
+        recent_pv_data = live_generation_kw[live_generation_kw['timestamp'] <= ts]
+        power_kw = np.array([np.array(recent_pv_data["power_kw"].values, dtype=np.float64)])
+        timestamp = recent_pv_data['timestamp'].values
+    else:
+        # make fake pv data, this is where we could add history of a pv system
+        power_kw = [[np.nan]]
+        timestamp = [ts]
 
     da = xr.DataArray(
-        data=generation_wh,
+        data=power_kw,
         dims=["pv_id", "timestamp"],
         coords=dict(
-            longitude=(["pv_id"], lon),
-            latitude=(["pv_id"], lat),
+            longitude=(["pv_id"], [site.longitude]),
+            latitude=(["pv_id"], [site.latitude]),
             timestamp=timestamp,
-            pv_id=pv_id,
+            pv_id=[1],
             kwp=(["pv_id"], [site.capacity_kwp]),
             tilt=(["pv_id"], [site.tilt]),
             orientation=(["pv_id"], [site.orientation]),
         ),
     )
-    da = da.to_dataset(name="generation_wh")
+    da = da.to_dataset(name="generation_kw")
+
     return da
