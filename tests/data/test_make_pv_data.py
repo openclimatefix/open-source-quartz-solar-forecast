@@ -43,11 +43,6 @@ def test_make_pv_data(mock_get_enphase, site, expected_data, ts=pd.Timestamp('20
         }
     ).to_dataset(name='generation_kw')
 
-    print("Result:")
-    print(result)
-    print("Expected:")
-    print(expected_xr)
-
     assert result.equals(expected_xr)
 
 @pytest.mark.parametrize("site, expected_data", [
@@ -74,10 +69,5 @@ def test_make_pv_data_empty_data(mock_get_enphase, site, expected_data, ts=pd.Ti
             'orientation': (["pv_id"], [site.orientation]),
         }
     ).to_dataset(name='generation_kw')
-
-    print("Result (Empty Data):")
-    print(result)
-    print("Expected (Empty Data):")
-    print(expected_xr)
 
     assert result.equals(expected_xr)
