@@ -139,6 +139,7 @@ def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
     for interval in data_json['intervals']:
         end_at = interval['end_at']
         if end_at >= start_at:
+            # Convert to UTC
             timestamp = datetime.fromtimestamp(end_at, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
 
             # Append the data to the list
@@ -147,7 +148,7 @@ def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
     # Convert the list to a DataFrame
     live_generation_kw = pd.DataFrame(data_list)
 
-    # Convert to UTC
+    # Convert to datetime
     live_generation_kw["timestamp"] = pd.to_datetime(live_generation_kw["timestamp"])
 
     return live_generation_kw
