@@ -54,9 +54,8 @@ def test_make_pv_data_enphase(mock_get_enphase, site, expected_data, ts=pd.Times
     expected_df = pd.DataFrame(expected_data)
     expected_df['end_at'] = expected_df['end_at'].apply(lambda x: datetime.fromtimestamp(x, tz=timezone.utc))
     expected_df = expected_df.rename(columns={'end_at': 'timestamp', 'powr': 'power_kw'})
-    print("expected_df['timestamp']: ", expected_df['timestamp'])
-    print("ts: ", ts)
-    expected = expected_df[expected_df['timestamp'] <= ts]
+    ts_utc = pd.to_datetime(ts, utc=True)  # Convert ts to UTC datetime64[ns, UTC]
+    expected = expected_df[expected_df['timestamp'] <= ts_utc]
     expected_xr = xr.DataArray(
         data=expected['power_kw'].values.reshape(1, -1) / 1000,
         dims=['pv_id', 'timestamp'],
