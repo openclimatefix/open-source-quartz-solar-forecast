@@ -26,6 +26,13 @@ def mock_api_response():
     return mock_data
 
 @pytest.fixture
+def mock_get_enphase_auth_code(monkeypatch):
+    def mock_auth_code(*args, **kwargs):
+        return "mock_auth_code"
+
+    monkeypatch.setattr("quartz_solar_forecast.inverters.enphase.get_enphase_authorization_code", mock_auth_code)
+
+@pytest.fixture
 def mock_get_enphase(monkeypatch):
     # Mock the get_enphase_access_token function
     monkeypatch.setattr('quartz_solar_forecast.inverters.enphase.get_enphase_access_token', lambda: "mock_access_token")
@@ -48,7 +55,7 @@ def mock_get_enphase(monkeypatch):
 @pytest.mark.parametrize("site, expected_data", [
     (PVSite(latitude=40.7128, longitude=-74.0059, capacity_kwp=8.5, inverter_type='enphase'), mock_api_response()['intervals']),
 ])
-def test_make_pv_data_enphase(mock_get_enphase, site, expected_data, ts=pd.Timestamp('2023-06-19 12:15:00')):
+def test_make_pv_data_enphase(mock_get_enphase, mock_get_enphase_auth_code, site, expected_data, ts=pd.Timestamp('2023-06-19 12:15:00')):
     from quartz_solar_forecast.data import make_pv_data
     result = make_pv_data(site, ts)
     expected_df = pd.DataFrame(expected_data)
