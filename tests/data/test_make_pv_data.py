@@ -59,7 +59,7 @@ def mock_get_enphase(monkeypatch, mock_get_enphase_access_token, mock_get_enphas
 ])
 def test_make_pv_data_enphase(mock_get_enphase, mock_get_enphase_access_token, mock_get_enphase_auth_code, site, expected_data, ts=pd.Timestamp('2023-06-19 12:15:00')):
     from quartz_solar_forecast.data import make_pv_data
-    with patch('builtins.input', return_value='mock_redirect_url?code=mock_auth_code'):
+    with patch('builtins.input', return_value='mock_redirect_url?code=mock_auth_code\n'):
         result = make_pv_data(site, ts)
     expected_df = pd.DataFrame(expected_data)
     expected_df['end_at'] = expected_df['end_at'].apply(lambda x: datetime.fromtimestamp(x, tz=timezone.utc))
