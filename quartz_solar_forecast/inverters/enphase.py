@@ -44,6 +44,7 @@ def get_enphase_authorization_code(auth_url):
     )
     print("Please copy and paste the full redirect URL here:")
     redirect_url = input()
+    print("REDIRECT URL: ", redirect_url)
     # Extract the authorization code from the redirect URL
     code = redirect_url.split("?code=")[1]
     return code
