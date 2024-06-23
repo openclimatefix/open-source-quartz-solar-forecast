@@ -44,7 +44,6 @@ def get_enphase_authorization_code(auth_url):
     )
     print("Please copy and paste the full redirect URL here:")
     redirect_url = input()
-    print("REDIRECT URL: ", redirect_url)
     # Extract the authorization code from the redirect URL
     code = redirect_url.split("?code=")[1]
     return code
@@ -99,6 +98,35 @@ def get_enphase_access_token():
     return access_token
 
 
+def process_enphase_data(data_json: dict, start_at: int) -> pd.DataFrame:
+    """
+    Process the JSON data from Enphase API and convert it to a DataFrame.
+    
+    :param data_json: JSON data from Enphase API
+    :param start_at: Start timestamp for filtering data
+    :return: DataFrame with processed data
+    """
+    # Initialize an empty list to store the data
+    data_list = []
+
+    # Loop through the intervals and collect the data for the last week
+    for interval in data_json['intervals']:
+        end_at = interval['end_at']
+        if end_at >= start_at:
+            # Convert to UTC
+            timestamp = datetime.fromtimestamp(end_at, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+
+            # Append the data to the list
+            data_list.append({"timestamp": timestamp, "power_kw": interval['powr']/1000})
+
+    # Convert the list to a DataFrame
+    live_generation_kw = pd.DataFrame(data_list)
+
+    # Convert to datetime
+    live_generation_kw["timestamp"] = pd.to_datetime(live_generation_kw["timestamp"])
+
+    return live_generation_kw
+
 def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
     """ 
     Get live PV generation data from Enphase API v4
@@ -132,24 +160,8 @@ def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
 
     # Convert the decoded data into JSON format
     data_json = json.loads(decoded_data)
-    
-    # Initialize an empty list to store the data
-    data_list = []
 
-    # Loop through the intervals and collect the data for the last 30 minutes
-    for interval in data_json['intervals']:
-        end_at = interval['end_at']
-        if end_at >= start_at:
-            # Convert to UTC
-            timestamp = datetime.fromtimestamp(end_at, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
-
-            # Append the data to the list
-            data_list.append({"timestamp": timestamp, "power_kw": interval['powr']/1000})
-
-    # Convert the list to a DataFrame
-    live_generation_kw = pd.DataFrame(data_list)
-
-    # Convert to datetime
-    live_generation_kw["timestamp"] = pd.to_datetime(live_generation_kw["timestamp"])
+    # Process the data using the new function
+    live_generation_kw = process_enphase_data(data_json, start_at)
 
     return live_generation_kw
