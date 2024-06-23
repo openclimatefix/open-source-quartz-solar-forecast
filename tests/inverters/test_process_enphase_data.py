@@ -1,5 +1,4 @@
 import pytest
-from datetime import datetime, timezone, timedelta
 import pandas as pd
 import numpy as np
 from quartz_solar_forecast.inverters.enphase import process_enphase_data 
@@ -21,8 +20,7 @@ def sample_data():
     }
 
 def test_process_enphase_data(sample_data):
-    # Set start_at to just before the first interval
-    # Can put - also instead of + 
+    # Set start_at to before/after the first interval
     start_at = sample_data['intervals'][0]['end_at'] + 1 
     
     # Process the data
