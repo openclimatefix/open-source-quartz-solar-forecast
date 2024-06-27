@@ -3,7 +3,7 @@ name: Python package tests
 on:
   push:
   pull_request:
-    types: [opened, reopened]
+    types: [opened, synchronize, reopened]
   schedule:
     - cron: "0 12 * * 1"
   pull_request_target:
