@@ -1,1 +1,1 @@
-include *.txt quartz_solar_forecast/models/model-0.3.0.pkl *.png
+include *.txt quartz_solar_forecast/models/model-0.4.0.pkl *.png
