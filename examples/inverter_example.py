@@ -27,10 +27,18 @@ def main():
     # Get the directory of the current script
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
-    # Save dataframes to CSV files in the script's directory
+    # Create a 'results' directory if it doesn't exist
+    results_dir = os.path.join(script_dir, 'results')
+    os.makedirs(results_dir, exist_ok=True)
+
+    # Save dataframe to CSV file in the 'results' directory
     current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-    predictions_with_recent_pv_df.to_csv(os.path.join(script_dir, f"predictions_with_recent_pv_{current_time}.csv"), index=True)
+    csv_filename = f"predictions_with_recent_pv_{current_time}.csv"
+    csv_path = os.path.join(results_dir, csv_filename)
+    predictions_with_recent_pv_df.to_csv(csv_path, index=True)
     
+    print(f"CSV file saved at: {csv_path}")
+
     # plot
     fig = predictions_with_recent_pv_df.plot(
         title="PV Forecast",
