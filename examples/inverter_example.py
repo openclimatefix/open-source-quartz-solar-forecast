@@ -1,15 +1,13 @@
-""" Example code to run the forecast"""
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timezone
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
-from datetime import datetime, timezone
+import os
 
 # Set plotly backend to be plotly, you might have to install plotly
 pd.options.plotting.backend = "plotly"
 
 def main():
-
     timestamp = datetime.now().timestamp()
     timestamp_str = datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
     ts = pd.to_datetime(timestamp_str)
@@ -26,6 +24,13 @@ def main():
 
     predictions_with_recent_pv_df["power_kw_no_live_pv"] = predictions_df["power_kw"]
 
+    # Get the directory of the current script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Save dataframes to CSV files in the script's directory
+    current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+    predictions_with_recent_pv_df.to_csv(os.path.join(script_dir, f"predictions_with_recent_pv_{current_time}.csv"), index=True)
+    
     # plot
     fig = predictions_with_recent_pv_df.plot(
         title="PV Forecast",
