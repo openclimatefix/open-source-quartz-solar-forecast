@@ -3,11 +3,15 @@ from datetime import datetime, timezone
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
 import os
+import typer
 
 # Set plotly backend to be plotly, you might have to install plotly
 pd.options.plotting.backend = "plotly"
 
-def main():
+app = typer.Typer()
+
+@app.command()
+def main(save_outputs: bool = typer.Option(False, "--save-outputs", help="Save outputs to CSV")):
     timestamp = datetime.now().timestamp()
     timestamp_str = datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
     ts = pd.to_datetime(timestamp_str)
@@ -24,20 +28,23 @@ def main():
 
     predictions_with_recent_pv_df["power_kw_no_live_pv"] = predictions_df["power_kw"]
 
-    # Get the directory of the current script
-    script_dir = os.path.dirname(os.path.abspath(__file__))
+    if save_outputs:
+        # Get the directory of the current script
+        script_dir = os.path.dirname(os.path.abspath(__file__))
 
-    # Create a 'results' directory if it doesn't exist
-    results_dir = os.path.join(script_dir, 'results')
-    os.makedirs(results_dir, exist_ok=True)
+        # Create a 'results' directory if it doesn't exist
+        results_dir = os.path.join(script_dir, 'results')
+        os.makedirs(results_dir, exist_ok=True)
 
-    # Save dataframe to CSV file in the 'results' directory
-    current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-    csv_filename = f"predictions_with_recent_pv_{current_time}.csv"
-    csv_path = os.path.join(results_dir, csv_filename)
-    predictions_with_recent_pv_df.to_csv(csv_path, index=True)
-    
-    print(f"CSV file saved at: {csv_path}")
+        # Save dataframe to CSV file in the 'results' directory
+        current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+        csv_filename = f"predictions_with_recent_pv_{current_time}.csv"
+        csv_path = os.path.join(results_dir, csv_filename)
+        predictions_with_recent_pv_df.to_csv(csv_path, index=True)
+        
+        print(f"CSV file saved at: {csv_path}")
+    else:
+        print("Outputs not saved to CSV. Use --save-outputs to save.")
 
     # plot
     fig = predictions_with_recent_pv_df.plot(
@@ -49,4 +56,4 @@ def main():
     fig.show(renderer="browser")
 
 if __name__ == "__main__":
-    main()
+    app()
