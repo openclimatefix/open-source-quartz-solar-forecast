@@ -11,3 +11,4 @@ gdown==5.1.0
 xgboost==2.0.3
 plotly
 typer
+streamlit
