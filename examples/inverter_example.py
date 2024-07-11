@@ -8,7 +8,7 @@ import typer
 # Set plotly backend to be plotly, you might have to install plotly
 pd.options.plotting.backend = "plotly"
 
-def main(save_outputs: bool = typer.Option(False, "--save-outputs", help="Save outputs to CSV")):
+def main(save_outputs: bool = False):
     timestamp = datetime.now().timestamp()
     timestamp_str = datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
     ts = pd.to_datetime(timestamp_str)
