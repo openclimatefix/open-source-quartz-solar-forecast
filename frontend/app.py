@@ -55,7 +55,7 @@ def get_enphase_auth_url():
 def get_enphase_access_token(auth_code):
     client_id = os.getenv('ENPHASE_CLIENT_ID')
     client_secret = os.getenv('ENPHASE_CLIENT_SECRET')
-    
+
     credentials = f"{client_id}:{client_secret}"
     credentials_bytes = credentials.encode("utf-8")
     encoded_credentials = base64.b64encode(credentials_bytes).decode("utf-8")
@@ -86,7 +86,7 @@ def get_enphase_data(enphase_system_id: str, access_token: str) -> pd.DataFrame:
     api_key = os.getenv('ENPHASE_API_KEY')
     start_at = int((datetime.now() - timedelta(weeks=1)).timestamp())
     granularity = "week"
-    
+
     conn = http.client.HTTPSConnection("api.enphaseenergy.com")
     headers = {
         "Authorization": f"Bearer {str(access_token)}",
@@ -107,16 +107,16 @@ def enphase_authorization():
     st.write("Please visit the following URL to authorize the application:")
     st.markdown(f"[Enphase Authorization URL]({auth_url})")
     st.write("After authorization, you will be redirected to a URL. Please copy the entire URL and paste it below:")
-    
+
     redirect_url = st.text_input("Enter the redirect URL:")
-    
+
     if redirect_url:
         auth_code = redirect_url.split("?code=")[1] if "?code=" in redirect_url else None
-        
+
         if auth_code:
             access_token = get_enphase_access_token(auth_code)
             return access_token, os.getenv('ENPHASE_SYSTEM_ID')
-    
+
     return None, None
 
 def make_pv_data(site: PVSite, ts: pd.Timestamp, access_token: str = None, enphase_system_id: str = None) -> xr.Dataset:
@@ -142,7 +142,7 @@ def predict_ocf(site: PVSite, model=None, ts: datetime | str = None, nwp_source:
 
 def predict_tryolabs(site: PVSite, ts: datetime | str = None):
     solar_power_predictor = TryolabsSolarPowerPredictor()
-    
+
     if ts is None:
         start_date = pd.Timestamp.now().strftime("%Y-%m-%d")
         start_time = pd.Timestamp.now().round(freq='h')
@@ -168,7 +168,7 @@ def predict_tryolabs(site: PVSite, ts: datetime | str = None):
     predictions = predictions.reset_index(drop=True)
     predictions.set_index("date", inplace=True)
     return predictions
-    
+
 def run_forecast(site: PVSite, model: str = "gb", ts: datetime | str = None, nwp_source: str = "icon", access_token: str = None, enphase_system_id: str = None) -> pd.DataFrame:
     if model == "gb":
         return predict_ocf(site, None, ts, nwp_source, access_token, enphase_system_id)
@@ -205,7 +205,7 @@ access_token, enphase_system_id = enphase_authorization()
 if st.button("Run Forecast"):
     if access_token:
         predictions_with_recent_pv_df, ts = fetch_data_and_run_forecast(access_token, enphase_system_id)
-        
+
         if predictions_with_recent_pv_df is not None:
             st.success("Forecast completed successfully!")
 
@@ -242,7 +242,6 @@ if st.button("Run Forecast"):
 st.sidebar.info(
     """
     This dashboard runs
-
     [Open Climate Fix](https://openclimatefix.org/)'s
     
     [Open Source Quartz Solar Forecast](https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/).
