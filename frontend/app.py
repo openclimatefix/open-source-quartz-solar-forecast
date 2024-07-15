@@ -27,6 +27,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.forecasts import forecast_v1_tilt_orientation, TryolabsSolarPowerPredictor
+from quartz_solar_forecast.forecast import predict_tryolabs
 from quartz_solar_forecast.data import get_nwp, process_pv_data
 from quartz_solar_forecast.inverters.enphase import process_enphase_data
 
@@ -156,35 +157,6 @@ def predict_ocf(site: PVSite, model=None, ts: datetime | str = None, nwp_source:
 
     pred_df = forecast_v1_tilt_orientation(nwp_source, nwp_xr, pv_xr, ts, model=model)
     return pred_df
-
-def predict_tryolabs(site: PVSite, ts: datetime | str = None):
-    solar_power_predictor = TryolabsSolarPowerPredictor()
-
-    if ts is None:
-        start_date = pd.Timestamp.now().strftime("%Y-%m-%d")
-        start_time = pd.Timestamp.now().round(freq='h')
-    else:
-        start_date = pd.Timestamp(ts).strftime("%Y-%m-%d")
-        start_time = pd.Timestamp(ts).round(freq='h')
-
-    end_time = start_time + pd.Timedelta(hours=48)
-
-    solar_power_predictor.load_model()
-    predictions = solar_power_predictor.predict_power_output(
-        latitude=site.latitude,
-        longitude=site.longitude,
-        start_date=start_date,
-        kwp=site.capacity_kwp,
-        orientation=site.orientation,
-        tilt=site.tilt,
-    )
-
-    predictions = predictions[
-        (predictions["date"] >= start_time) & (predictions["date"] < end_time)
-    ]
-    predictions = predictions.reset_index(drop=True)
-    predictions.set_index("date", inplace=True)
-    return predictions
 
 def run_forecast(site: PVSite, model: str = "gb", ts: datetime | str = None, nwp_source: str = "icon", access_token: str = None, enphase_system_id: str = None) -> pd.DataFrame:
     if model == "gb":
