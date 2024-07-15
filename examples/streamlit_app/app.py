@@ -171,6 +171,7 @@ def fetch_data_and_run_forecast(access_token: str = None, enphase_system_id: str
             timestamp_str = datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
             ts = pd.to_datetime(timestamp_str)
 
+            # TO-DO: user inputs for latitude, longitude, and capacity_kwp
             site_live = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25, inverter_type="enphase")
             site_no_live = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
 
