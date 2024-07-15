@@ -6,12 +6,10 @@ from datetime import datetime, timezone, timedelta
 import sys
 import os
 import logging
-import numpy as np
 import xarray as xr
 from dotenv import load_dotenv
 import base64
 import json
-import requests
 from urllib.parse import urlencode
 from PIL import Image
 
@@ -26,7 +24,7 @@ logger = logging.getLogger(__name__)
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from quartz_solar_forecast.pydantic_models import PVSite
-from quartz_solar_forecast.forecasts import forecast_v1_tilt_orientation, TryolabsSolarPowerPredictor
+from quartz_solar_forecast.forecasts import forecast_v1_tilt_orientation
 from quartz_solar_forecast.forecast import predict_tryolabs
 from quartz_solar_forecast.data import get_nwp, process_pv_data
 from quartz_solar_forecast.inverters.enphase import process_enphase_data
