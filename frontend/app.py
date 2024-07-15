@@ -78,8 +78,14 @@ def get_enphase_access_token(auth_code):
 
     # Convert the decoded data into JSON format
     data_json = json.loads(decoded_data)
+    
+    if 'error' in data_json:
+        raise ValueError(f"Error in getting access token: {data_json['error_description']}")
+    
+    if 'access_token' not in data_json:
+        raise KeyError(f"Access token not found in response. Response: {data_json}")
+    
     access_token = data_json["access_token"]
-
     return access_token
 
 def get_enphase_data(enphase_system_id: str, access_token: str) -> pd.DataFrame:
@@ -103,19 +109,30 @@ def get_enphase_data(enphase_system_id: str, access_token: str) -> pd.DataFrame:
     return process_enphase_data(data_json, start_at)
 
 def enphase_authorization():
-    auth_url = get_enphase_auth_url()
-    st.write("Please visit the following URL to authorize the application:")
-    st.markdown(f"[Enphase Authorization URL]({auth_url})")
-    st.write("After authorization, you will be redirected to a URL. Please copy the entire URL and paste it below:")
+    if 'access_token' not in st.session_state:
+        auth_url = get_enphase_auth_url()
+        st.write("Please visit the following URL to authorize the application:")
+        st.markdown(f"[Enphase Authorization URL]({auth_url})")
+        st.write("After authorization, you will be redirected to a URL. Please copy the entire URL and paste it below:")
 
-    redirect_url = st.text_input("Enter the redirect URL:")
+        redirect_url = st.text_input("Enter the redirect URL:")
 
-    if redirect_url:
-        auth_code = redirect_url.split("?code=")[1] if "?code=" in redirect_url else None
+        if redirect_url:
+            if "?code=" not in redirect_url:
+                st.error("Invalid redirect URL. Please make sure you copied the entire URL.")
+                return None, None
 
-        if auth_code:
-            access_token = get_enphase_access_token(auth_code)
-            return access_token, os.getenv('ENPHASE_SYSTEM_ID')
+            auth_code = redirect_url.split("?code=")[1]
+
+            try:
+                access_token = get_enphase_access_token(auth_code)
+                st.session_state['access_token'] = access_token
+                return access_token, os.getenv('ENPHASE_SYSTEM_ID')
+            except Exception as e:
+                st.error(f"Error getting access token: {str(e)}")
+                return None, None
+    else:
+        return st.session_state['access_token'], os.getenv('ENPHASE_SYSTEM_ID')
 
     return None, None
 
@@ -200,7 +217,10 @@ def fetch_data_and_run_forecast(access_token: str = None, enphase_system_id: str
             return None, None
 
 # Main app logic
-access_token, enphase_system_id = enphase_authorization()
+if 'access_token' not in st.session_state:
+    access_token, enphase_system_id = enphase_authorization()
+else:
+    access_token, enphase_system_id = st.session_state['access_token'], os.getenv('ENPHASE_SYSTEM_ID')
 
 if st.button("Run Forecast"):
     if access_token:
