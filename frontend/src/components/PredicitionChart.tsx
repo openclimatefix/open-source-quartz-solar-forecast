@@ -30,7 +30,6 @@ function CustomizedTick(props) {
 }
 
 export function PredictionChart({ predictions }) {
-  if (!predictions) return;
   const chartData = Object.keys(predictions).map((key) => ({
     datetime: key,
     power: predictions[key],

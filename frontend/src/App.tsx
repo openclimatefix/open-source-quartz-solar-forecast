@@ -7,11 +7,11 @@ import { PredictionChart } from "./components/PredicitionChart";
 function App() {
   const [predictions, setPredictions] = useState(null);
   return (
-    <div className="flex flex-col max-w-screen p-10">
+    <div className="flex flex-col max-w-screen-lg max-h-screen-lg p-10">
       <div className="space-y-0.5">
         <h2 className="text-2xl font-bold tracking-tight">PV Power Forecast</h2>
         <p className="text-muted-foreground">
-          Get solar energy predictions for a specific time for 48 hours ahead.
+          Get solar energy predictions for 48 hours ahead.
         </p>
       </div>
       <Separator className="my-6" />
@@ -20,7 +20,7 @@ function App() {
           <PVForecastForm updatePredictions={setPredictions} />
         </aside>
         {predictions ? (
-          <div className="grow flex flex-col">
+          <div className="grow flex flex-col justify-between">
             <PredictionChart predictions={predictions} />
             <PredictionTable predictions={predictions} />
           </div>
