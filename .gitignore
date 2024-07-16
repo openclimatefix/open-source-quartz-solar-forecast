@@ -5,3 +5,4 @@ quartz_solar_forecast/data
 quartz_solar_forecast.egg-info
 .env
 venv
+frontend/node_modules
