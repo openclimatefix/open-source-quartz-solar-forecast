@@ -43,7 +43,6 @@ st.set_page_config(
 )
 st.title("☀️ Open Source Quartz Solar Forecast")
 
-
 def get_enphase_auth_url():
     client_id = os.getenv("ENPHASE_CLIENT_ID")
     redirect_uri = "https://api.enphaseenergy.com/oauth/redirect_uri"
@@ -54,7 +53,6 @@ def get_enphase_auth_url():
     }
     auth_url = f"https://api.enphaseenergy.com/oauth/authorize?{urlencode(params)}"
     return auth_url
-
 
 def get_enphase_access_token(auth_code):
     client_id = os.getenv("ENPHASE_CLIENT_ID")
@@ -92,7 +90,6 @@ def get_enphase_access_token(auth_code):
     access_token = data_json["access_token"]
     return access_token
 
-
 def get_enphase_data(enphase_system_id: str, access_token: str) -> pd.DataFrame:
     api_key = os.getenv("ENPHASE_API_KEY")
     start_at = int((datetime.now() - timedelta(weeks=1)).timestamp())
@@ -109,7 +106,6 @@ def get_enphase_data(enphase_system_id: str, access_token: str) -> pd.DataFrame:
     data_json = json.loads(decoded_data)
 
     return process_enphase_data(data_json, start_at)
-
 
 def enphase_authorization():
     if "access_token" not in st.session_state:
@@ -143,7 +139,6 @@ def enphase_authorization():
 
     return None, None
 
-
 def make_pv_data(
     site: PVSite,
     ts: pd.Timestamp,
@@ -157,7 +152,6 @@ def make_pv_data(
 
     da = process_pv_data(live_generation_kw, ts, site)
     return da
-
 
 def predict_ocf(
     site: PVSite,
@@ -180,7 +174,6 @@ def predict_ocf(
     pred_df = forecast_v1_tilt_orientation(nwp_source, nwp_xr, pv_xr, ts, model=model)
     return pred_df
 
-
 def run_forecast(
     site: PVSite,
     model: str = "gb",
@@ -196,9 +189,10 @@ def run_forecast(
     else:
         raise ValueError(f"Unsupported model: {model}. Choose between 'xgb' and 'gb'")
 
-
 def fetch_data_and_run_forecast(
-    inverter_type: str, access_token: str = None, enphase_system_id: str = None
+    site: PVSite,
+    access_token: str = None,
+    enphase_system_id: str = None
 ):
     with st.spinner("Running forecast..."):
         try:
@@ -208,39 +202,25 @@ def fetch_data_and_run_forecast(
             )
             ts = pd.to_datetime(timestamp_str)
 
-            # Create PVSite for both cases
-            site_with_inverter = PVSite(
-                latitude=51.75,
-                longitude=-1.25,
-                capacity_kwp=1.25,
-                inverter_type="enphase",
+            # Run forecast with the given site
+            predictions_with_inverter = run_forecast(
+                site=site,
+                ts=ts,
+                access_token=access_token,
+                enphase_system_id=enphase_system_id,
             )
+
+            # Create a site without inverter for comparison
             site_without_inverter = PVSite(
-                latitude=51.75, longitude=-1.25, capacity_kwp=1.25
+                latitude=site.latitude,
+                longitude=site.longitude,
+                capacity_kwp=site.capacity_kwp
             )
-
-            # Run forecast for both cases
-            if inverter_type == "Enphase":
-                predictions_with_inverter = run_forecast(
-                    site=site_with_inverter,
-                    ts=ts,
-                    access_token=access_token,
-                    enphase_system_id=enphase_system_id,
-                )
-            else:
-                predictions_with_inverter = run_forecast(
-                    site=site_without_inverter, ts=ts
-                )
-
-            predictions_without_inverter = run_forecast(
-                site=site_without_inverter, ts=ts
-            )
+            predictions_without_inverter = run_forecast(site=site_without_inverter, ts=ts)
 
             # Combine the results
             predictions_df = predictions_with_inverter.copy()
-            predictions_df["power_kw_no_live_pv"] = predictions_without_inverter[
-                "power_kw"
-            ]
+            predictions_df["power_kw_no_live_pv"] = predictions_without_inverter["power_kw"]
 
             return predictions_df, ts
 
@@ -249,9 +229,24 @@ def fetch_data_and_run_forecast(
             st.error(f"An error occurred: {str(e)}")
             return None, None
 
-
 # Main app logic
-inverter_type = st.selectbox("Select Inverter", ["No Inverter", "Enphase"])
+st.sidebar.header("PV Site Configuration")
+
+use_defaults = st.sidebar.checkbox("Use Default Values", value=True)
+
+if use_defaults:
+    latitude = 51.75
+    longitude = -1.25
+    capacity_kwp = 1.25
+    st.sidebar.text(f"Default Latitude: {latitude}")
+    st.sidebar.text(f"Default Longitude: {longitude}")
+    st.sidebar.text(f"Default Capacity (kWp): {capacity_kwp}")
+else:
+    latitude = st.sidebar.number_input("Latitude", min_value=-90.0, max_value=90.0, value=51.75, step=0.01)
+    longitude = st.sidebar.number_input("Longitude", min_value=-180.0, max_value=180.0, value=-1.25, step=0.01)
+    capacity_kwp = st.sidebar.number_input("Capacity (kWp)", min_value=0.1, value=1.25, step=0.01)
+
+inverter_type = st.sidebar.selectbox("Select Inverter", ["No Inverter", "Enphase"])
 
 access_token = None
 enphase_system_id = None
@@ -264,16 +259,22 @@ if inverter_type == "Enphase":
             "ENPHASE_SYSTEM_ID"
         )
 
-if st.button("Run Forecast"):
-    if inverter_type == "Enphase" and (
-        access_token is None or enphase_system_id is None
-    ):
+if st.sidebar.button("Run Forecast"):
+    if inverter_type == "Enphase" and (access_token is None or enphase_system_id is None):
         st.error(
             "Enphase authorization is required. Please complete the authorization process."
         )
     else:
+        # Create PVSite object with user-input or default values
+        site = PVSite(
+            latitude=latitude,
+            longitude=longitude,
+            capacity_kwp=capacity_kwp,
+            inverter_type="enphase" if inverter_type == "Enphase" else "none"  # Changed this line
+        )
+        
         predictions_df, ts = fetch_data_and_run_forecast(
-            inverter_type, access_token, enphase_system_id
+            site, access_token, enphase_system_id
         )
 
         if predictions_df is not None:
