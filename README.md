@@ -204,6 +204,17 @@ FOSDEM is a free event for software developers to meet, share ideas and collabor
 OCF presented Quartz Solar Forecast project at FOSDEM 2024. The link to the original FOSDEM video is availble at [Quartz Solar OS: Building an open source AI solar forecast for everyone](https://fosdem.org/2024/schedule/event/fosdem-2024-2960-quartz-solar-os-building-an-open-source-ai-solar-forecast-for-everyone/).
 It is also available on [YouTube](https://www.youtube.com/watch?v=NAZ2VeiN1N8)
 
+## Running the dashboard locally
+
+Start the API first (port 8000):
+`cd backend`
+`python main.py`
+
+Start the frontend (port 5137):
+`cd frontend`
+`npm install`
+`npm run dev`
+
 ## Contribution
 
 We welcome other models.
