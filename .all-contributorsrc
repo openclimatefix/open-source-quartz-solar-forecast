@@ -172,6 +172,15 @@
       "contributions": [
         "review"
       ]
+    },
+    {
+      "login": "KelRem",
+      "name": "KelRem",
+      "avatar_url": "https://avatars.githubusercontent.com/u/175075550?v=4",
+      "profile": "https://github.com/KelRem",
+      "contributions": [
+        "question"
+      ]
     }
   ],
   "contributorsPerLine": 7,
