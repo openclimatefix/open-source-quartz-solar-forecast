@@ -205,13 +205,15 @@ It is also available on [YouTube](https://www.youtube.com/watch?v=NAZ2VeiN1N8)
 ## Running the dashboard locally
 
 Start the API first (port 8000):
-`cd backend`
+`cd api`
 `python main.py`
 
 Start the frontend (port 5137):
-`cd frontend`
+`cd dashboard/dashboard_1`
 `npm install`
 `npm run dev`
+
+There is also a steamlit dashboard in `dashboard/dashboard_1` that can be used. 
 
 ## Contribution
 
