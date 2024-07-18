@@ -68,5 +68,5 @@ https://github.com/user-attachments/assets/940ca4a7-65a4-40ea-a602-ea0f65e96746
 
 ## Additional Information
 
-- Forecasts are generated for the next 24 hours in 15-minute intervals.
+- Forecasts are generated for the next 48 hours in 15-minute intervals.
 - The app demonstrates the impact of using recent PV data (from Enphase) on forecast accuracy.
