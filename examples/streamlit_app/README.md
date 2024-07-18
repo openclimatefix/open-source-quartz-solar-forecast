@@ -21,7 +21,7 @@ https://github.com/user-attachments/assets/940ca4a7-65a4-40ea-a602-ea0f65e96746
 1. Clone the repository and install all the dependencies in a virtual environment on a Linux System(or WSL):
    `pip install -e .` and `pip install -r requirements.txt`
 
-2. Set up environment variables (if applicable):
+2. Optionally, if you have an enphase inverter, set up environment variables (if applicable):
 
 - Create a `.env` file in your root directory
 - Add the following variables:
