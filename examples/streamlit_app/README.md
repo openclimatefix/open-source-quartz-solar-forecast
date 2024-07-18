@@ -2,6 +2,10 @@
 
 This Streamlit Dashboard provides an interactive interface for running and visualizing solar forecasts using the [Open Source Quartz Solar Forecast](https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast) model developed by [Open Climate Fix](https://openclimatefix.org/).
 
+
+https://github.com/user-attachments/assets/940ca4a7-65a4-40ea-a602-ea0f65e96746
+
+
 ## Features
 
 - Configure PV site parameters (latitude, longitude, capacity)
