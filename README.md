@@ -209,11 +209,11 @@ Start the API first (port 8000):
 `python main.py`
 
 Start the frontend (port 5137):
-`cd dashboard/dashboard_1`
+`cd dashboards/dashboard_1`
 `npm install`
 `npm run dev`
 
-There is also a steamlit dashboard in `dashboard/dashboard_1` that can be used. 
+There is also a steamlit dashboard in `dashboards/dashboard_2` that can be used. 
 
 ## Contribution
 
