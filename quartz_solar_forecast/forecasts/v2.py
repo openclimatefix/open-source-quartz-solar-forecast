@@ -2,6 +2,8 @@ import datetime
 import pandas as pd
 import zipfile
 import os.path
+import logging
+import shutil
 
 from huggingface_hub import hf_hub_download
 from quartz_solar_forecast.weather import WeatherService
@@ -9,6 +11,8 @@ from quartz_solar_forecast.weather import WeatherService
 from xgboost.sklearn import XGBRegressor
 
 from . import constants
+
+logger = logging.getLogger(__name__)
 
 class TryolabsSolarPowerPredictor:
     """
@@ -33,9 +37,9 @@ class TryolabsSolarPowerPredictor:
     """
     DATE_COLUMN = "date"
 
-    def _download_model(self, filename: str, repo_id: str, file_path: str) -> None:
+    def _download_model(self, filename: str, repo_id: str, file_path: str) -> str:
         """
-        Download model from Hugging Face Hub and save it to the root of the repo.
+        Download model from Hugging Face Hub and save it to a writable directory.
 
         Parameters
         ----------
@@ -45,9 +49,30 @@ class TryolabsSolarPowerPredictor:
             The Hugging Face repository ID
         file_path: str
             The path to the file within the Hugging Face repository
+
+        Returns
+        -------
+        str
+            The path to the downloaded and renamed file
         """
-        hf_hub_download(repo_id=repo_id, filename=file_path, local_dir=".")
-        os.rename(file_path.split("/")[-1], filename)
+        try:
+            # Use a directory that's guaranteed to be writable
+            download_dir = os.path.join(os.path.expanduser("~"), ".cache", "quartz_solar_forecast")
+            os.makedirs(download_dir, exist_ok=True)
+            logger.debug(f"Download directory: {download_dir}")
+            
+            downloaded_file = hf_hub_download(repo_id=repo_id, filename=file_path, cache_dir=download_dir)
+            logger.debug(f"File downloaded to: {downloaded_file}")
+            
+            target_path = os.path.join(download_dir, filename)
+            logger.debug(f"Copying {downloaded_file} to {target_path}")
+            shutil.copy2(downloaded_file, target_path)
+            
+            logger.info(f"Model downloaded and saved to: {target_path}")
+            return target_path
+        except Exception as e:
+            logger.error(f"Error downloading model: {str(e)}")
+            raise
 
     def _decompress_zipfile(self, filename: str) -> None:
         """
@@ -71,18 +96,30 @@ class TryolabsSolarPowerPredictor:
         """
         Download and decompress model from Hugging Face Hub
         """
-        zipfile_model = model_file + ".zip"
+        try:
+            download_dir = os.path.join(os.path.expanduser("~"), ".cache", "quartz_solar_forecast")
+            zipfile_model = os.path.join(download_dir, model_file + ".zip")
+            logger.debug(f"Zip file path: {zipfile_model}")
 
-        if not os.path.isfile(zipfile_model):
-            print("Downloading model ...")
-            self._download_model(zipfile_model, repo_id, file_path)
-        if not os.path.isfile(model_file):
-            print("Preparing model ...")
-            self._decompress_zipfile(zipfile_model)
-        print("Loading model ...")
-        loaded_model = XGBRegressor()
-        loaded_model.load_model(model_file)
-        self.model = loaded_model
+            if not os.path.isfile(zipfile_model):
+                logger.info("Downloading model...")
+                zipfile_model = self._download_model(model_file + ".zip", repo_id, file_path)
+            
+            model_path = os.path.join(download_dir, model_file)
+            if not os.path.isfile(model_path):
+                logger.info("Preparing model...")
+                self._decompress_zipfile(zipfile_model)
+            
+            logger.info("Loading model...")
+            loaded_model = XGBRegressor()
+            logger.debug(f"Loading model from: {model_path}")
+            loaded_model.load_model(model_path)
+            self.model = loaded_model
+            logger.info("Model loaded successfully")
+            return loaded_model
+        except Exception as e:
+            logger.error(f"Error loading model: {str(e)}")
+            raise
 
     def get_data(
         self,
