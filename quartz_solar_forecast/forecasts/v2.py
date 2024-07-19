@@ -1,8 +1,8 @@
 import datetime
 import pandas as pd
 import zipfile
-import gdown
 import os.path
+import logging
 
 from huggingface_hub import hf_hub_download
 from quartz_solar_forecast.weather import WeatherService
@@ -10,6 +10,9 @@ from quartz_solar_forecast.weather import WeatherService
 from xgboost.sklearn import XGBRegressor
 
 from . import constants
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 class TryolabsSolarPowerPredictor:
     """
@@ -37,27 +40,22 @@ class TryolabsSolarPowerPredictor:
     def _download_model(self, filename: str, repo_id: str, file_path: str) -> None:
         """
         Download model from Hugging Face Hub and save it to the root of the repo.
-
-        Parameters
-        ----------
-        filename : str
-            The name of the model to be saved locally
-        repo_id: str
-            The Hugging Face repository ID
-        file_path: str
-            The path to the file within the Hugging Face repository
         """
-        # Get the directory of the current file
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        
-        # Download the file to the current directory
-        downloaded_file = hf_hub_download(repo_id=repo_id, filename=file_path, cache_dir=current_dir)
-        
-        # Rename the downloaded file to the desired filename
-        target_path = os.path.join(current_dir, filename)
-        os.rename(downloaded_file, target_path)
-        
-        print(f"Model downloaded and saved to: {target_path}")
+        try:
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            logger.debug(f"Current directory: {current_dir}")
+            
+            downloaded_file = hf_hub_download(repo_id=repo_id, filename=file_path, cache_dir=current_dir)
+            logger.debug(f"File downloaded to: {downloaded_file}")
+            
+            target_path = os.path.join(current_dir, filename)
+            logger.debug(f"Renaming {downloaded_file} to {target_path}")
+            os.rename(downloaded_file, target_path)
+            
+            logger.info(f"Model downloaded and saved to: {target_path}")
+        except Exception as e:
+            logger.error(f"Error downloading model: {str(e)}")
+            raise
 
     def _decompress_zipfile(self, filename: str) -> None:
         """
@@ -81,19 +79,29 @@ class TryolabsSolarPowerPredictor:
         """
         Download and decompress model from Hugging Face Hub
         """
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        zipfile_model = os.path.join(current_dir, model_file + ".zip")
+        try:
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            zipfile_model = os.path.join(current_dir, model_file + ".zip")
+            logger.debug(f"Zip file path: {zipfile_model}")
 
-        if not os.path.isfile(zipfile_model):
-            print("Downloading model ...")
-            self._download_model(model_file + ".zip", repo_id, file_path)
-        if not os.path.isfile(os.path.join(current_dir, model_file)):
-            print("Preparing model ...")
-            self._decompress_zipfile(zipfile_model)
-        print("Loading model ...")
-        loaded_model = XGBRegressor()
-        loaded_model.load_model(os.path.join(current_dir, model_file))
-        self.model = loaded_model 
+            if not os.path.isfile(zipfile_model):
+                logger.info("Downloading model...")
+                self._download_model(model_file + ".zip", repo_id, file_path)
+            
+            if not os.path.isfile(os.path.join(current_dir, model_file)):
+                logger.info("Preparing model...")
+                self._decompress_zipfile(zipfile_model)
+            
+            logger.info("Loading model...")
+            loaded_model = XGBRegressor()
+            model_path = os.path.join(current_dir, model_file)
+            logger.debug(f"Loading model from: {model_path}")
+            loaded_model.load_model(model_path)
+            self.model = loaded_model
+            logger.info("Model loaded successfully")
+        except Exception as e:
+            logger.error(f"Error loading model: {str(e)}")
+            raise
 
     def get_data(
         self,
