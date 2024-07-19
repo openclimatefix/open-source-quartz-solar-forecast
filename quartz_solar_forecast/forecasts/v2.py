@@ -40,22 +40,18 @@ class TryolabsSolarPowerPredictor:
     def _download_model(self, filename: str, repo_id: str, file_path: str) -> None:
         """
         Download model from Hugging Face Hub and save it to the root of the repo.
+
+        Parameters
+        ----------
+        filename : str
+            The name of the model to be saved locally
+        repo_id: str
+            The Hugging Face repository ID
+        file_path: str
+            The path to the file within the Hugging Face repository
         """
-        try:
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            logger.debug(f"Current directory: {current_dir}")
-            
-            downloaded_file = hf_hub_download(repo_id=repo_id, filename=file_path, cache_dir=current_dir)
-            logger.debug(f"File downloaded to: {downloaded_file}")
-            
-            target_path = os.path.join(current_dir, filename)
-            logger.debug(f"Renaming {downloaded_file} to {target_path}")
-            os.rename(downloaded_file, target_path)
-            
-            logger.info(f"Model downloaded and saved to: {target_path}")
-        except Exception as e:
-            logger.error(f"Error downloading model: {str(e)}")
-            raise
+        hf_hub_download(repo_id=repo_id, filename=file_path, local_dir=".")
+        os.rename(file_path.split("/")[-1], filename)
 
     def _decompress_zipfile(self, filename: str) -> None:
         """
@@ -79,29 +75,18 @@ class TryolabsSolarPowerPredictor:
         """
         Download and decompress model from Hugging Face Hub
         """
-        try:
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            zipfile_model = os.path.join(current_dir, model_file + ".zip")
-            logger.debug(f"Zip file path: {zipfile_model}")
+        zipfile_model = model_file + ".zip"
 
-            if not os.path.isfile(zipfile_model):
-                logger.info("Downloading model...")
-                self._download_model(model_file + ".zip", repo_id, file_path)
-            
-            if not os.path.isfile(os.path.join(current_dir, model_file)):
-                logger.info("Preparing model...")
-                self._decompress_zipfile(zipfile_model)
-            
-            logger.info("Loading model...")
-            loaded_model = XGBRegressor()
-            model_path = os.path.join(current_dir, model_file)
-            logger.debug(f"Loading model from: {model_path}")
-            loaded_model.load_model(model_path)
-            self.model = loaded_model
-            logger.info("Model loaded successfully")
-        except Exception as e:
-            logger.error(f"Error loading model: {str(e)}")
-            raise
+        if not os.path.isfile(zipfile_model):
+            print("Downloading model ...")
+            self._download_model(zipfile_model, repo_id, file_path)
+        if not os.path.isfile(model_file):
+            print("Preparing model ...")
+            self._decompress_zipfile(zipfile_model)
+        print("Loading model ...")
+        loaded_model = XGBRegressor()
+        loaded_model.load_model(model_file)
+        self.model = loaded_model
 
     def get_data(
         self,
