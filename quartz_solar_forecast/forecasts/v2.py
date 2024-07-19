@@ -2,7 +2,6 @@ import datetime
 import pandas as pd
 import zipfile
 import os.path
-import logging
 
 from huggingface_hub import hf_hub_download
 from quartz_solar_forecast.weather import WeatherService
@@ -10,9 +9,6 @@ from quartz_solar_forecast.weather import WeatherService
 from xgboost.sklearn import XGBRegressor
 
 from . import constants
-
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
 
 class TryolabsSolarPowerPredictor:
     """
