@@ -1,4 +1,4 @@
-name: Python package tests
+name: Run forecast
 
 on:
   push:
