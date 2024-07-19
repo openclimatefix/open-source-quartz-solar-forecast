@@ -4,6 +4,7 @@ import zipfile
 import gdown
 import os.path
 
+from huggingface_hub import hf_hub_download
 from quartz_solar_forecast.weather import WeatherService
 
 from xgboost.sklearn import XGBRegressor
@@ -33,18 +34,21 @@ class TryolabsSolarPowerPredictor:
     """
     DATE_COLUMN = "date"
 
-    def _download_model(self, filename: str, file_id: str) -> None:
+    def _download_model(self, filename: str, repo_id: str, file_path: str) -> None:
         """
-        Download model from google drive and save it to the root of the repo.
+        Download model from Hugging Face Hub and save it to the root of the repo.
 
         Parameters
         ----------
         filename : str
-            The name of the model to be saved
-        file_id: 
-            Google id of the model file
+            The name of the model to be saved locally
+        repo_id: str
+            The Hugging Face repository ID
+        file_path: str
+            The path to the file within the Hugging Face repository
         """
-        gdown.download(f'https://drive.google.com/uc?id={file_id}', filename, quiet=False)
+        hf_hub_download(repo_id=repo_id, filename=file_path, local_dir=".")
+        os.rename(file_path.split("/")[-1], filename)
 
     def _decompress_zipfile(self, filename: str) -> None:
         """
@@ -62,22 +66,17 @@ class TryolabsSolarPowerPredictor:
     def load_model(
         self, 
         model_file: str = constants.MODEL_FILE,
-        file_id: str = constants.FILE_ID
+        repo_id: str = "openclimatefix/open-source-quartz-solar-forecast",
+        file_path: str = "models/v2/model_10_202405.ubj.zip"
     ) -> XGBRegressor:
         """
-        Download and decompress model from Google Drive
-        Parameters
-        ----------
-        model_file: str
-            The name of the model as string
-        file_id: str
-            Google id to download the file
+        Download and decompress model from Hugging Face Hub
         """
         zipfile_model = model_file + ".zip"
 
         if not os.path.isfile(zipfile_model):
             print("Downloading model ...")
-            self._download_model(zipfile_model, file_id)
+            self._download_model(zipfile_model, repo_id, file_path)
         if not os.path.isfile(model_file):
             print("Preparing model ...")
             self._decompress_zipfile(zipfile_model)
