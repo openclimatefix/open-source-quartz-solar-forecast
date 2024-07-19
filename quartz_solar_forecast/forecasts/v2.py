@@ -12,6 +12,8 @@ from xgboost.sklearn import XGBRegressor
 
 from . import constants
 
+logger = logging.getLogger(__name__)
+
 class TryolabsSolarPowerPredictor:
     """
     A class to predict solar power output based on weather data, location, panel orientation,
