@@ -39,8 +39,8 @@ class TryolabsSolarPowerPredictor:
 
     def _download_model(self, filename: str, repo_id: str, file_path: str) -> str:
         try:
-            # Use a directory that's guaranteed to be writable
-            download_dir = os.path.join(os.path.expanduser("~"), ".cache", "quartz_solar_forecast")
+            # Use the project directory instead of the user's home directory
+            download_dir = "/home/runner/work/Open-Source-Quartz-Solar-Forecast/Open-Source-Quartz-Solar-Forecast"
             os.makedirs(download_dir, exist_ok=True)
             
             downloaded_file = hf_hub_download(repo_id=repo_id, filename=file_path, cache_dir=download_dir)
@@ -73,7 +73,8 @@ class TryolabsSolarPowerPredictor:
         file_path: str = "models/v2/model_10_202405.ubj.zip"
     ) -> XGBRegressor:
         try:
-            download_dir = os.path.join(os.path.expanduser("~"), ".cache", "quartz_solar_forecast")
+            # Use the project directory
+            download_dir = "/home/runner/work/Open-Source-Quartz-Solar-Forecast/Open-Source-Quartz-Solar-Forecast"
             zipfile_model = os.path.join(download_dir, model_file + ".zip")
     
             if not os.path.isfile(zipfile_model):
