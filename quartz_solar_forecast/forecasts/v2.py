@@ -2,7 +2,6 @@ import datetime
 import pandas as pd
 import zipfile
 import os.path
-import logging
 import shutil
 
 from huggingface_hub import hf_hub_download
@@ -11,8 +10,6 @@ from quartz_solar_forecast.weather import WeatherService
 from xgboost.sklearn import XGBRegressor
 
 from . import constants
-
-logger = logging.getLogger(__name__)
 
 class TryolabsSolarPowerPredictor:
     """
@@ -38,37 +35,16 @@ class TryolabsSolarPowerPredictor:
     DATE_COLUMN = "date"
 
     def _download_model(self, filename: str, repo_id: str, file_path: str) -> str:
-        """
-        Download model from Hugging Face Hub and save it to a writable directory.
-
-        Parameters
-        ----------
-        filename : str
-            The name of the model to be saved locally
-        repo_id: str
-            The Hugging Face repository ID
-        file_path: str
-            The path to the file within the Hugging Face repository
-
-        Returns
-        -------
-        str
-            The path to the downloaded and renamed file
-        """
         try:
             # Use a directory that's guaranteed to be writable
             download_dir = os.path.join(os.path.expanduser("~"), ".cache", "quartz_solar_forecast")
             os.makedirs(download_dir, exist_ok=True)
-            logger.debug(f"Download directory: {download_dir}")
             
             downloaded_file = hf_hub_download(repo_id=repo_id, filename=file_path, cache_dir=download_dir)
-            logger.debug(f"File downloaded to: {downloaded_file}")
             
             target_path = os.path.join(download_dir, filename)
-            logger.debug(f"Copying {downloaded_file} to {target_path}")
             shutil.copy2(downloaded_file, target_path)
             
-            logger.info(f"Model downloaded and saved to: {target_path}")
             return target_path
         except Exception as e:
             logger.error(f"Error downloading model: {str(e)}")
@@ -93,14 +69,10 @@ class TryolabsSolarPowerPredictor:
         repo_id: str = "openclimatefix/open-source-quartz-solar-forecast",
         file_path: str = "models/v2/model_10_202405.ubj.zip"
     ) -> XGBRegressor:
-        """
-        Download and decompress model from Hugging Face Hub
-        """
         try:
             download_dir = os.path.join(os.path.expanduser("~"), ".cache", "quartz_solar_forecast")
             zipfile_model = os.path.join(download_dir, model_file + ".zip")
-            logger.debug(f"Zip file path: {zipfile_model}")
-
+    
             if not os.path.isfile(zipfile_model):
                 logger.info("Downloading model...")
                 zipfile_model = self._download_model(model_file + ".zip", repo_id, file_path)
@@ -112,10 +84,8 @@ class TryolabsSolarPowerPredictor:
             
             logger.info("Loading model...")
             loaded_model = XGBRegressor()
-            logger.debug(f"Loading model from: {model_path}")
             loaded_model.load_model(model_path)
             self.model = loaded_model
-            logger.info("Model loaded successfully")
             return loaded_model
         except Exception as e:
             logger.error(f"Error loading model: {str(e)}")
