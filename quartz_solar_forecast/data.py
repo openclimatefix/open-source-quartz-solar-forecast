@@ -15,13 +15,12 @@ from retry_requests import retry
 
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.inverters.enphase import get_enphase_data
+from quartz_solar_forecast.inverters.solis import get_solis_data
 from quartz_solar_forecast.inverters.solaredge import get_site_coordinates, get_site_list, get_solaredge_data
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
 from dotenv import load_dotenv
-
-system_id = os.getenv('ENPHASE_SYSTEM_ID')
 
 def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     """
@@ -204,7 +203,9 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
             site_id = matching_site_ids[0]
             live_generation_kw = get_solaredge_data(site_id)
     elif site.inverter_type == 'enphase':
-        live_generation_kw = get_enphase_data(system_id)
+        live_generation_kw = get_enphase_data(os.getenv('ENPHASE_SYSTEM_ID'))
+    elif site.inverter_type == 'solis':  
+        live_generation_kw = get_solis_data(os.getenv('SOLIS_API_ID'))
     else:
         # If no inverter type is specified or not recognized, set live_generation_kw to None
         live_generation_kw = None
