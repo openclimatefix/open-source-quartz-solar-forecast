@@ -180,7 +180,7 @@ def process_pv_data(live_generation_kw: Optional[pd.DataFrame], ts: pd.Timestamp
 
 def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     """
-    Make PV data by combining live data from SolarEdge, Enphase, or Solis and fake PV data.
+    Make PV data by combining live data from Enphase or Solis and fake PV data.
     Later we could add PV history here.
     :param site: the PV site
     :param ts: the timestamp of the site
@@ -197,16 +197,9 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
         else:
             print("Error: Enphase inverter ID is not provided in the environment variables.")
     elif site.inverter_type == 'solis':
-        inverter_id = os.getenv('SOLIS_CLOUD_API_INVERTER_ID')
-        inverter_sn = os.getenv('SOLIS_CLOUD_API_INVERTER_SN')
-        
-        # Determine whether to use ID or SN based on which one is available
-        if inverter_id:
-            live_generation_kw = get_solis_data(inverter_id, is_sn=False)
-        elif inverter_sn:
-            live_generation_kw = get_solis_data(inverter_sn, is_sn=True)
-        else:
-            print("Error: Neither Solis inverter ID nor SN is provided in the environment variables.")
+        live_generation_kw = get_solis_data()
+        if live_generation_kw is None:
+            print("Error: Failed to retrieve Solis inverter data.")
     else:
         # If no inverter type is specified or not recognized, set live_generation_kw to None
         live_generation_kw = None
