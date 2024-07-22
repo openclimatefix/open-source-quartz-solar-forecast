@@ -12,11 +12,11 @@ import xarray as xr
 import openmeteo_requests
 import requests_cache
 from retry_requests import retry
+from typing import Optional
 
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.inverters.enphase import get_enphase_data
 from quartz_solar_forecast.inverters.solis import get_solis_data
-from quartz_solar_forecast.inverters.solaredge import get_site_coordinates, get_site_list, get_solaredge_data
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -142,7 +142,7 @@ def format_nwp_data(df: pd.DataFrame, nwp_source:str, site: PVSite):
     )
     return data_xr
 
-def process_pv_data(live_generation_kw: pd.DataFrame, ts: pd.Timestamp, site: PVSite) -> xr.Dataset:
+def process_pv_data(live_generation_kw: Optional[pd.DataFrame], ts: pd.Timestamp, site: PVSite) -> xr.Dataset:
     """
     Process PV data and create an xarray Dataset.
     
@@ -151,7 +151,7 @@ def process_pv_data(live_generation_kw: pd.DataFrame, ts: pd.Timestamp, site: PV
     :param site: PV site information
     :return: xarray Dataset containing processed PV data
     """
-    if live_generation_kw is not None:
+    if live_generation_kw is not None and not live_generation_kw.empty:
         # get the most recent data
         recent_pv_data = live_generation_kw[live_generation_kw['timestamp'] <= ts]
         power_kw = np.array([np.array(recent_pv_data["power_kw"].values, dtype=np.float64)])
@@ -180,7 +180,7 @@ def process_pv_data(live_generation_kw: pd.DataFrame, ts: pd.Timestamp, site: PV
 
 def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     """
-    Make PV data by combining live data from SolarEdge or Enphase and fake PV data.
+    Make PV data by combining live data from SolarEdge, Enphase, or Solis and fake PV data.
     Later we could add PV history here.
     :param site: the PV site
     :param ts: the timestamp of the site
@@ -190,22 +190,23 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     live_generation_kw = None  
 
     # Check if the site has an inverter type specified
-    if site.inverter_type == 'solaredge':
-        # Fetch the list of site IDs associated with the SolarEdge account
-        site_ids = get_site_list()
-        # Find the site ID that matches the site's latitude and longitude
-        matching_site_ids = [s_id for s_id in site_ids if abs(site.latitude - lat) < 1e-6 and abs(site.longitude - lon) < 1e-6 for lat, lon in get_site_coordinates(s_id)]
-        if not matching_site_ids:
-            raise ValueError("Site not found in the list of associated sites.")
-        elif len(matching_site_ids) > 1:
-            raise ValueError("Multiple sites found matching the given latitude and longitude.")
+    if site.inverter_type == 'enphase':
+        system_id = os.getenv('ENPHASE_SYSTEM_ID')
+        if system_id:
+            live_generation_kw = get_enphase_data(system_id)
         else:
-            site_id = matching_site_ids[0]
-            live_generation_kw = get_solaredge_data(site_id)
-    elif site.inverter_type == 'enphase':
-        live_generation_kw = get_enphase_data(os.getenv('ENPHASE_SYSTEM_ID'))
-    elif site.inverter_type == 'solis':  
-        live_generation_kw = get_solis_data(os.getenv('SOLIS_API_ID'))
+            print("Error: Enphase inverter ID is not provided in the environment variables.")
+    elif site.inverter_type == 'solis':
+        inverter_id = os.getenv('SOLIS_CLOUD_API_INVERTER_ID')
+        inverter_sn = os.getenv('SOLIS_CLOUD_API_INVERTER_SN')
+        
+        # Determine whether to use ID or SN based on which one is available
+        if inverter_id:
+            live_generation_kw = get_solis_data(inverter_id, is_sn=False)
+        elif inverter_sn:
+            live_generation_kw = get_solis_data(inverter_sn, is_sn=True)
+        else:
+            print("Error: Neither Solis inverter ID nor SN is provided in the environment variables.")
     else:
         # If no inverter type is specified or not recognized, set live_generation_kw to None
         live_generation_kw = None
