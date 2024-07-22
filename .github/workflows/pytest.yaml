@@ -14,6 +14,6 @@ jobs:
       # pytest-cov looks at this folder
       pytest_cov_dir: "quartz_solar_forecast"
       os_list: '["ubuntu-latest"]'
-      python-version: "['3.10','3.11']"
+      python-version: "['3.11']"
       extra_commands: echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
       pytest_numcpus: '1'

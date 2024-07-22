@@ -181,6 +181,15 @@
       "contributions": [
         "question"
       ]
+    },
+    {
+      "login": "sicunchen",
+      "name": "Lia Chen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14258987?v=4",
+      "profile": "https://github.com/sicunchen",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
