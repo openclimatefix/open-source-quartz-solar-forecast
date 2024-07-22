@@ -12,4 +12,4 @@ xgboost==2.0.3
 plotly
 typer
 streamlit
-datasets>=2
+datasets>=2.20
