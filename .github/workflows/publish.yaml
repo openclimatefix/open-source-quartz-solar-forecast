@@ -26,5 +26,5 @@ jobs:
       - name: execute py script # run main.py
         run: |
           cd scripts
-          python forecast_csv.py
+          python hf_upload.py
 
