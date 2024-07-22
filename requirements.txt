@@ -1,6 +1,5 @@
 pandas==2.2.1
 xarray==2022.12.0
-pv-site-prediction==0.1.19
 pydantic==2.6.2
 huggingface_hub== 0.17.3 # only for evaluation
 python-dotenv==1.0.1
@@ -12,4 +11,4 @@ xgboost==2.0.3
 plotly
 typer
 streamlit
-datasets>=2.1
+datasets>=2.20
