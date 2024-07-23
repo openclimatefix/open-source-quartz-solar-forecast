@@ -1,6 +1,7 @@
 name: Python package tests
 
 on:
+  push:
   pull_request:
     types: [opened, synchronize, reopened]
   schedule:

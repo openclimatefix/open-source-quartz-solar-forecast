@@ -1,9 +1,6 @@
 name: Run forecast
 
 on:
-  push:
-    branches:
-      - topic/test-forecast-in-workflow
   schedule:
     - cron: "0 9 * * *"
 
