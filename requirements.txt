@@ -12,3 +12,4 @@ plotly
 typer
 streamlit
 datasets<=2.14.0
+pv-site-prediction==0.1.19
