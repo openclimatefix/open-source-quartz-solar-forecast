@@ -12,5 +12,3 @@ xgboost==2.0.3
 plotly
 typer
 streamlit
-datasets==2.9.0
-fsspec==2022.11.0
