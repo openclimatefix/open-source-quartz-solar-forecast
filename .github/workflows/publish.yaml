@@ -2,20 +2,20 @@ name: Run forecast
 
 on:
   push:
-    branches:
-      - topic/test-forecast-in-workflow
+  schedule:
+    - cron: "0 9 * * *"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo content
-        uses: actions/checkout@v2 # checkout the repository content
+        uses: actions/checkout@v2
 
       - name: setup python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11' # install the python version needed
+          python-version: '3.11'
 
       - name: install python packages
         run: |
@@ -23,7 +23,7 @@ jobs:
           pip install -r requirements.txt
           pip install -e .
 
-      - name: execute py script # run main.py
+      - name: upload forecast to Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_REPO: ${{ secrets.HF_REPO }}
