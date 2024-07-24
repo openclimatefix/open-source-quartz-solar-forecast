@@ -1,3 +1,17 @@
+# Site-level forecast dashboard
+Enter site details(longitude, latitude, capacity) and get forecast 48 hours ahead. Built with React and [shadcn/ui](https://ui.shadcn.com/).
+
+
+
+
+
+https://github.com/user-attachments/assets/db2856d3-789b-408e-af54-59bbab2d285f
+
+
+
+
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
