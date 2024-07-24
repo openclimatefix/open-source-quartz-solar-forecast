@@ -125,22 +125,6 @@ class SoliscloudAPI():
             params['nmiCode'] = nmi_code
         return await self._get_records(INVERTER_LIST, key_id, secret, params)
 
-    async def inverter_detail(self, key_id: str, secret: bytes, /, *,
-        inverter_sn: int = None,
-        inverter_id: str = None
-    ) -> dict[str, str]:
-        """Inverter details"""
-
-        params: dict[str, Any] = {}
-        if (inverter_sn is not None and inverter_id is None):
-            params['sn'] = inverter_sn
-        elif (inverter_sn is None and inverter_id is not None):
-            params['id'] = inverter_id
-        else:
-            raise SoliscloudAPI.SolisCloudError("Only pass one of inverter_id or inverter_sn \
-                as identifier")
-        return await self._get_data(INVERTER_DETAIL, key_id, secret, params)
-
     async def inverter_day(self, key_id: str, secret: bytes, /, *,
         currency: str,
         time: str,
@@ -162,39 +146,6 @@ class SoliscloudAPI():
                 as identifier")
 
         return await self._get_data(INVERTER_DAY, key_id, secret, params)
-
-    async def inverter_month(self, key_id: str, secret: bytes, /, *,
-        currency: str,
-        month: str,
-        inverter_id: int = None,
-        inverter_sn: str = None
-    ) -> dict[str, str]:
-        """Inverter monthly graph"""
-
-        SoliscloudAPI._verify_date(SoliscloudAPI.DateFormat.MONTH, month)
-        params: dict[str, Any] = {'money': currency, 'month': month}
-
-        if (inverter_id is not None and inverter_sn is None):
-            params['id'] = inverter_id
-        elif (inverter_id is None and inverter_sn is not None):
-            params['sn'] = inverter_sn
-        else:
-            raise SoliscloudAPI.SolisCloudError("Only pass one of inverter_id or inverter_sn \
-                as identifier")
-
-        return await self._get_data(INVERTER_MONTH, key_id, secret, params)
-
-    async def inverter_detail_list(self, key_id: str, secret: bytes, /, *,
-        page_no: int = 1,
-        page_size: int = 20
-    ) -> dict[str, str]:
-        """Batch acquire inverter details"""
-
-        if page_size > 100:
-            raise SoliscloudAPI.SolisCloudError("PageSize must be <= 100")
-        params: dict[str, Any] = {'pageNo': page_no, 'pageSize': page_size}
-
-        return await self._get_records(INVERTER_DETAIL_LIST, key_id, secret, params)
 
     async def _get_records(self, canonicalized_resource: str, key_id: str, secret: bytes, params: dict[str, Any]):
         """
