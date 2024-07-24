@@ -22,5 +22,5 @@ app.add_middleware(
 
 @app.post("/forecast/")
 async def forecast(site:PVSite):
-    df =run_forecast(site)
+    df =await run_forecast(site)
     return df.to_dict()

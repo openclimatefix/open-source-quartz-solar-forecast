@@ -3,7 +3,7 @@ from quartz_solar_forecast.pydantic_models import PVSite
 import pandas as pd
 
 
-def generate_forecasts(sites_info, forecast_date):
+async def generate_forecasts(sites_info, forecast_date):
     """Generate forecasts for multiple PV sites.
 
     This function takes a list of site information tuples and a forecast date as input. For each site, it creates a PVSite object,
@@ -33,7 +33,7 @@ def generate_forecasts(sites_info, forecast_date):
         site = PVSite(latitude=latitude, longitude=longitude, capacity_kwp=capacity)
 
         # Run forecast for the site
-        forecast = run_forecast(site=site, ts=forecast_date)
+        forecast = await run_forecast(site=site, ts=forecast_date)
 
         # Flatten forecast values to a 1D array
         forecast_values = forecast.values.flatten()

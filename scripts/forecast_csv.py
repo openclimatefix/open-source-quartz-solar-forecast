@@ -6,7 +6,7 @@ from quartz_solar_forecast.pydantic_models import PVSite
 import unittest
 from unittest.mock import patch
 
-def generate_forecast(init_time_freq, start_datetime, end_datetime, site_name, latitude, longitude, capacity_kwp):
+async def generate_forecast(init_time_freq, start_datetime, end_datetime, site_name, latitude, longitude, capacity_kwp):
     """
     Generates forecasts at specified intervals and saves them into a CSV file.
 
@@ -29,7 +29,7 @@ def generate_forecast(init_time_freq, start_datetime, end_datetime, site_name, l
     init_time = start
     while init_time <= end:
         print(f"Running forecast for initialization time: {init_time}")
-        predictions_df = run_forecast(site=site, ts=init_time.strftime("%Y-%m-%d %H:%M:%S"))
+        predictions_df = await run_forecast(site=site, ts=init_time.strftime("%Y-%m-%d %H:%M:%S"))
         predictions_df.reset_index(inplace=True)  
         predictions_df.rename(columns={'index': 'datetime'}, inplace=True) 
         predictions_df['forecast_init_time'] = init_time  

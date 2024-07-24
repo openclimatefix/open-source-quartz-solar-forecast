@@ -7,7 +7,7 @@ from quartz_solar_forecast.forecasts import forecast_v1_tilt_orientation, Tryola
 from quartz_solar_forecast.pydantic_models import PVSite
 
 
-def predict_ocf(
+async def predict_ocf(
     site: PVSite, model=None, ts: datetime | str = None, nwp_source: str = "icon"
 ):
     """
@@ -27,7 +27,7 @@ def predict_ocf(
 
     # make pv and nwp data from nwp_source
     nwp_xr = get_nwp(site=site, ts=ts, nwp_source=nwp_source)
-    pv_xr = make_pv_data(site=site, ts=ts)
+    pv_xr = await make_pv_data(site=site, ts=ts)
 
     # load and run models
     pred_df = forecast_v1_tilt_orientation(nwp_source, nwp_xr, pv_xr, ts, model=model)
@@ -90,7 +90,7 @@ def predict_tryolabs(
         return predictions
 
 
-def run_forecast(
+async def run_forecast(
     site: PVSite,
     model: str = "gb",
     ts: datetime | str = None,
@@ -109,7 +109,7 @@ def run_forecast(
     """
 
     if model == "gb":
-        return predict_ocf(site, None, ts, nwp_source)
+        return await predict_ocf(site, None, ts, nwp_source)
               
     elif model == "xgb":
         return predict_tryolabs(site, ts)

@@ -761,6 +761,10 @@ class SolisData:
             live_generation_kw = live_generation_kw.sort_values("timestamp")
             
             return live_generation_kw
+        
+async def get_solis_data():
+    solis_data = SolisData()
+    return await solis_data.get_solis_data()
 
 async def main():
     try:
