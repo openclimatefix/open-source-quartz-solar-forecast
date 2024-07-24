@@ -16,42 +16,20 @@ import async_timeout
 
 from dotenv import load_dotenv
 
+SOLIS_CLOUD_API_URL = os.environ.get('SOLIS_CLOUD_API_URL', 'https://www.soliscloud.com')
+SOLIS_CLOUD_API_PORT = os.environ.get('SOLIS_CLOUD_API_PORT', '13333')
+
 # VERSION
-VERSION = '0.1.0'
-SUPPORTED_API_VERSION = '1.2'
 RESOURCE_PREFIX = '/v1/api/'
 
 VERB = "POST"
 
 # Endpoints
-USER_STATION_LIST = RESOURCE_PREFIX + 'userStationList'
-STATION_DETAIL = RESOURCE_PREFIX + 'stationDetail'
-COLLECTOR_LIST = RESOURCE_PREFIX + 'collectorList'
-COLLECTOR_DETAIL = RESOURCE_PREFIX + 'collectorDetail'
 INVERTER_LIST = RESOURCE_PREFIX + 'inverterList'
 INVERTER_DETAIL = RESOURCE_PREFIX + 'inverterDetail'
-STATION_DAY = RESOURCE_PREFIX + 'stationDay'
-STATION_MONTH = RESOURCE_PREFIX + 'stationMonth'
-STATION_YEAR = RESOURCE_PREFIX + 'stationYear'
-STATION_ALL = RESOURCE_PREFIX + 'stationAll'
 INVERTER_DAY = RESOURCE_PREFIX + 'inverterDay'
 INVERTER_MONTH = RESOURCE_PREFIX + 'inverterMonth'
-INVERTER_YEAR = RESOURCE_PREFIX + 'inverterYear'
-INVERTER_ALL = RESOURCE_PREFIX + 'inverterAll'
-ALARM_LIST = RESOURCE_PREFIX + 'inverterAlarmList'
-STATION_DETAIL_LIST = RESOURCE_PREFIX + 'stationDetailList'
 INVERTER_DETAIL_LIST = RESOURCE_PREFIX + 'inverterDetailList'
-STATION_DAY_ENERGY_LIST = RESOURCE_PREFIX + 'stationDayEnergyList'
-STATION_MONTH_ENERGY_LIST = RESOURCE_PREFIX + 'stationMonthEnergyList'
-STATION_YEAR_ENERGY_LIST = RESOURCE_PREFIX + 'stationYearEnergyList'
-EPM_LIST = RESOURCE_PREFIX + 'epmList'
-EPM_DETAIL = RESOURCE_PREFIX + 'epmDetail'
-EPM_DAY = RESOURCE_PREFIX + 'epm/day'
-EPM_MONTH = RESOURCE_PREFIX + 'epm/month'
-EPM_YEAR = RESOURCE_PREFIX + 'epm/year'
-EPM_ALL = RESOURCE_PREFIX + 'epm/all'
-
-
 class SoliscloudAPI():
     """Class with functions for reading data from the Soliscloud Portal."""
 
@@ -127,65 +105,6 @@ class SoliscloudAPI():
 
     # All methods take key and secret as positional arguments followed by
     # one or more keyword arguments
-    async def user_station_list(self, key_id: str, secret: bytes, /, *,
-        page_no: int = 1,
-        page_size: int = 20,
-        nmi_code: str = None
-    ) -> dict[str, str]:
-        """Power station List"""
-
-        if page_size > 100:
-            raise SoliscloudAPI.SolisCloudError("page_size must be <= 100")
-
-        params: dict[str, Any] = {'pageNo': page_no, 'pageSize': page_size}
-        if nmi_code is not None:
-            params['nmiCode'] = nmi_code
-        return await self._get_records(USER_STATION_LIST, key_id, secret, params)
-
-    async def station_detail(self, key_id: str, secret: bytes, /, *,
-        station_id: int,
-        nmi_code: str = None
-    ) -> dict[str, str]:
-        """Power station details"""
-
-        params: dict[str, Any] = {'id': station_id}
-        if nmi_code is not None:
-            params['nmiCode'] = nmi_code
-        return await self._get_data(STATION_DETAIL, key_id, secret, params)
-
-    async def collector_list(self, key_id: str, secret: bytes, /, *,
-        page_no: int = 1,
-        page_size: int = 20,
-        station_id: int = None,
-        nmi_code: str = None
-    ) -> dict[str, str]:
-        """Datalogger list"""
-
-        if page_size > 100:
-            raise SoliscloudAPI.SolisCloudError("page_size must be <= 100")
-
-        params: dict[str, Any] = {'pageNo': page_no, 'pageSize': page_size}
-        if station_id is not None:
-            params['stationId'] = station_id
-        if nmi_code is not None:
-            params['nmiCode'] = nmi_code
-        return await self._get_records(COLLECTOR_LIST, key_id, secret, params)
-
-    async def collector_detail(self, key_id: str, secret: bytes, /, *,
-        collector_sn: int = None,
-        collector_id: str = None
-    ) -> dict[str, str]:
-        """Datalogger details"""
-
-        params: dict[str, Any] = {}
-        if (collector_sn is not None and collector_id is None):
-            params['sn'] = collector_sn
-        elif (collector_sn is None and collector_id is not None):
-            params['id'] = collector_id
-        else:
-            raise SoliscloudAPI.SolisCloudError("Only pass one of collector_id or collector_sn \
-                as identifier")
-        return await self._get_data(COLLECTOR_DETAIL, key_id, secret, params)
 
     async def inverter_list(self, key_id: str, secret: bytes, /, *,
         page_no: int = 1,
@@ -221,84 +140,6 @@ class SoliscloudAPI():
             raise SoliscloudAPI.SolisCloudError("Only pass one of inverter_id or inverter_sn \
                 as identifier")
         return await self._get_data(INVERTER_DETAIL, key_id, secret, params)
-
-    async def station_day(self, key_id: str, secret: bytes, /, *,
-        currency: str,
-        time: str,
-        time_zone: int,
-        station_id: int = None,
-        nmi_code=None
-    ) -> dict[str, str]:
-        """Station daily graph"""
-
-        SoliscloudAPI._verify_date(SoliscloudAPI.DateFormat.DAY, time)
-        params: dict[str, Any] = {'money': currency, 'time': time, 'timeZone': time_zone}
-
-        if (station_id is not None and nmi_code is None):
-            params['id'] = station_id
-        elif (station_id is None and nmi_code is not None):
-            params['nmiCode'] = nmi_code
-        else:
-            raise SoliscloudAPI.SolisCloudError("Only pass one of station_id or nmi_code as identifier")
-
-        return await self._get_data(STATION_DAY, key_id, secret, params)
-
-    async def station_month(self, key_id: str, secret: bytes, /, *,
-        currency: str,
-        month: str,
-        station_id: int = None,
-        nmi_code=None
-    ) -> dict[str, str]:
-        """Station monthly graph"""
-
-        SoliscloudAPI._verify_date(SoliscloudAPI.DateFormat.MONTH, month)
-        params: dict[str, Any] = {'money': currency, 'month': month}
-
-        if (station_id is not None and nmi_code is None):
-            params['id'] = station_id
-        elif (station_id is None and nmi_code is not None):
-            params['nmiCode'] = nmi_code
-        else:
-            raise SoliscloudAPI.SolisCloudError("Only pass one of station_id or nmi_code as identifier")
-
-        return await self._get_data(STATION_MONTH, key_id, secret, params)
-
-    async def station_year(self, key_id: str, secret: bytes, /, *,
-        currency: str,
-        year: str,
-        station_id: int = None,
-        nmi_code=None
-    ) -> dict[str, str]:
-        """Station yearly graph"""
-
-        SoliscloudAPI._verify_date(SoliscloudAPI.DateFormat.YEAR, year)
-        params: dict[str, Any] = {'money': currency, 'year': year}
-
-        if (station_id is not None and nmi_code is None):
-            params['id'] = station_id
-        elif (station_id is None and nmi_code is not None):
-            params['nmiCode'] = nmi_code
-        else:
-            raise SoliscloudAPI.SolisCloudError("Only pass one of station_id or nmi_code as identifier")
-
-        return await self._get_data(STATION_YEAR, key_id, secret, params)
-
-    async def station_all(self, key_id: str, secret: bytes, /, *,
-        currency: str,
-        station_id: int = None,
-        nmi_code: str = None
-    ) -> dict[str, str]:
-        """Station cumulative graph"""
-
-        params: dict[str, Any] = {'money': currency}
-        if (station_id is not None and nmi_code is None):
-            params['id'] = station_id
-        elif (station_id is None and nmi_code is not None):
-            params['nmiCode'] = nmi_code
-        else:
-            raise SoliscloudAPI.SolisCloudError("Only pass one of station_id or nmi_code as identifier")
-
-        return await self._get_data(STATION_ALL, key_id, secret, params)
 
     async def inverter_day(self, key_id: str, secret: bytes, /, *,
         currency: str,
@@ -343,86 +184,6 @@ class SoliscloudAPI():
 
         return await self._get_data(INVERTER_MONTH, key_id, secret, params)
 
-    async def inverter_year(self, key_id: str, secret: bytes, /, *,
-        currency: str,
-        year: str,
-        inverter_id: int = None,
-        inverter_sn: str = None
-    ) -> dict[str, str]:
-        """Inverter yearly graph"""
-
-        SoliscloudAPI._verify_date(SoliscloudAPI.DateFormat.YEAR, year)
-        params: dict[str, Any] = {'money': currency, 'year': year}
-
-        if (inverter_id is not None and inverter_sn is None):
-            params['id'] = inverter_id
-        elif (inverter_id is None and inverter_sn is not None):
-            params['sn'] = inverter_sn
-        else:
-            raise SoliscloudAPI.SolisCloudError("Only pass one of inverter_id or inverter_sn \
-                as identifier")
-
-        return await self._get_data(INVERTER_YEAR, key_id, secret, params)
-
-    async def inverter_all(self, key_id: str, secret: bytes, /, *,
-        currency: str,
-        inverter_id: int = None,
-        inverter_sn: str = None
-    ) -> dict[str, str]:
-        """Inverter cumulative graph"""
-
-        params: dict[str, Any] = {'money': currency}
-        if (inverter_id is not None and inverter_sn is None):
-            params['id'] = inverter_id
-        elif (inverter_id is None and inverter_sn is not None):
-            params['sn'] = inverter_sn
-        else:
-            raise SoliscloudAPI.SolisCloudError("Only pass one of inverter_id or inverter_sn \
-                as identifier")
-
-        return await self._get_data(INVERTER_ALL, key_id, secret, params)
-
-    async def inverter_alarm_list(self, key_id: str, secret: bytes, /, *,
-        page_no: int = 1,
-        page_size: int = 20,
-        station_id: str = None,
-        device_sn: str = None,
-        begintime: str = None,
-        endtime: str = None,
-        nmi_code: str = None
-    ) -> dict[str, str]:
-        """Alarm check"""
-
-        if page_size > 100:
-            raise SoliscloudAPI.SolisCloudError("PageSize must be <= 100")
-
-        params: dict[str, Any] = {'pageNo': page_no, 'pageSize': page_size}
-        if station_id is not None and device_sn is None:
-            params['stationId'] = station_id
-        elif station_id is None and device_sn is not None:
-            params['alarmDeviceSn'] = device_sn
-        else:
-            raise SoliscloudAPI.SolisCloudError("Only pass one of station_id or device_sn as identifier")
-        SoliscloudAPI._verify_date(SoliscloudAPI.DateFormat.DAY, begintime)
-        SoliscloudAPI._verify_date(SoliscloudAPI.DateFormat.DAY, endtime)
-        params['alarmBeginTime'] = begintime
-        params['alarmEndTime'] = endtime
-        if nmi_code is not None:
-            params['nmiCode'] = nmi_code
-        return await self._get_records(ALARM_LIST, key_id, secret, params)
-
-    async def station_detail_list(self, key_id: str, secret: bytes, /, *,
-        page_no: int = 1,
-        page_size: int = 20
-    ) -> dict[str, str]:
-        """Batch acquire station details"""
-
-        if page_size > 100:
-            raise SoliscloudAPI.SolisCloudError("PageSize must be <= 100")
-        params: dict[str, Any] = {'pageNo': page_no, 'pageSize': page_size}
-
-        return await self._get_records(STATION_DETAIL_LIST, key_id, secret, params)
-
     async def inverter_detail_list(self, key_id: str, secret: bytes, /, *,
         page_no: int = 1,
         page_size: int = 20
@@ -434,120 +195,6 @@ class SoliscloudAPI():
         params: dict[str, Any] = {'pageNo': page_no, 'pageSize': page_size}
 
         return await self._get_records(INVERTER_DETAIL_LIST, key_id, secret, params)
-
-    async def station_day_energy_list(self, key_id: str, secret: bytes, /, *,
-        page_no: int = 1,
-        page_size: int = 20,
-        time: str
-    ) -> dict[str, str]:
-        """Batch acquire station daily generation"""
-
-        if page_size > 100:
-            raise SoliscloudAPI.SolisCloudError("PageSize must be <= 100")
-        SoliscloudAPI._verify_date(SoliscloudAPI.DateFormat.DAY, time)
-        params: dict[str, Any] = {'pageNo': page_no, 'pageSize': page_size, 'time': time}
-
-        return await self._get_records(STATION_DAY_ENERGY_LIST, key_id, secret, params)
-
-    async def station_month_energy_list(self, key_id: str, secret: bytes, /, *,
-        page_no: int = 1,
-        page_size: int = 20,
-        month: str
-    ) -> dict[str, str]:
-        """Batch acquire station monthly generation"""
-
-        if page_size > 100:
-            raise SoliscloudAPI.SolisCloudError("PageSize must be <= 100")
-        SoliscloudAPI._verify_date(SoliscloudAPI.DateFormat.MONTH, month)
-        params: dict[str, Any] = {'pageNo': page_no, 'pageSize': page_size, 'time': month}
-
-        return await self._get_records(STATION_MONTH_ENERGY_LIST, key_id, secret, params)
-
-    async def station_year_energy_list(self, key_id: str, secret: bytes, /, *,
-        page_no: int = 1,
-        page_size: int = 20,
-        year: str
-    ) -> dict[str, str]:
-        """Batch acquire station yearly generation"""
-
-        if page_size > 100:
-            raise SoliscloudAPI.SolisCloudError("PageSize must be <= 100")
-        SoliscloudAPI._verify_date(SoliscloudAPI.DateFormat.YEAR, year)
-        params: dict[str, Any] = {'pageNo': page_no, 'pageSize': page_size, 'time': year}
-
-        return await self._get_records(STATION_YEAR_ENERGY_LIST, key_id, secret, params)
-
-    async def epm_list(self, key_id: str, secret: bytes, /, *,
-        page_no: int = 1,
-        page_size: int = 20,
-        station_id: str = None
-    ) -> dict[str, str]:
-        """EPM list"""
-
-        if page_size > 100:
-            raise SoliscloudAPI.SolisCloudError("PageSize must be <= 100")
-        params: dict[str, Any] = {'pageNo': page_no, 'pageSize': page_size}
-        if station_id is not None:
-            params['stationId'] = station_id
-
-        return await self._get_records(EPM_LIST, key_id, secret, params)
-
-    async def epm_detail(self, key_id: str, secret: bytes, /, *,
-        epm_sn: str
-    ) -> dict[str, str]:
-        """EPM details"""
-
-        params: dict[str, Any] = {'sn': epm_sn}
-
-        return await self._get_records(EPM_DETAIL, key_id, secret, params)
-
-    async def epm_day(self, key_id: str, secret: bytes, /, *,
-        searchinfo: str,
-        epm_sn: str,
-        time: str,
-        time_zone: int
-    ) -> dict[str, str]:
-        """EPM daily graph"""
-
-        SoliscloudAPI._verify_date(SoliscloudAPI.DateFormat.DAY, time)
-        params: dict[str, Any] = {
-            'searchinfo': searchinfo,
-            'sn': epm_sn,
-            'time': time,
-            'timezone': time_zone}
-
-        return await self._get_records(EPM_DAY, key_id, secret, params)
-
-    async def epm_month(self, key_id: str, secret: bytes, /, *,
-        epm_sn: str,
-        month: str,
-    ) -> dict[str, str]:
-        """EPM monthly graph"""
-
-        SoliscloudAPI._verify_date(SoliscloudAPI.DateFormat.MONTH, month)
-        params: dict[str, Any] = {'sn': epm_sn, 'month': month}
-
-        return await self._get_records(EPM_MONTH, key_id, secret, params)
-
-    async def epm_year(self, key_id: str, secret: bytes, /, *,
-        epm_sn: str,
-        year: str
-    ) -> dict[str, str]:
-        """EPM yearly graph"""
-
-        SoliscloudAPI._verify_date(SoliscloudAPI.DateFormat.YEAR, year)
-        params: dict[str, Any] = {'sn': epm_sn, 'year': year}
-
-        return await self._get_records(EPM_YEAR, key_id, secret, params)
-
-    async def epm_all(self, key_id: str, secret: bytes, /, *,
-        epm_sn: str
-    ) -> dict[str, str]:
-        """EPM cumulative graph"""
-
-        params: dict[str, Any] = {'sn': epm_sn}
-
-        return await self._get_records(EPM_ALL, key_id, secret, params)
 
     async def _get_records(self, canonicalized_resource: str, key_id: str, secret: bytes, params: dict[str, Any]):
         """
@@ -677,8 +324,11 @@ class SoliscloudAPI():
         return
 
 class SolisData:
-    def __init__(self, domain: str = 'https://www.soliscloud.com:13333'):
+    def __init__(self, domain: str = None):
         load_dotenv()  
+        if domain is None:
+            domain = f"{SOLIS_CLOUD_API_URL}:{SOLIS_CLOUD_API_PORT}"
+        self.domain = domain
         self.api_key = os.environ.get('SOLIS_CLOUD_API_KEY')
         api_secret_str = os.environ.get('SOLIS_CLOUD_API_KEY_SECRET')
         if not self.api_key or not api_secret_str:
