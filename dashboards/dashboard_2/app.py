@@ -12,6 +12,14 @@ import base64
 import json
 from urllib.parse import urlencode
 from PIL import Image
+import asyncio
+
+from quartz_solar_forecast.pydantic_models import PVSite
+from quartz_solar_forecast.forecasts import forecast_v1_tilt_orientation
+from quartz_solar_forecast.forecast import predict_tryolabs
+from quartz_solar_forecast.data import get_nwp, process_pv_data
+from quartz_solar_forecast.inverters.enphase import process_enphase_data
+from quartz_solar_forecast.inverters.solis import SolisData, get_solis_data
 
 # Load environment variables
 load_dotenv()
@@ -22,12 +30,6 @@ logger = logging.getLogger(__name__)
 
 # Add the parent directory to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from quartz_solar_forecast.pydantic_models import PVSite
-from quartz_solar_forecast.forecasts import forecast_v1_tilt_orientation
-from quartz_solar_forecast.forecast import predict_tryolabs
-from quartz_solar_forecast.data import get_nwp, process_pv_data
-from quartz_solar_forecast.inverters.enphase import process_enphase_data
 
 # Get the directory of the current script
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -144,11 +146,14 @@ def make_pv_data(
     ts: pd.Timestamp,
     access_token: str = None,
     enphase_system_id: str = None,
+    solis_data: pd.DataFrame = None
 ) -> xr.Dataset:
     live_generation_kw = None
 
     if site.inverter_type == "enphase" and access_token and enphase_system_id:
         live_generation_kw = get_enphase_data(enphase_system_id, access_token)
+    elif site.inverter_type == "solis" and solis_data is not None:
+        live_generation_kw = solis_data
 
     da = process_pv_data(live_generation_kw, ts, site)
     return da
@@ -160,6 +165,7 @@ def predict_ocf(
     nwp_source: str = "icon",
     access_token: str = None,
     enphase_system_id: str = None,
+    solis_data: pd.DataFrame = None
 ):
     if ts is None:
         ts = pd.Timestamp.now().round("15min")
@@ -168,7 +174,7 @@ def predict_ocf(
 
     nwp_xr = get_nwp(site=site, ts=ts, nwp_source=nwp_source)
     pv_xr = make_pv_data(
-        site=site, ts=ts, access_token=access_token, enphase_system_id=enphase_system_id
+        site=site, ts=ts, access_token=access_token, enphase_system_id=enphase_system_id, solis_data=solis_data
     )
 
     pred_df = forecast_v1_tilt_orientation(nwp_source, nwp_xr, pv_xr, ts, model=model)
@@ -181,9 +187,10 @@ def run_forecast(
     nwp_source: str = "icon",
     access_token: str = None,
     enphase_system_id: str = None,
+    solis_data: pd.DataFrame = None
 ) -> pd.DataFrame:
     if model == "gb":
-        return predict_ocf(site, None, ts, nwp_source, access_token, enphase_system_id)
+        return predict_ocf(site, None, ts, nwp_source, access_token, enphase_system_id, solis_data)
     elif model == "xgb":
         return predict_tryolabs(site, ts)
     else:
@@ -192,7 +199,8 @@ def run_forecast(
 def fetch_data_and_run_forecast(
     site: PVSite,
     access_token: str = None,
-    enphase_system_id: str = None
+    enphase_system_id: str = None,
+    solis_data: pd.DataFrame = None
 ):
     with st.spinner("Running forecast..."):
         try:
@@ -208,6 +216,7 @@ def fetch_data_and_run_forecast(
                 ts=ts,
                 access_token=access_token,
                 enphase_system_id=enphase_system_id,
+                solis_data=solis_data
             )
 
             # Create a site without inverter for comparison
@@ -246,10 +255,11 @@ else:
     longitude = st.sidebar.number_input("Longitude", min_value=-180.0, max_value=180.0, value=-1.25, step=0.01)
     capacity_kwp = st.sidebar.number_input("Capacity (kWp)", min_value=0.1, value=1.25, step=0.01)
 
-inverter_type = st.sidebar.selectbox("Select Inverter", ["No Inverter", "Enphase"])
+inverter_type = st.sidebar.selectbox("Select Inverter", ["No Inverter", "Enphase", "Solis"])
 
 access_token = None
 enphase_system_id = None
+solis_data = None
 
 if inverter_type == "Enphase":
     if "access_token" not in st.session_state:
@@ -258,6 +268,8 @@ if inverter_type == "Enphase":
         access_token, enphase_system_id = st.session_state["access_token"], os.getenv(
             "ENPHASE_SYSTEM_ID"
         )
+elif inverter_type == "Solis":
+    solis_data = SolisData()
 
 if st.sidebar.button("Run Forecast"):
     if inverter_type == "Enphase" and (access_token is None or enphase_system_id is None):
@@ -270,12 +282,21 @@ if st.sidebar.button("Run Forecast"):
             latitude=latitude,
             longitude=longitude,
             capacity_kwp=capacity_kwp,
-            inverter_type="enphase" if inverter_type == "Enphase" else "none"  # Changed this line
+            inverter_type=inverter_type.lower()
         )
         
-        predictions_df, ts = fetch_data_and_run_forecast(
-            site, access_token, enphase_system_id
-        )
+        # Fetch data based on the selected inverter type
+        if inverter_type == "Enphase":
+            predictions_df, ts = fetch_data_and_run_forecast(
+                site, access_token, enphase_system_id
+            )
+        elif inverter_type == "Solis":
+            solis_df = asyncio.run(get_solis_data())
+            predictions_df, ts = fetch_data_and_run_forecast(
+                site, solis_data=solis_df
+            )
+        else:
+            predictions_df, ts = fetch_data_and_run_forecast(site)
 
         if predictions_df is not None:
             st.success("Forecast completed successfully!")
@@ -308,7 +329,7 @@ if st.sidebar.button("Run Forecast"):
                 y=["power_kw", "power_kw_no_live_pv"],
                 title="Forecasted Power Generation Comparison",
                 labels={
-                    "power_kw": "Forecast with selected inverter type",
+                    "power_kw": f"Forecast with {inverter_type}",
                     "power_kw_no_live_pv": "Forecast without recent PV data"
                 }
             )
