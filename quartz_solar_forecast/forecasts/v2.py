@@ -38,6 +38,23 @@ class TryolabsSolarPowerPredictor:
     DATE_COLUMN = "date"
 
     def _download_model(self, filename: str, repo_id: str, file_path: str) -> str:
+        """
+        Downloads a model file from a Hugging Face repository and saves it locally.
+    
+        Parameters:
+        -----------
+        filename : str
+            The name to give the downloaded file when saving it locally.
+        repo_id : str
+            The ID of the Hugging Face repository containing the model.
+        file_path : str
+            The path to the model file within the repository.
+    
+        Returns:
+        --------
+        str
+            The path to the locally saved model file.
+        """
         # Use the project directory instead of the user's home directory
         download_dir = "/home/runner/work/Open-Source-Quartz-Solar-Forecast/Open-Source-Quartz-Solar-Forecast"
         os.makedirs(download_dir, exist_ok=True)
@@ -68,6 +85,26 @@ class TryolabsSolarPowerPredictor:
         repo_id: str = "openclimatefix/open-source-quartz-solar-forecast",
         file_path: str = "models/v2/model_10_202405.ubj.zip"
     ) -> XGBRegressor:
+        """
+        Downloads, prepares, and loads the XGBoost model for solar power prediction.
+    
+        Parameters:
+        -----------
+        model_file : str, optional
+            The name of the model file (without .zip extension).
+            Default is set by constants.MODEL_FILE.
+        repo_id : str, optional
+            The ID of the Hugging Face repository containing the model.
+            Default is "openclimatefix/open-source-quartz-solar-forecast".
+        file_path : str, optional
+            The path to the model file within the repository.
+            Default is "models/v2/model_10_202405.ubj.zip".
+    
+        Returns:
+        --------
+        XGBRegressor
+            The loaded XGBoost model ready for making predictions.
+        """
         # Use the project directory
         download_dir = "/home/runner/work/Open-Source-Quartz-Solar-Forecast/Open-Source-Quartz-Solar-Forecast"
         zipfile_model = os.path.join(download_dir, model_file + ".zip")
@@ -86,7 +123,7 @@ class TryolabsSolarPowerPredictor:
         loaded_model.load_model(model_path)
         self.model = loaded_model
         return loaded_model
-
+        
     def get_data(
         self,
         latitude: float,
