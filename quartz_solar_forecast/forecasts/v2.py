@@ -38,20 +38,16 @@ class TryolabsSolarPowerPredictor:
     DATE_COLUMN = "date"
 
     def _download_model(self, filename: str, repo_id: str, file_path: str) -> str:
-        try:
-            # Use the project directory instead of the user's home directory
-            download_dir = "/home/runner/work/Open-Source-Quartz-Solar-Forecast/Open-Source-Quartz-Solar-Forecast"
-            os.makedirs(download_dir, exist_ok=True)
-            
-            downloaded_file = hf_hub_download(repo_id=repo_id, filename=file_path, cache_dir=download_dir)
-            
-            target_path = os.path.join(download_dir, filename)
-            shutil.copy2(downloaded_file, target_path)
-            
-            return target_path
-        except Exception as e:
-            logger.error(f"Error downloading model: {str(e)}")
-            raise
+        # Use the project directory instead of the user's home directory
+        download_dir = "/home/runner/work/Open-Source-Quartz-Solar-Forecast/Open-Source-Quartz-Solar-Forecast"
+        os.makedirs(download_dir, exist_ok=True)
+        
+        downloaded_file = hf_hub_download(repo_id=repo_id, filename=file_path, cache_dir=download_dir)
+        
+        target_path = os.path.join(download_dir, filename)
+        shutil.copy2(downloaded_file, target_path)
+        
+        return target_path
 
     def _decompress_zipfile(self, filename: str) -> None:
         """
@@ -72,28 +68,24 @@ class TryolabsSolarPowerPredictor:
         repo_id: str = "openclimatefix/open-source-quartz-solar-forecast",
         file_path: str = "models/v2/model_10_202405.ubj.zip"
     ) -> XGBRegressor:
-        try:
-            # Use the project directory
-            download_dir = "/home/runner/work/Open-Source-Quartz-Solar-Forecast/Open-Source-Quartz-Solar-Forecast"
-            zipfile_model = os.path.join(download_dir, model_file + ".zip")
+        # Use the project directory
+        download_dir = "/home/runner/work/Open-Source-Quartz-Solar-Forecast/Open-Source-Quartz-Solar-Forecast"
+        zipfile_model = os.path.join(download_dir, model_file + ".zip")
     
-            if not os.path.isfile(zipfile_model):
-                logger.info("Downloading model...")
-                zipfile_model = self._download_model(model_file + ".zip", repo_id, file_path)
-            
-            model_path = os.path.join(download_dir, model_file)
-            if not os.path.isfile(model_path):
-                logger.info("Preparing model...")
-                self._decompress_zipfile(zipfile_model)
-            
-            logger.info("Loading model...")
-            loaded_model = XGBRegressor()
-            loaded_model.load_model(model_path)
-            self.model = loaded_model
-            return loaded_model
-        except Exception as e:
-            logger.error(f"Error loading model: {str(e)}")
-            raise
+        if not os.path.isfile(zipfile_model):
+            logger.info("Downloading model...")
+            zipfile_model = self._download_model(model_file + ".zip", repo_id, file_path)
+        
+        model_path = os.path.join(download_dir, model_file)
+        if not os.path.isfile(model_path):
+            logger.info("Preparing model...")
+            self._decompress_zipfile(zipfile_model)
+        
+        logger.info("Loading model...")
+        loaded_model = XGBRegressor()
+        loaded_model.load_model(model_path)
+        self.model = loaded_model
+        return loaded_model
 
     def get_data(
         self,
