@@ -695,6 +695,27 @@ class SolisData:
             page_size=100
         )
         return inverter_list
+    
+    def process_solis_data(self, live_generation_kw: pd.DataFrame) -> pd.DataFrame:
+        """
+        Process the Solis data and convert it to a DataFrame with timestamp and power_kw columns.
+        
+        :param live_generation_kw: DataFrame with original Solis data
+        :return: DataFrame with processed data
+        """
+        # Create a copy of the DataFrame to avoid SettingWithCopyWarning
+        processed_df = live_generation_kw[['timestamp', 'power_kw']].copy()
+        
+        # Ensure the timestamp is in the correct format
+        processed_df.loc[:, 'timestamp'] = pd.to_datetime(processed_df['timestamp'])
+        
+        # Sort by timestamp
+        processed_df = processed_df.sort_values('timestamp')
+        
+        # Reset the index
+        processed_df = processed_df.reset_index(drop=True)
+        
+        return processed_df
 
     async def get_solis_data(self) -> pd.DataFrame:
         """
@@ -727,14 +748,14 @@ class SolisData:
                             inverter_sn=inverter_sn
                         )
                         
-                        # Check if inverter_day_data is a dictionary and has 'energyList' key
-                        if isinstance(inverter_day_data, dict) and 'energyList' in inverter_day_data:
-                            for data_point in inverter_day_data['energyList']:
-                                timestamp = datetime.fromtimestamp(data_point['time'], tz=timezone.utc)
+                        # Check if inverter_day_data is a list of dictionaries
+                        if isinstance(inverter_day_data, list) and all(isinstance(item, dict) for item in inverter_day_data):
+                            for data_point in inverter_day_data:
+                                timestamp = datetime.fromtimestamp(int(data_point['dataTimestamp']) / 1000, tz=timezone.utc)
                                 if start_time <= timestamp <= end_time:
                                     data_list.append({
                                         "timestamp": timestamp.strftime('%Y-%m-%d %H:%M:%S'),
-                                        "power_kw": data_point['power'] / 1000,  # Convert W to kW
+                                        "power_kw": float(data_point['pac']) / 1000,  # Convert W to kW
                                         "inverter_sn": inverter_sn
                                     })
                         else:
@@ -752,7 +773,7 @@ class SolisData:
             live_generation_kw = pd.DataFrame(data_list)
             
             if live_generation_kw.empty:
-                return pd.DataFrame(columns=["timestamp", "power_kw", "inverter_sn"])
+                return pd.DataFrame(columns=["timestamp", "power_kw"])
 
             # Convert to datetime
             live_generation_kw["timestamp"] = pd.to_datetime(live_generation_kw["timestamp"])
@@ -760,27 +781,12 @@ class SolisData:
             # Sort by timestamp
             live_generation_kw = live_generation_kw.sort_values("timestamp")
             
-            return live_generation_kw
+            # Process the data to match the desired format
+            processed_df = self.process_solis_data(live_generation_kw)
+            processed_df = processed_df.reset_index(drop=True)
+            
+            return processed_df
         
 async def get_solis_data():
     solis_data = SolisData()
     return await solis_data.get_solis_data()
-
-async def main():
-    try:
-        solis_data = SolisData()
-        df = await solis_data.get_solis_data()
-        
-        if df.empty:
-            print("No data was retrieved.")
-        else:
-            print(df)
-            print(f"Retrieved {len(df)} data points.")
-    except ValueError as e:
-        print(f"Error: {e}")
-        print("Please ensure that SOLIS_CLOUD_API_KEY and SOLIS_CLOUD_API_KEY_SECRET are set in your environment or .env file.")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-
-if __name__ == "__main__":
-    asyncio.run(main())

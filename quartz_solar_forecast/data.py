@@ -22,6 +22,8 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 from dotenv import load_dotenv
 
+load_dotenv()  
+
 def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     """
     Get GFS NWP data for a point time space and time
@@ -203,6 +205,8 @@ async def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     else:
         # If no inverter type is specified or not recognized, set live_generation_kw to None
         live_generation_kw = None
+
+    print(live_generation_kw)
 
     # Process the PV data
     da = process_pv_data(live_generation_kw, ts, site)
