@@ -33,7 +33,7 @@ except:
     )
 
 
-async def run_eval(testset_path: str = "dataset/testset.csv"):
+def run_eval(testset_path: str = "dataset/testset.csv"):
 
     # load testset from csv
     testset = pd.read_csv(testset_path)
@@ -48,7 +48,7 @@ async def run_eval(testset_path: str = "dataset/testset.csv"):
     nwp_df = get_nwp(pv_metadata)
 
     # Run forecast with PV and NWP inputs.
-    predictions_df = await run_forecast(pv_df=pv_metadata, nwp_df=nwp_df)
+    predictions_df = run_forecast(pv_df=pv_metadata, nwp_df=nwp_df)
 
     # Combine the forecast results with the ground truth (ts, id, horizon (in hours), pred, truth, diff)
     results_df = combine_forecast_ground_truth(predictions_df, ground_truth_df)

@@ -3,7 +3,7 @@ from quartz_solar_forecast.eval.forecast import run_forecast
 import pandas as pd
 
 
-async def test_run_forecast():
+def test_run_forecast():
     pv_df = pd.DataFrame(
         [
             {
@@ -68,4 +68,4 @@ async def test_run_forecast():
     nwp_df["timestamp"] = pd.to_datetime(nwp_df["timestamp"])
     nwp_df["time"] = pd.to_datetime(nwp_df["time"])
 
-    _ = await run_forecast(pv_df=pv_df, nwp_df=nwp_df, nwp_source="ICON")
+    _ = run_forecast(pv_df=pv_df, nwp_df=nwp_df, nwp_source="ICON")

@@ -16,7 +16,7 @@ from datetime import datetime
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
-async def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="ICON") -> pd.DataFrame:
+def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="ICON") -> pd.DataFrame:
     """
     Run the forecast from NWP data
 
@@ -70,7 +70,7 @@ async def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="IC
         # TODO move this to model
         print("Making pv and nwp data")
         nwp_xr = format_nwp_data(df=nwp_site_df, nwp_source=nwp_source, site=site)
-        pv_xr = await make_pv_data(site=site, ts=ts)
+        pv_xr = make_pv_data(site=site, ts=ts)
 
         # run model
         print('Running model')

@@ -21,8 +21,8 @@ async def main(save_outputs: bool = False):
     site_no_live = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
 
     # run model, with and without recent pv data
-    predictions_with_recent_pv_df = await run_forecast(site=site_live, ts=ts)
-    predictions_df = await run_forecast(site=site_no_live, ts=ts) 
+    predictions_with_recent_pv_df = run_forecast(site=site_live, ts=ts)
+    predictions_df = run_forecast(site=site_no_live, ts=ts) 
 
     predictions_with_recent_pv_df["power_kw_no_live_pv"] = predictions_df["power_kw"]
 

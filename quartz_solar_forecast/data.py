@@ -1,22 +1,19 @@
 """ Function to get NWP data and create fake PV dataset"""
-import json
 import ssl
 from datetime import datetime
 import os  
-
 import numpy as np
 import pandas as pd
-import requests
 import xarray as xr
-
 import openmeteo_requests
 import requests_cache
+
 from retry_requests import retry
 from typing import Optional
 
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.inverters.enphase import get_enphase_data
-from quartz_solar_forecast.inverters.solis import get_solis_data
+from quartz_solar_forecast.inverters.solis import get_solis_data_sync
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -180,7 +177,7 @@ def process_pv_data(live_generation_kw: Optional[pd.DataFrame], ts: pd.Timestamp
 
     return da
 
-async def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
+def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     """
     Make PV data by combining live data from Enphase or Solis and fake PV data.
     Later we could add PV history here.
@@ -199,7 +196,7 @@ async def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
         else:
             print("Error: Enphase inverter ID is not provided in the environment variables.")
     elif site.inverter_type == 'solis':
-        live_generation_kw = await get_solis_data()
+        live_generation_kw = get_solis_data_sync()
         if live_generation_kw is None:
             print("Error: Failed to retrieve Solis inverter data.")
     else:
