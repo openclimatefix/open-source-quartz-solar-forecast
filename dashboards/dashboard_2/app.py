@@ -278,10 +278,6 @@ if inverter_type == "Enphase":
         access_token, enphase_system_id = st.session_state["access_token"], os.getenv(
             "ENPHASE_SYSTEM_ID"
         )
-elif inverter_type == "Solis":
-    solis_data = SolisData()
-elif inverter_type == "GivEnergy":
-    givenergy_data = get_givenergy_data()
 
 if st.sidebar.button("Run Forecast"):
     if inverter_type == "Enphase" and (access_token is None or enphase_system_id is None):
