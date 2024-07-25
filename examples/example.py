@@ -2,7 +2,6 @@
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
 from datetime import datetime, timedelta
-import asyncio
 
 def main():
     # make input data
@@ -14,9 +13,5 @@ def main():
     print(predictions_df)
     print(f"Max: {predictions_df['power_kw'].max()}")
 
-
-def sync_main():
-    asyncio.run(main())
-
 if __name__ == "__main__":
-    sync_main
+    main()
