@@ -21,6 +21,6 @@ class PVSite(BaseModel):
     )
     inverter_type: str = Field(
         default=None,
-        description="The type of inverter used, either 'solaredge' or 'enphase'",
-        json_schema_extra=["solaredge", "enphase", None],
+        description="The type of inverter used",
+        json_schema_extra=["enphase", "solis", None],
     )
