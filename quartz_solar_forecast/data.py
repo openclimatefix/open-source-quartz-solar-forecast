@@ -204,8 +204,6 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
         # If no inverter type is specified or not recognized, set live_generation_kw to None
         live_generation_kw = None
 
-    print(live_generation_kw)
-
     # Process the PV data
     da = process_pv_data(live_generation_kw, ts, site)
 

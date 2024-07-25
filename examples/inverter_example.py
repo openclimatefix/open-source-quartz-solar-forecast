@@ -4,12 +4,11 @@ from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
 import os
 import typer
-import asyncio
 
 # Set plotly backend to be plotly, you might have to install plotly
 pd.options.plotting.backend = "plotly"
 
-async def main(save_outputs: bool = False):
+def main(save_outputs: bool = False):
     timestamp = datetime.now().timestamp()
     timestamp_str = datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
     ts = pd.to_datetime(timestamp_str)
@@ -53,8 +52,5 @@ async def main(save_outputs: bool = False):
     )
     fig.show(renderer="browser")
 
-def sync_main():
-    asyncio.run(main())
-
 if __name__ == "__main__":
-    typer.run(sync_main)
+    typer.run(main)
