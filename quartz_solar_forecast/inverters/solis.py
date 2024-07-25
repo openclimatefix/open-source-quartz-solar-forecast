@@ -1,6 +1,5 @@
 from __future__ import annotations
 import asyncio
-from typing import Optional
 import os
 import pandas as pd
 from datetime import datetime, timedelta, timezone
@@ -389,27 +388,6 @@ class SolisData:
             
             return processed_df
         
-def get_solis_data_sync() -> Optional[pd.DataFrame]:
-    """
-    Synchronous wrapper for the asynchronous get_solis_data function.
-    """
+async def get_solis_data():
     solis_data = SolisData()
-    
-    try:
-        # Try to get the current event loop
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        # If there's no current event loop, create a new one
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-
-    if loop.is_running():
-        # If the loop is already running, create a new one
-        new_loop = asyncio.new_event_loop()
-        result = new_loop.run_until_complete(solis_data.get_solis_data())
-        new_loop.close()
-    else:
-        # If the loop is not running, use it
-        result = loop.run_until_complete(solis_data.get_solis_data())
-
-    return result
+    return await solis_data.get_solis_data()

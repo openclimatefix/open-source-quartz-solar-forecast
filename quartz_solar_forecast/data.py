@@ -7,13 +7,14 @@ import pandas as pd
 import xarray as xr
 import openmeteo_requests
 import requests_cache
+import asyncio
 
 from retry_requests import retry
 from typing import Optional
 
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.inverters.enphase import get_enphase_data
-from quartz_solar_forecast.inverters.solis import get_solis_data_sync
+from quartz_solar_forecast.inverters.solis import get_solis_data
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -196,7 +197,7 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
         else:
             print("Error: Enphase inverter ID is not provided in the environment variables.")
     elif site.inverter_type == 'solis':
-        live_generation_kw = get_solis_data_sync()
+        live_generation_kw = asyncio.run(get_solis_data())
         if live_generation_kw is None:
             print("Error: Failed to retrieve Solis inverter data.")
     else:
