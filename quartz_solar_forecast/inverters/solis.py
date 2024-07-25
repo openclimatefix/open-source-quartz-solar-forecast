@@ -26,10 +26,7 @@ VERB = "POST"
 
 # Endpoints
 INVERTER_LIST = RESOURCE_PREFIX + 'inverterList'
-INVERTER_DETAIL = RESOURCE_PREFIX + 'inverterDetail'
 INVERTER_DAY = RESOURCE_PREFIX + 'inverterDay'
-INVERTER_MONTH = RESOURCE_PREFIX + 'inverterMonth'
-INVERTER_DETAIL_LIST = RESOURCE_PREFIX + 'inverterDetailList'
 class SoliscloudAPI():
     """Class with functions for reading data from the Soliscloud Portal."""
 
