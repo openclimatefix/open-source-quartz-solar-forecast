@@ -12,3 +12,4 @@ xgboost==2.0.3
 plotly
 typer
 streamlit
+async_timeout
