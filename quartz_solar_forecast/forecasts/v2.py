@@ -1,14 +1,18 @@
 import datetime
 import pandas as pd
 import zipfile
-import gdown
 import os.path
+import shutil
+import logging
 
+from huggingface_hub import hf_hub_download
 from quartz_solar_forecast.weather import WeatherService
 
 from xgboost.sklearn import XGBRegressor
 
 from . import constants
+
+logger = logging.getLogger(__name__)
 
 class TryolabsSolarPowerPredictor:
     """
@@ -33,18 +37,34 @@ class TryolabsSolarPowerPredictor:
     """
     DATE_COLUMN = "date"
 
-    def _download_model(self, filename: str, file_id: str) -> None:
+    def _download_model(self, filename: str, repo_id: str, file_path: str) -> str:
         """
-        Download model from google drive and save it to the root of the repo.
-
-        Parameters
-        ----------
+        Downloads a model file from a Hugging Face repository and saves it locally.
+    
+        Parameters:
+        -----------
         filename : str
-            The name of the model to be saved
-        file_id: 
-            Google id of the model file
+            The name to give the downloaded file when saving it locally.
+        repo_id : str
+            The ID of the Hugging Face repository containing the model.
+        file_path : str
+            The path to the model file within the repository.
+    
+        Returns:
+        --------
+        str
+            The path to the locally saved model file.
         """
-        gdown.download(f'https://drive.google.com/uc?id={file_id}', filename, quiet=False)
+        # Use the project directory instead of the user's home directory
+        download_dir = "/home/runner/work/Open-Source-Quartz-Solar-Forecast/Open-Source-Quartz-Solar-Forecast"
+        os.makedirs(download_dir, exist_ok=True)
+        
+        downloaded_file = hf_hub_download(repo_id=repo_id, filename=file_path, cache_dir=download_dir)
+        
+        target_path = os.path.join(download_dir, filename)
+        shutil.copy2(downloaded_file, target_path)
+        
+        return target_path
 
     def _decompress_zipfile(self, filename: str) -> None:
         """
@@ -62,30 +82,48 @@ class TryolabsSolarPowerPredictor:
     def load_model(
         self, 
         model_file: str = constants.MODEL_FILE,
-        file_id: str = constants.FILE_ID
+        repo_id: str = "openclimatefix/open-source-quartz-solar-forecast",
+        file_path: str = "models/v2/model_10_202405.ubj.zip"
     ) -> XGBRegressor:
         """
-        Download and decompress model from Google Drive
-        Parameters
-        ----------
-        model_file: str
-            The name of the model as string
-        file_id: str
-            Google id to download the file
+        Downloads, prepares, and loads the XGBoost model for solar power prediction.
+    
+        Parameters:
+        -----------
+        model_file : str, optional
+            The name of the model file (without .zip extension).
+            Default is set by constants.MODEL_FILE.
+        repo_id : str, optional
+            The ID of the Hugging Face repository containing the model.
+            Default is "openclimatefix/open-source-quartz-solar-forecast".
+        file_path : str, optional
+            The path to the model file within the repository.
+            Default is "models/v2/model_10_202405.ubj.zip".
+    
+        Returns:
+        --------
+        XGBRegressor
+            The loaded XGBoost model ready for making predictions.
         """
-        zipfile_model = model_file + ".zip"
-
+        # Use the project directory
+        download_dir = "/home/runner/work/Open-Source-Quartz-Solar-Forecast/Open-Source-Quartz-Solar-Forecast"
+        zipfile_model = os.path.join(download_dir, model_file + ".zip")
+    
         if not os.path.isfile(zipfile_model):
-            print("Downloading model ...")
-            self._download_model(zipfile_model, file_id)
-        if not os.path.isfile(model_file):
-            print("Preparing model ...")
+            logger.info("Downloading model...")
+            zipfile_model = self._download_model(model_file + ".zip", repo_id, file_path)
+        
+        model_path = os.path.join(download_dir, model_file)
+        if not os.path.isfile(model_path):
+            logger.info("Preparing model...")
             self._decompress_zipfile(zipfile_model)
-        print("Loading model ...")
+        
+        logger.info("Loading model...")
         loaded_model = XGBRegressor()
-        loaded_model.load_model(model_file)
-        self.model = loaded_model 
-
+        loaded_model.load_model(model_path)
+        self.model = loaded_model
+        return loaded_model
+        
     def get_data(
         self,
         latitude: float,
