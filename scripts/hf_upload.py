@@ -9,9 +9,11 @@ if __name__ == "__main__":
     hf_repo = os.getenv("HF_REPO")
 
     now = datetime.utcnow()
-    forecast = forecast_csv.forecast_for_site(latitude=51.75, longitude=-1.25, capacity_kwp=1.25, init_time=now)
+    latitude = 51.75
+    longitude = -1.25
+    forecast = forecast_csv.forecast_for_site(latitude=latitude, longitude=longitude, capacity_kwp=1.25, init_time=now)
 
-    path = now.strftime("data/%Y/%-m/%-d/%Y%m%d_%H.csv")
+    path = now.strftime(f"data/%Y/%-m/%-d/{latitude}_{longitude}_%Y%m%d_%H.csv")
     login(hf_token)
     fs = HfFileSystem()
     with fs.open(f"datasets/{hf_repo}/{path}", "w") as f:
