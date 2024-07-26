@@ -13,10 +13,11 @@ if __name__ == "__main__":
     now = datetime.utcnow()
     latitude = 51.75
     longitude = -1.25
+    capacity_kwp = 1.25
 
     for model in ["gb", "xgb"]:
-        forecast = forecast_csv.forecast_for_site(latitude, longitude, 1.25, model, now)
+        forecast = forecast_csv.forecast_for_site(latitude, longitude, capacity_kwp, model, now)
 
-        path = now.strftime(f"data/%Y/%-m/%-d/{model}_{latitude}_{longitude}_%Y%m%d_%H.csv")
+        path = now.strftime(f"data/%Y/%-m/%-d/{model}_{latitude}_{longitude}_{capacity_kwp}_%Y%m%d_%H.csv")
         with fs.open(f"datasets/{hf_repo}/{path}", "w") as f:
             forecast.to_csv(path_or_buf=f)
