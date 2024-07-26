@@ -31,10 +31,11 @@ def generate_all_forecasts(
 def forecast_for_site(latitude: float,
                       longitude: float,
                       capacity_kwp: float,
+                      model: str = "gb",
                       init_time: datetime = None) -> pd.DataFrame:
 
     site = PVSite(latitude=latitude, longitude=longitude, capacity_kwp=capacity_kwp)
-    predictions_df = run_forecast(site=site, ts=init_time)
+    predictions_df = run_forecast(site=site, model=model, ts=init_time)
     predictions_df.reset_index(inplace=True)
     predictions_df.rename(columns={'index': 'datetime'}, inplace=True)
     return predictions_df
