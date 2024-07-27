@@ -20,7 +20,7 @@ def generate_all_forecasts(
     init_time = start
     while init_time <= end:
         print(f"Running forecast for initialization time: {init_time}")
-        predictions_df = forecast_for_site(latitude, longitude, capacity_kwp, init_time)
+        predictions_df = forecast_for_site(latitude, longitude, capacity_kwp, init_time=init_time)
         predictions_df['forecast_init_time'] = init_time
         all_forecasts = pd.concat([all_forecasts, predictions_df])
         init_time += timedelta(hours=init_time_freq)
