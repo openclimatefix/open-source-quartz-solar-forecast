@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-def get_givenergy_latest_data():
+def get_givenergy_data():
     """
     Fetch the latest data from the GivEnergy API and return a DataFrame.
     
@@ -36,7 +36,7 @@ def get_givenergy_latest_data():
     data = response.json()['data']
     
     # Process the data
-    timestamp = datetime.strptime(data['time'], "%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.strptime(data['time'], "%Y-%m-%dT%H:%M:%SZ")
     power_kw = data['solar']['power'] / 1000  # Convert W to kW
     
     # Create DataFrame
