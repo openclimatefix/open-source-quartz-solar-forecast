@@ -12,7 +12,10 @@ from enum import Enum
 from http import HTTPStatus
 import json
 from typing import Any
-import async_timeout
+try:
+    import async_timeout
+except:
+    print('Could not import `async_timeout`')
 
 from dotenv import load_dotenv
 
