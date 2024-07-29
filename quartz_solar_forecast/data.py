@@ -15,6 +15,7 @@ from typing import Optional
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.inverters.enphase import get_enphase_data
 from quartz_solar_forecast.inverters.solis import get_solis_data
+from quartz_solar_forecast.inverters.givenergy import get_givenergy_data
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -200,6 +201,11 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
         live_generation_kw = asyncio.run(get_solis_data())
         if live_generation_kw is None:
             print("Error: Failed to retrieve Solis inverter data.")
+    elif site.inverter_type == 'givenergy':
+        try:
+            live_generation_kw = get_givenergy_data()
+        except Exception as e:
+            print(f"Error retrieving GivEnergy data: {str(e)}")
     else:
         # If no inverter type is specified or not recognized, set live_generation_kw to None
         live_generation_kw = None
