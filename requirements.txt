@@ -13,3 +13,5 @@ plotly
 typer
 streamlit
 async_timeout
+uvicorn
+fastapi
