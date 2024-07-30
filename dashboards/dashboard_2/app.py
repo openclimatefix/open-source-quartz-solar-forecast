@@ -19,7 +19,7 @@ from quartz_solar_forecast.forecasts import forecast_v1_tilt_orientation
 from quartz_solar_forecast.forecast import predict_tryolabs
 from quartz_solar_forecast.data import get_nwp, process_pv_data
 from quartz_solar_forecast.inverters.enphase import process_enphase_data
-from quartz_solar_forecast.inverters.solis import SolisData, get_solis_data
+from quartz_solar_forecast.inverters.solis import get_solis_data
 from quartz_solar_forecast.inverters.givenergy import get_givenergy_data
 
 # Load environment variables
