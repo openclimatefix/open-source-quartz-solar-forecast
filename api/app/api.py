@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.forecast import run_forecast
-from datetime import datetime
 
 app = FastAPI()
 

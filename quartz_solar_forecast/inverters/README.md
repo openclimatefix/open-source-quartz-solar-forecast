@@ -62,5 +62,5 @@ Open-Source-Quartz-Solar-Forecast/
 4. Install the requirements by entering `pip install -r requirements.txt` and `pip install -e .`
 5. Install `plotly` by entering `pip install plotly`
 6. Create a `.env` file in the root directory, i.e. `Open-Source-Quartz-Solar-Forecast`
-7. Add your Solar Inverter's user credentials along with environment variables in the `.env` file, refer to the `.env.example` file for Enphase & SolarEdge credential examples
+7. Add your Solar Inverter's user credentials along with environment variables in the `.env` file, refer to the `.env.example` file for Enphase & Solis credential examples
 8. Run the `inverter_example.py` file by entering `python examples/inverter_example.py`

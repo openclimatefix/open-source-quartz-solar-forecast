@@ -13,6 +13,5 @@ def main():
     print(predictions_df)
     print(f"Max: {predictions_df['power_kw'].max()}")
 
-
 if __name__ == "__main__":
     main()
