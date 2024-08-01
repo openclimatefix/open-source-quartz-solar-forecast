@@ -11,7 +11,7 @@ from datetime import datetime
 
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.forecast import predict_tryolabs
-from quartz_solar_forecast.data import get_nwp, process_pv_data
+from quartz_solar_forecast.data import get_nwp, make_pv_data, process_pv_data
 from quartz_solar_forecast.forecasts import forecast_v1_tilt_orientation
 from quartz_solar_forecast.inverters.enphase import (
     get_enphase_auth_url,
@@ -56,26 +56,6 @@ class ForecastRequest(BaseModel):
 class AuthUrlRequest(BaseModel):
     full_auth_url: str
 
-def make_pv_data(
-    site: PVSite,
-    ts: pd.Timestamp,
-    access_token: Optional[str] = None,
-    enphase_system_id: Optional[str] = None,
-    solis_data: Optional[pd.DataFrame] = None,
-    givenergy_data: Optional[pd.DataFrame] = None
-) -> xr.Dataset:
-    live_generation_kw = None
-
-    if site.inverter_type == "enphase" and enphase_system_id:
-        live_generation_kw = get_enphase_data(enphase_system_id, access_token)
-    elif site.inverter_type == "solis" and solis_data is not None:
-        live_generation_kw = solis_data
-    elif site.inverter_type == "givenergy" and givenergy_data is not None:
-        live_generation_kw = givenergy_data
-
-    da = process_pv_data(live_generation_kw, ts, site)
-    return da
-
 def predict_ocf(
     site: PVSite,
     model=None,
@@ -91,8 +71,12 @@ def predict_ocf(
 
     nwp_xr = get_nwp(site=site, ts=ts, nwp_source=nwp_source)
     pv_xr = make_pv_data(
-        site=site, ts=ts, access_token=access_token, enphase_system_id=enphase_system_id, 
-        solis_data=solis_data, givenergy_data=givenergy_data
+        site=site, 
+        ts=ts, 
+        access_token=access_token, 
+        enphase_system_id=enphase_system_id,
+        solis_data=solis_data,
+        givenergy_data=givenergy_data
     )
 
     pred_df = forecast_v1_tilt_orientation(nwp_source, nwp_xr, pv_xr, ts, model=model)

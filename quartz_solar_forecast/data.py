@@ -179,33 +179,48 @@ def process_pv_data(live_generation_kw: Optional[pd.DataFrame], ts: pd.Timestamp
 
     return da
 
-def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
+def make_pv_data(
+    site: PVSite,
+    ts: pd.Timestamp,
+    access_token: Optional[str] = None,
+    enphase_system_id: Optional[str] = None,
+    solis_data: Optional[pd.DataFrame] = None,
+    givenergy_data: Optional[pd.DataFrame] = None
+) -> xr.Dataset:
     """
-    Make PV data by combining live data from Enphase or Solis and fake PV data.
-    Later we could add PV history here.
+    Make PV data by combining live data from Enphase, Solis, or GivEnergy and fake PV data.
+    
     :param site: the PV site
     :param ts: the timestamp of the site
+    :param access_token: optional access token for API calls
+    :param enphase_system_id: optional Enphase system ID
+    :param solis_data: optional pre-fetched Solis data
+    :param givenergy_data: optional pre-fetched GivEnergy data
     :return: The combined PV dataset in xarray form
     """
-    # Initialize live_generation_kw to None
-    live_generation_kw = None  
+    live_generation_kw = None
 
-    # Check if the site has an inverter type specified
     if site.inverter_type == 'enphase':
-        system_id = os.getenv('ENPHASE_SYSTEM_ID')
+        system_id = enphase_system_id or os.getenv('ENPHASE_SYSTEM_ID')
         if system_id:
-            live_generation_kw = get_enphase_data(system_id)
+            live_generation_kw = get_enphase_data(system_id, access_token)
         else:
-            print("Error: Enphase inverter ID is not provided in the environment variables.")
+            print("Error: Enphase inverter ID is not provided.")
     elif site.inverter_type == 'solis':
-        live_generation_kw = asyncio.run(get_solis_data())
+        if solis_data is not None:
+            live_generation_kw = solis_data
+        else:
+            live_generation_kw = asyncio.run(get_solis_data())
         if live_generation_kw is None:
             print("Error: Failed to retrieve Solis inverter data.")
     elif site.inverter_type == 'givenergy':
-        try:
-            live_generation_kw = get_givenergy_data()
-        except Exception as e:
-            print(f"Error retrieving GivEnergy data: {str(e)}")
+        if givenergy_data is not None:
+            live_generation_kw = givenergy_data
+        else:
+            try:
+                live_generation_kw = get_givenergy_data()
+            except Exception as e:
+                print(f"Error retrieving GivEnergy data: {str(e)}")
     else:
         # If no inverter type is specified or not recognized, set live_generation_kw to None
         live_generation_kw = None
