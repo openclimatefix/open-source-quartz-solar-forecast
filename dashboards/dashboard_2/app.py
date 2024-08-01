@@ -121,6 +121,14 @@ if st.sidebar.button("Run Forecast"):
 
         predictions = pd.DataFrame(forecast_data['predictions'])
         
+        # Ensure 'index' column exists and is of datetime type
+        if 'index' not in predictions.columns:
+            predictions['index'] = pd.to_datetime(predictions.index)
+        else:
+            predictions['index'] = pd.to_datetime(predictions['index'])
+        
+        predictions.set_index('index', inplace=True)
+        
         with col1:
             current_power = predictions['power_kw'].iloc[-1]
             st.metric("Current Power", f"{current_power:.2f} kW")
@@ -134,16 +142,33 @@ if st.sidebar.button("Run Forecast"):
             st.metric("Peak Forecasted Power", f"{peak_power:.2f} kW")
 
         # Create a line chart of power generation
-        fig = px.line(
-            predictions.reset_index(),
-            x="index",
-            y=["power_kw", "power_kw_no_live_pv"],
-            title="Forecasted Power Generation",
-            labels={
-                "power_kw": f"Forecast with {inverter_type}" if inverter_type != "No Inverter" else "Forecast",
-                "power_kw_no_live_pv": "Forecast without recent PV data"
-            }
-        )
+        if inverter_type == "No Inverter":
+            fig = px.line(
+                predictions.reset_index(),
+                x="index",
+                y="power_kw",
+                title="Forecasted Power Generation",
+                labels={
+                    "power_kw": "Forecast without recent PV data",
+                    "index": "Time"
+                }
+            )
+        else:
+            # If an inverter is selected, we assume both 'power_kw' and 'power_kw_no_live_pv' exist
+            if 'power_kw_no_live_pv' not in predictions.columns:
+                st.error("Expected 'power_kw_no_live_pv' column is missing. Please check the API response.")
+            else:
+                fig = px.line(
+                    predictions.reset_index(),
+                    x="index",
+                    y=["power_kw", "power_kw_no_live_pv"],
+                    title="Forecasted Power Generation",
+                    labels={
+                        "power_kw": f"Forecast with {inverter_type}",
+                        "power_kw_no_live_pv": "Forecast without recent PV data",
+                        "index": "Time"
+                    }
+                )
 
         fig.update_layout(
             xaxis_title="Time",
