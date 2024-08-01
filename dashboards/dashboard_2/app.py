@@ -42,21 +42,6 @@ def make_api_request(endpoint, method="GET", data=None):
         st.error(f"API request error: {e}")
         return None
 
-def enphase_authorization(redirect_url):
-    try:
-        token_data = make_api_request("/enphase/access_token", method="POST", data={"full_auth_url": redirect_url})
-        if token_data and "access_token" in token_data:
-            access_token = token_data["access_token"]
-            st.session_state["access_token"] = access_token
-            st.success("Enphase authorization successful!")
-            return access_token
-        else:
-            st.error(f"Failed to retrieve access token. Please check the URL and try again.")
-            return None
-    except Exception as e:
-        st.error(f"Error getting access token: {str(e)}")
-        return None
-
 # Main app logic
 st.sidebar.header("PV Site Configuration")
 
@@ -76,7 +61,6 @@ else:
 
 inverter_type = st.sidebar.selectbox("Select Inverter", ["No Inverter", "Enphase", "Solis", "GivEnergy"])
 
-enphase_redirect_url = None
 if inverter_type == "Enphase":
     st.sidebar.write("Enphase Authorization")
     auth_url_data = make_api_request("/enphase/auth_url")
@@ -94,10 +78,10 @@ if st.sidebar.button("Run Forecast"):
 
     if inverter_type == "Enphase":
         if enphase_redirect_url:
-            access_token = enphase_authorization(enphase_redirect_url)
-            if access_token:
-                system_id_data = os.getenv('ENPHASE_SYSTEM_ID')
-                enphase_system_id = system_id_data if system_id_data else st.sidebar.text_input("Enter Enphase System ID:")
+            token_data = make_api_request("/enphase/access_token", method="POST", data={"full_auth_url": enphase_redirect_url})
+            if token_data and "access_token" in token_data:
+                access_token = token_data["access_token"]
+                enphase_system_id = os.getenv('ENPHASE_SYSTEM_ID')
         else:
             st.error("Please enter the Enphase authorization redirect URL before running the forecast.")
             st.stop()
@@ -124,50 +108,41 @@ if st.sidebar.button("Run Forecast"):
     }
 
     # Make the API request
-    predictions = make_api_request("/forecast/", method="POST", data=data)
+    forecast_data = make_api_request("/forecast/", method="POST", data=data)
 
-    if predictions:
-        # Convert predictions to DataFrame
-        predictions_df = pd.DataFrame.from_dict(predictions['predictions'])
-        
-        # Convert columns to numeric, replacing any non-numeric values with NaN
-        predictions_df['power_kw'] = pd.to_numeric(predictions_df['power_kw'], errors='coerce')
-        predictions_df['power_kw_no_live_pv'] = pd.to_numeric(predictions_df['power_kw_no_live_pv'], errors='coerce')
-
+    if forecast_data:
         st.success("Forecast completed successfully!")
 
         # Display current timestamp
-        st.subheader(f"Forecast generated at: {data['timestamp']}")
+        st.subheader(f"Forecast generated at: {forecast_data['timestamp']}")
 
         # Create three columns
         col1, col2, col3 = st.columns(3)
 
+        predictions = pd.DataFrame(forecast_data['predictions'])
+        
         with col1:
-            current_power = predictions_df['power_kw'].iloc[-1] if predictions_df['power_kw'].notna().any() else predictions_df['power_kw_no_live_pv'].iloc[-1]
-            st.metric("Current Power", f"{current_power:.2f} kW" if pd.notna(current_power) else "Data not available")
+            current_power = predictions['power_kw'].iloc[-1]
+            st.metric("Current Power", f"{current_power:.2f} kW")
 
         with col2:
-            total_energy = predictions_df['power_kw'].sum() * 0.25 if predictions_df['power_kw'].notna().any() else predictions_df['power_kw_no_live_pv'].sum() * 0.25
-            st.metric("Total Forecasted Energy", f"{total_energy:.2f} kWh" if pd.notna(total_energy) else "Data not available")
+            total_energy = predictions['power_kw'].sum() * 0.25  # Assuming 15-minute intervals
+            st.metric("Total Forecasted Energy", f"{total_energy:.2f} kWh")
 
         with col3:
-            peak_power = predictions_df['power_kw'].max() if predictions_df['power_kw'].notna().any() else predictions_df['power_kw_no_live_pv'].max()
-            st.metric("Peak Forecasted Power", f"{peak_power:.2f} kW" if pd.notna(peak_power) else "Data not available")
-
-        # Determine which columns to plot
-        y_columns = ["power_kw", "power_kw_no_live_pv"]
-        labels = {
-            "power_kw": f"Forecast with {inverter_type}" if inverter_type != "No Inverter" else "Forecast",
-            "power_kw_no_live_pv": "Forecast without recent PV data"
-        }
+            peak_power = predictions['power_kw'].max()
+            st.metric("Peak Forecasted Power", f"{peak_power:.2f} kW")
 
         # Create a line chart of power generation
         fig = px.line(
-            predictions_df.reset_index(),
+            predictions.reset_index(),
             x="index",
-            y=y_columns,
+            y=["power_kw", "power_kw_no_live_pv"],
             title="Forecasted Power Generation",
-            labels=labels
+            labels={
+                "power_kw": f"Forecast with {inverter_type}" if inverter_type != "No Inverter" else "Forecast",
+                "power_kw_no_live_pv": "Forecast without recent PV data"
+            }
         )
 
         fig.update_layout(
@@ -186,10 +161,7 @@ if st.sidebar.button("Run Forecast"):
 
         # Display raw data
         st.subheader("Raw Forecast Data")
-        predictions_df_display = predictions_df.reset_index().rename(columns={'index': 'Date'})
-        predictions_df_display = predictions_df_display.set_index('Date')
-        st.dataframe(predictions_df_display, use_container_width=True)
-
+        st.dataframe(predictions, use_container_width=True)
 
 # Some information about the app
 st.sidebar.info(

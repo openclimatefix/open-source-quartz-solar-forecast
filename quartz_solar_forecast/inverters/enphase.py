@@ -1,5 +1,6 @@
 import http.client
 import os
+from typing import Optional
 import pandas as pd
 import json
 import base64
@@ -32,22 +33,25 @@ def get_enphase_auth_url():
 
 def get_enphase_authorization_code(auth_url):
     """
-    Open the authorization URL in a browser and retrieve the authorization code from the redirect URI.
+    Retrieve the authorization code from the environment variable or user input.
 
     :param auth_url: Authentication URL to get the code
     :return: The one time code for access to a system
     """
-    # Open the authorization URL in a browser
-    print(f"Please visit the following URL and authorize the application: {auth_url}")
-    print(
-        "After authorization, you will be redirected to a URL with the authorization code."
-    )
-    print("Please copy and paste the full redirect URL here:")
-    redirect_url = input()
-    # Extract the authorization code from the redirect URL
-    code = redirect_url.split("?code=")[1]
-    return code
-
+    # Check if we're in an API context (environment variable is set)
+    code = os.getenv('ENPHASE_AUTH_CODE')
+    
+    if code:
+        return code
+    else:
+        # We're in a CLI context, so prompt for user input
+        print(f"Please visit the following URL and authorize the application: {auth_url}")
+        print("After authorization, you will be redirected to a URL with the authorization code.")
+        print("Please copy and paste the full redirect URL here:")
+        redirect_url = input()
+        # Extract the authorization code from the redirect URL
+        code = redirect_url.split("?code=")[1]
+        return code
 
 def get_enphase_access_token():
     """
@@ -127,14 +131,16 @@ def process_enphase_data(data_json: dict, start_at: int) -> pd.DataFrame:
 
     return live_generation_kw
 
-def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
-    """ 
+def get_enphase_data(enphase_system_id: str, access_token: Optional[str] = None) -> pd.DataFrame:
+    """
     Get live PV generation data from Enphase API v4
     :param enphase_system_id: System ID for Enphase API
+    :param access_token: Optional access token for API calls
     :return: Live PV generation in Watt-hours, assumes to be a floating-point number
     """
     api_key = os.getenv('ENPHASE_API_KEY')
-    access_token = get_enphase_access_token()
+    if not access_token:
+        access_token = get_enphase_access_token()
 
     # Set the start time to 1 week from now
     start_at = int((datetime.now() - timedelta(weeks=1)).timestamp())
