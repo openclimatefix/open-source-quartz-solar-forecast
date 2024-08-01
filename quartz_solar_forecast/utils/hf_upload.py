@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from huggingface_hub import login, HfFileSystem
-from utils import forecast_csv
+from quartz_solar_forecast.utils.forecast_csv import forecast_for_site
 
 
 def get_file_path(latitude: float,
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     capacity_kwp = 1.25
 
     for model in ["gb", "xgb"]:
-        forecast = forecast_csv.forecast_for_site(latitude, longitude, capacity_kwp, model, now)
+        forecast = forecast_for_site(latitude, longitude, capacity_kwp, model, now)
 
         path = get_file_path(latitude, longitude, capacity_kwp, model, now)
         with fs.open(f"datasets/{hf_repo}/{path}", "w") as f:
