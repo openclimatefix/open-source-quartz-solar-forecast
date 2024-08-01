@@ -24,7 +24,7 @@ jobs:
 
       - name: upload forecast to Hugging Face
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN_PUSH }}
           HF_REPO: ${{ secrets.HF_REPO }}
         run: |
           cd scripts
