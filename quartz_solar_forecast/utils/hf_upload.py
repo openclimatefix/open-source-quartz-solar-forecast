@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from huggingface_hub import login, HfFileSystem
-import forecast_csv
+from utils import forecast_csv
 
 
 def get_file_path(latitude: float,
