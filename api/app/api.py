@@ -1,12 +1,11 @@
 import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import Optional
 import pandas as pd
 import logging
 from dotenv import load_dotenv
 
+from api.app.models import ForecastRequest, AuthUrlRequest
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.inverters.enphase import (
@@ -40,16 +39,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-
-class ForecastRequest(BaseModel):
-    site: PVSite
-    timestamp: Optional[str] = None
-    nwp_source: Optional[str] = "icon"
-    access_token: Optional[str] = None
-    enphase_system_id: Optional[str] = None
-
-class AuthUrlRequest(BaseModel):
-    full_auth_url: str
 
 @app.post("/forecast/")
 async def forecast(request: ForecastRequest):
