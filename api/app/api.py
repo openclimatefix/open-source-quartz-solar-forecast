@@ -2,7 +2,6 @@ import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
-import logging
 from dotenv import load_dotenv
 
 from api.app.models import ForecastRequest, AuthUrlRequest
@@ -18,9 +17,6 @@ from quartz_solar_forecast.inverters.givenergy import get_givenergy_data
 
 # Load environment variables
 load_dotenv()
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
 
 app = FastAPI()
 
@@ -48,59 +44,49 @@ async def forecast(request: ForecastRequest):
     access_token = request.access_token
     enphase_system_id = request.enphase_system_id
 
-    try:
-        logging.info(f"Received forecast request: {request}")
+    timestamp = pd.Timestamp(ts).tz_localize(None)
+    formatted_timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
-        timestamp = pd.Timestamp(ts).tz_localize(None)
-        formatted_timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+    solis_data = None
+    givenergy_data = None
+    
+    if site.inverter_type:
+        if site.inverter_type == "solis":
+            solis_data = await get_solis_data()
+        elif site.inverter_type == "givenergy":
+            givenergy_data = get_givenergy_data()
 
-        logging.info(f"Processed forecast request: site={site} timestamp={formatted_timestamp} nwp_source={nwp_source} enphase_system_id={enphase_system_id}")
+        # Run forecast with inverter data
+        predictions_with_recent_pv_df = run_forecast(
+            site=site,
+            ts=timestamp,
+            nwp_source=nwp_source,
+            access_token=access_token,
+            enphase_system_id=enphase_system_id,
+            solis_data=solis_data,
+            givenergy_data=givenergy_data
+        )
 
-        solis_data = None
-        givenergy_data = None
-        
-        if site.inverter_type:
-            if site.inverter_type == "solis":
-                solis_data = await get_solis_data()
-            elif site.inverter_type == "givenergy":
-                givenergy_data = get_givenergy_data()
+        # Run forecast without inverter data
+        site_no_live = PVSite(latitude=site.latitude, longitude=site.longitude, capacity_kwp=site.capacity_kwp)
+        predictions_df = run_forecast(site=site_no_live, ts=timestamp, nwp_source=nwp_source)
 
-            # Run forecast with inverter data
-            predictions_with_recent_pv_df = run_forecast(
-                site=site,
-                ts=timestamp,
-                nwp_source=nwp_source,
-                access_token=access_token,
-                enphase_system_id=enphase_system_id,
-                solis_data=solis_data,
-                givenergy_data=givenergy_data
-            )
+        predictions_with_recent_pv_df["power_kw_no_live_pv"] = predictions_df["power_kw"]
+        final_predictions = predictions_with_recent_pv_df
+    else:
+        # Run forecast without inverter data
+        final_predictions = run_forecast(
+            site=site,
+            ts=timestamp,
+            nwp_source=nwp_source
+        )
 
-            # Run forecast without inverter data
-            site_no_live = PVSite(latitude=site.latitude, longitude=site.longitude, capacity_kwp=site.capacity_kwp)
-            predictions_df = run_forecast(site=site_no_live, ts=timestamp, nwp_source=nwp_source)
-
-            predictions_with_recent_pv_df["power_kw_no_live_pv"] = predictions_df["power_kw"]
-            final_predictions = predictions_with_recent_pv_df
-        else:
-            # Run forecast without inverter data
-            final_predictions = run_forecast(
-                site=site,
-                ts=timestamp,
-                nwp_source=nwp_source
-            )
-
-        logging.info(f"Generated predictions: {final_predictions}")
-
-        response = {
-            "timestamp": formatted_timestamp,
-            "predictions": final_predictions.to_dict()
-        }
-        
-        return response
-    except Exception as e:
-        logging.error(f"Error in forecast endpoint: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    response = {
+        "timestamp": formatted_timestamp,
+        "predictions": final_predictions.to_dict()
+    }
+    
+    return response
 
 @app.get("/enphase/auth_url")
 async def get_enphase_authorization_url():
@@ -130,5 +116,4 @@ async def get_enphase_token(request: AuthUrlRequest):
         
         return {"access_token": access_token}
     except Exception as e:
-        logging.error(f"Error in get_enphase_token: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
