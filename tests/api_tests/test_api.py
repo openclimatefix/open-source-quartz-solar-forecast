@@ -32,17 +32,18 @@ def body_short():
 
 def test_api(client, body):
     response = client.post("/forecast/", json=body)
-
-    print(response.json().keys())
+    response_body = response.json()
     assert response.status_code == 200
+    assert isinstance(response_body["power_kw"], dict)
     assert any("power_kw" in key for key in response.json().keys()), f"No key contains power_kw"
     assert len(response.json()["power_kw"]) == 192
 
 
 def test_api_short(client, body_short):
     response = client.post("/forecast/", json=body_short)
+    response_body = response.json()
 
-    print(response.json().keys())
     assert response.status_code == 200
-    assert any("power_kw" in key for key in response.json().keys()), f"No key contains power_kw"
+    assert isinstance(response_body["power_kw"], dict)
+    assert any("power_kw" in key for key in response_body.keys()), f"No key contains power_kw"
     assert len(response.json()["power_kw"]) == 192
