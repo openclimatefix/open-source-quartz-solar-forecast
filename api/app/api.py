@@ -1,10 +1,16 @@
 import os
+import sys
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 from dotenv import load_dotenv
 
-from api.app.models import ForecastRequest, AuthUrlRequest
+# Add the project root to the Python path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.dirname(current_dir))
+sys.path.append(project_root)
+
+from .models import ForecastRequest, AuthUrlRequest
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.inverters.enphase import (
