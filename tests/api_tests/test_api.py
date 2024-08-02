@@ -66,7 +66,6 @@ def test_api_wrong_body(client, body_wrong):
     response = client.post("/forecast/", json=body_wrong)
     response_body = response.json()
 
-    print(response_body)
     expected_response = {
         "detail": [
             {
