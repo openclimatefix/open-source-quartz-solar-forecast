@@ -1,7 +1,7 @@
 import os
 import requests
 import pandas as pd
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -12,101 +12,63 @@ SOLARMAN_API_URL = os.getenv('SOLARMAN_API_URL')
 SOLARMAN_TOKEN = os.getenv('SOLARMAN_TOKEN')
 SOLARMAN_ID = os.getenv('SOLARMAN_ID')
 
-def get_device_info():
+def get_solarman_data(start_date, end_date):
     """
-    Fetch the device information from the Solarman API.
+    Fetch data from the Solarman API from start_date to end_date.
     
-    :return: Dictionary containing deviceId and deviceSn
+    :param start_date: Start date (datetime object)
+    :param end_date: End date (datetime object)
+    :return: DataFrame with timestamp and power_kw columns
     """
-    url = f"{SOLARMAN_API_URL}/device/v1.0/list"
+    all_data = []
     
-    headers = {
-        'Authorization': f'Bearer {SOLARMAN_TOKEN}',
-        'Content-Type': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
-    }
+    current_date = start_date
     
-    payload = {
-        "page": 1,
-        "size": 10
-    }
+    while current_date <= end_date:
+        year = current_date.year
+        month = current_date.month
+        day = current_date.day
+        
+        url = f"{SOLARMAN_API_URL}/{SOLARMAN_ID}/record"
+        
+        headers = {
+            'Authorization': f'Bearer {SOLARMAN_TOKEN}',
+            'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
+        }
+        
+        params = {
+            'year': year,
+            'month': month,
+            'day': day
+        }
+        
+        response = requests.get(url, headers=headers, params=params)
+        
+        if response.status_code != 200:
+            print(f"API request failed for {current_date} with status code {response.status_code}")
+        else:
+            data = response.json()
+            records = data.get('records', [])
+            
+            if records:
+                df = pd.DataFrame(records)
+                df['timestamp'] = pd.to_datetime(df['dateTime'], unit='s')
+                all_data.append(df)
+        
+        current_date += timedelta(days=1)
     
-    response = requests.post(url, headers=headers, json=payload)
+    if not all_data:
+        raise ValueError("No data found for the specified date range")
     
-    if response.status_code != 200:
-        raise Exception(f"Device list API request failed with status code {response.status_code}")
+    # Concatenate all dataframes
+    full_data = pd.concat(all_data, ignore_index=True)
     
-    data = response.json()
-    print("DATA: ", data)
-    device_list = data.get('deviceList', [])
+    # Select and rename relevant columns, and convert power to kW
+    full_data = full_data[['timestamp', 'generationPower']]
+    full_data = full_data.rename(columns={'generationPower': 'power_kw'})
+    full_data['power_kw'] = full_data['power_kw'] / 1000.0  # Convert watts to kilowatts
     
-    if not device_list:
-        raise ValueError("No devices found")
+    # Sort by timestamp
+    full_data = full_data.sort_values('timestamp')
     
-    device = next((dev for dev in device_list if dev['deviceSn'] == SOLARMAN_ID), None)
-    
-    if not device:
-        raise ValueError(f"Device with ID {SOLARMAN_ID} not found")
-    
-    return {
-        'deviceId': device['deviceId'],
-        'deviceSn': device['deviceSn']
-    }
-
-def get_solarman_data():
-    """
-    Fetch data from the Solarman API for the past week and return a DataFrame.
-    
-    :return: DataFrame with timestamp and energy_kwh columns
-    """
-    device_info = get_device_info()
-    
-    url = f"{SOLARMAN_API_URL}/historical"
-    
-    headers = {
-        'Authorization': f'Bearer {SOLARMAN_TOKEN}',
-        'Content-Type': 'application/json'
-    }
-    
-    # Get data for the last week
-    end_time = datetime.now(timezone.utc)
-    start_time = end_time - timedelta(days=7)
-    
-    payload = {
-        "timeType": 2,  # Daily statistics
-        "startTime": start_time.strftime("%Y-%m-%d"),
-        "endTime": end_time.strftime("%Y-%m-%d"),
-        "deviceSn": device_info['deviceSn'],
-        "deviceId": device_info['deviceId']
-    }
-    
-    response = requests.post(url, headers=headers, json=payload)
-    
-    if response.status_code != 200:
-        raise Exception(f"Historical data API request failed with status code {response.status_code}")
-    
-    data = response.json()
-    param_data_list = data.get('paramDataList', [])
-    
-    if not param_data_list:
-        raise ValueError("No data found for the specified time range")
-    
-    # Process the data
-    rows = []
-    for entry in param_data_list:
-        timestamp = datetime.strptime(entry['collectTime'], "%Y-%m-%d").replace(tzinfo=timezone.utc)
-        generation_data = next((item for item in entry['dataList'] if item['key'] == 'generation'), None)
-        if generation_data:
-            energy_kwh = float(generation_data['value'])
-            rows.append({'timestamp': timestamp, 'energy_kwh': energy_kwh})
-    
-    # Create DataFrame
-    df = pd.DataFrame(rows)
-    df = df.sort_values('timestamp')
-    
-    print(df)
-    return df
-
-
-if __name__ == "__main__":
-    get_solarman_data()
+    return full_data

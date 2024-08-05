@@ -1,6 +1,6 @@
 """ Function to get NWP data and create fake PV dataset"""
 import ssl
-from datetime import datetime
+from datetime import datetime, timedelta
 import os  
 import numpy as np
 import pandas as pd
@@ -16,6 +16,7 @@ from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.inverters.enphase import get_enphase_data
 from quartz_solar_forecast.inverters.solis import get_solis_data
 from quartz_solar_forecast.inverters.givenergy import get_givenergy_data
+from quartz_solar_forecast.inverters.solarman import get_solarman_data
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -153,13 +154,13 @@ def process_pv_data(live_generation_kw: Optional[pd.DataFrame], ts: pd.Timestamp
     :return: xarray Dataset containing processed PV data
     """
     if live_generation_kw is not None and not live_generation_kw.empty:
-        # get the most recent data
+        # Get the most recent data
         recent_pv_data = live_generation_kw[live_generation_kw['timestamp'] <= ts]
-        power_kw = np.array([np.array(recent_pv_data["power_kw"].values, dtype=np.float64)])
+        power_kw = np.array([recent_pv_data["power_kw"].values], dtype=np.float64)
         timestamp = recent_pv_data['timestamp'].values
     else:
-        # make fake pv data, this is where we could add history of a pv system
-        power_kw = [[np.nan]]
+        # Make fake PV data; this is where we could add the history of a PV system
+        power_kw = np.array([[np.nan]])
         timestamp = [ts]
 
     da = xr.DataArray(
@@ -181,8 +182,8 @@ def process_pv_data(live_generation_kw: Optional[pd.DataFrame], ts: pd.Timestamp
 
 def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     """
-    Make PV data by combining live data from Enphase or Solis and fake PV data.
-    Later we could add PV history here.
+    Make PV data by combining live data from various inverters.
+    
     :param site: the PV site
     :param ts: the timestamp of the site
     :return: The combined PV dataset in xarray form
@@ -206,9 +207,26 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
             live_generation_kw = get_givenergy_data()
         except Exception as e:
             print(f"Error retrieving GivEnergy data: {str(e)}")
+    elif site.inverter_type == 'solarman':
+        try:
+            end_date = datetime.now()
+            start_date = end_date - timedelta(weeks=1)
+            solarman_data = get_solarman_data(start_date, end_date)
+            print("DATA: ", solarman_data)
+            # Filter data for the specified timestamp or find the nearest past timestamp
+            filtered_data = solarman_data[solarman_data['timestamp'] <= ts].sort_values('timestamp', ascending=False)
+            
+            if not filtered_data.empty:
+                live_generation_kw = filtered_data.head(1)  # Get the most recent available data point as DataFrame
+            else:
+                print("No Solarman data found near the specified timestamp.")
+                live_generation_kw = pd.DataFrame(columns=['timestamp', 'power_kw'])  # Create an empty DataFrame
+        except Exception as e:
+            print(f"Error retrieving Solarman data: {str(e)}")
+            live_generation_kw = pd.DataFrame(columns=['timestamp', 'power_kw'])  # Create an empty DataFrame
     else:
-        # If no inverter type is specified or not recognized, set live_generation_kw to None
-        live_generation_kw = None
+        # If no inverter type is specified or not recognized, create an empty DataFrame
+        live_generation_kw = pd.DataFrame(columns=['timestamp', 'power_kw'])
 
     # Process the PV data
     da = process_pv_data(live_generation_kw, ts, site)
