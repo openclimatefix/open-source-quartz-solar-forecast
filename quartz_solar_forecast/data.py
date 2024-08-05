@@ -188,10 +188,8 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     :param ts: the timestamp of the site
     :return: The combined PV dataset in xarray form
     """
-    # Initialize live_generation_kw to None
-    live_generation_kw = None  
+    live_generation_kw = None
 
-    # Check if the site has an inverter type specified
     if site.inverter_type == 'enphase':
         system_id = os.getenv('ENPHASE_SYSTEM_ID')
         if system_id:
@@ -212,20 +210,20 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
             end_date = datetime.now()
             start_date = end_date - timedelta(weeks=1)
             solarman_data = get_solarman_data(start_date, end_date)
-            print("DATA: ", solarman_data)
-            # Filter data for the specified timestamp or find the nearest past timestamp
-            filtered_data = solarman_data[solarman_data['timestamp'] <= ts].sort_values('timestamp', ascending=False)
+
+            # Filter out rows with null power_kw values
+            valid_data = solarman_data.dropna(subset=['power_kw'])
             
-            if not filtered_data.empty:
-                live_generation_kw = filtered_data.head(1)  # Get the most recent available data point as DataFrame
+            if not valid_data.empty:
+                # Use all valid data points
+                live_generation_kw = valid_data
             else:
-                print("No Solarman data found near the specified timestamp.")
-                live_generation_kw = pd.DataFrame(columns=['timestamp', 'power_kw'])  # Create an empty DataFrame
+                print("No valid Solarman data found.")
+                live_generation_kw = pd.DataFrame(columns=['timestamp', 'power_kw'])
         except Exception as e:
             print(f"Error retrieving Solarman data: {str(e)}")
-            live_generation_kw = pd.DataFrame(columns=['timestamp', 'power_kw'])  # Create an empty DataFrame
+            live_generation_kw = pd.DataFrame(columns=['timestamp', 'power_kw'])
     else:
-        # If no inverter type is specified or not recognized, create an empty DataFrame
         live_generation_kw = pd.DataFrame(columns=['timestamp', 'power_kw'])
 
     # Process the PV data
