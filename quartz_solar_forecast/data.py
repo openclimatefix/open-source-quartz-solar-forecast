@@ -144,7 +144,58 @@ def format_nwp_data(df: pd.DataFrame, nwp_source:str, site: PVSite):
     )
     return data_xr
 
-def process_pv_data(live_generation_kw: Optional[pd.DataFrame], ts: pd.Timestamp, site: PVSite) -> xr.Dataset:
+def fetch_enphase_data() -> Optional[pd.DataFrame]:
+    system_id = os.getenv('ENPHASE_SYSTEM_ID')
+    if not system_id:
+        print("Error: Enphase inverter ID is not provided in the environment variables.")
+        return None
+    return get_enphase_data(system_id)
+
+def fetch_solis_data() -> Optional[pd.DataFrame]:
+    try:
+        return asyncio.run(get_solis_data())
+    except Exception as e:
+        print(f"Error retrieving Solis data: {str(e)}")
+        return None
+
+def fetch_givenergy_data() -> Optional[pd.DataFrame]:
+    try:
+        return get_givenergy_data()
+    except Exception as e:
+        print(f"Error retrieving GivEnergy data: {str(e)}")
+        return None
+
+def fetch_solarman_data() -> pd.DataFrame:
+    try:
+        end_date = datetime.now()
+        start_date = end_date - timedelta(weeks=1)
+        solarman_data = get_solarman_data(start_date, end_date)
+        
+        # Filter out rows with null power_kw values
+        valid_data = solarman_data.dropna(subset=['power_kw'])
+        
+        if valid_data.empty:
+            print("No valid Solarman data found.")
+            return pd.DataFrame(columns=['timestamp', 'power_kw'])
+        
+        return valid_data
+    except Exception as e:
+        print(f"Error retrieving Solarman data: {str(e)}")
+        return pd.DataFrame(columns=['timestamp', 'power_kw'])
+
+def fetch_live_generation_data(inverter_type: str) -> Optional[pd.DataFrame]:
+    if inverter_type == 'enphase':
+        return fetch_enphase_data()
+    elif inverter_type == 'solis':
+        return fetch_solis_data()
+    elif inverter_type == 'givenergy':
+        return fetch_givenergy_data()
+    elif inverter_type == 'solarman':
+        return fetch_solarman_data()
+    else:
+        return pd.DataFrame(columns=['timestamp', 'power_kw'])
+
+def process_pv_data(live_generation_kw: Optional[pd.DataFrame], ts: pd.Timestamp, site: 'PVSite') -> xr.Dataset:
     """
     Process PV data and create an xarray Dataset.
     
@@ -180,7 +231,7 @@ def process_pv_data(live_generation_kw: Optional[pd.DataFrame], ts: pd.Timestamp
 
     return da
 
-def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
+def make_pv_data(site: 'PVSite', ts: pd.Timestamp) -> xr.Dataset:
     """
     Make PV data by combining live data from various inverters.
     
@@ -188,44 +239,7 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     :param ts: the timestamp of the site
     :return: The combined PV dataset in xarray form
     """
-    live_generation_kw = None
-
-    if site.inverter_type == 'enphase':
-        system_id = os.getenv('ENPHASE_SYSTEM_ID')
-        if system_id:
-            live_generation_kw = get_enphase_data(system_id)
-        else:
-            print("Error: Enphase inverter ID is not provided in the environment variables.")
-    elif site.inverter_type == 'solis':
-        live_generation_kw = asyncio.run(get_solis_data())
-        if live_generation_kw is None:
-            print("Error: Failed to retrieve Solis inverter data.")
-    elif site.inverter_type == 'givenergy':
-        try:
-            live_generation_kw = get_givenergy_data()
-        except Exception as e:
-            print(f"Error retrieving GivEnergy data: {str(e)}")
-    elif site.inverter_type == 'solarman':
-        try:
-            end_date = datetime.now()
-            start_date = end_date - timedelta(weeks=1)
-            solarman_data = get_solarman_data(start_date, end_date)
-
-            # Filter out rows with null power_kw values
-            valid_data = solarman_data.dropna(subset=['power_kw'])
-            
-            if not valid_data.empty:
-                # Use all valid data points
-                live_generation_kw = valid_data
-            else:
-                print("No valid Solarman data found.")
-                live_generation_kw = pd.DataFrame(columns=['timestamp', 'power_kw'])
-        except Exception as e:
-            print(f"Error retrieving Solarman data: {str(e)}")
-            live_generation_kw = pd.DataFrame(columns=['timestamp', 'power_kw'])
-    else:
-        live_generation_kw = pd.DataFrame(columns=['timestamp', 'power_kw'])
-
+    live_generation_kw = fetch_live_generation_data(site.inverter_type)
     # Process the PV data
     da = process_pv_data(live_generation_kw, ts, site)
 
