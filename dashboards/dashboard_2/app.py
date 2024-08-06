@@ -68,20 +68,17 @@ else:
 inverter_type = st.sidebar.selectbox("Select Inverter", ["No Inverter", "Enphase", "Solis", "GivEnergy"])
 
 if inverter_type == "Enphase":
-    if state.enphase_access_token is None:
-        st.sidebar.write("Enphase Authorization")
-        auth_url_data = make_api_request("/enphase/auth_url")
-        if auth_url_data:
-            auth_url = auth_url_data["auth_url"]
-            st.sidebar.write("Please visit the following URL to authorize the application:")
-            st.sidebar.markdown(f"[Enphase Authorization URL]({auth_url})")
-            st.sidebar.write("After authorization, you will be redirected to a URL. Please copy the entire URL and paste it below:")
-        
-        enphase_redirect_url = st.sidebar.text_input("Enter the redirect URL:", key="enphase_redirect_url")
-    else:
-        st.sidebar.success("Enphase is authorized.")
+    st.write("Enphase Authorization")
+    auth_url_data = make_api_request("/enphase/auth_url")
+    if auth_url_data:
+        auth_url = auth_url_data["auth_url"]
+        st.write("Please visit the following URL to authorize the application:")
+        st.markdown(f"[Enphase Authorization URL]({auth_url})")
+        st.write("After authorization, you will be redirected to a URL. Please copy the entire URL and paste it below:")
+    
+    enphase_redirect_url = st.text_input("Enter the redirect URL:", key="enphase_redirect_url")
 
-if st.sidebar.button("Authorize and Run Forecast"):
+if st.sidebar.button("Run Forecast"):
     if inverter_type == "Enphase":
         if enphase_redirect_url:
             # Get access token
@@ -91,7 +88,7 @@ if st.sidebar.button("Authorize and Run Forecast"):
                 state.enphase_system_id = os.getenv('ENPHASE_SYSTEM_ID')
                 st.sidebar.success("Enphase authorized successfully!")
             else:
-                st.error("Failed to obtain Enphase access token.")
+                st.error("Failed to obtain Enphase access token. Please try authorizing again.")
                 st.stop()
         else:
             st.error("Please enter the Enphase authorization redirect URL.")
