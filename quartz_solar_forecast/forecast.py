@@ -116,4 +116,3 @@ def run_forecast(
     
     else:  
         raise ValueError(f"Unsupported model: {model}. Choose between 'xgb' and 'gb'")
-        
