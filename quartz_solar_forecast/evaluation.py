@@ -65,7 +65,11 @@ def run_eval(testset_path: str = "dataset/testset.csv"):
     results_df.set_index("timestamp", inplace=True)
 
     # sort by timestamp
-    results_df.sort_index(inplace=True)
+    results_df.sort_index(inplace=True, ascending=False)
+
+    # select last 10 values
+    df_last10 = results_df[:10]
+
     fig = make_subplots(
         rows=2, cols=1, subplot_titles=("Predictions", "Actual"), vertical_spacing=0.05
     )
@@ -73,8 +77,8 @@ def run_eval(testset_path: str = "dataset/testset.csv"):
     # Add the first plot to the first column
     fig.add_trace(
         go.Scatter(
-            x=results_df.index,
-            y=results_df["forecast_power"],
+            x=df_last10.index,
+            y=df_last10["forecast_power"],
             mode="lines",
             name="Forecasted Power",
         ),
@@ -85,8 +89,8 @@ def run_eval(testset_path: str = "dataset/testset.csv"):
     # Add the second plot to the second column
     fig.add_trace(
         go.Scatter(
-            x=results_df.index,
-            y=results_df["generation_power"],
+            x=df_last10.index,
+            y=df_last10["generation_power"],
             mode="lines",
             name="Generated Power",
         ),
