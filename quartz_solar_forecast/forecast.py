@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from typing import Optional
 
 import pandas as pd
 
@@ -9,14 +8,7 @@ from quartz_solar_forecast.pydantic_models import PVSite
 
 
 def predict_ocf(
-    site: PVSite,
-    model=None,
-    ts: Optional[datetime | str] = None,
-    nwp_source: str = "icon",
-    access_token: Optional[str] = None,
-    enphase_system_id: Optional[str] = None,
-    solis_data: Optional[pd.DataFrame] = None,
-    givenergy_data: Optional[pd.DataFrame] = None
+    site: PVSite, model=None, ts: datetime | str = None, nwp_source: str = "icon"
 ):
     """
     Run the forecast with the gb model, which can take tilt and orientation as inputs
@@ -24,11 +16,7 @@ def predict_ocf(
     :param site: the PV site
     :param model: the model to use for prediction
     :param ts: the timestamp of the site. If None, defaults to the current timestamp rounded down to 15 minutes.
-    :param nwp_source: the nwp data source. Either "gfs" or "icon". Defaults to "icon"
-    :param access_token: optional access token for API calls
-    :param enphase_system_id: optional Enphase system ID
-    :param solis_data: optional pre-fetched Solis data
-    :param givenergy_data: optional pre-fetched GivEnergy data
+    :param nwp_source: the nwp data source. Either "gfs" or "icon". Defaults to "icon" 
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
     if ts is None:
@@ -39,19 +27,13 @@ def predict_ocf(
 
     # make pv and nwp data from nwp_source
     nwp_xr = get_nwp(site=site, ts=ts, nwp_source=nwp_source)
-    pv_xr = make_pv_data(
-        site=site,
-        ts=ts,
-        access_token=access_token,
-        enphase_system_id=enphase_system_id,
-        solis_data=solis_data,
-        givenergy_data=givenergy_data
-    )
+    pv_xr = make_pv_data(site=site, ts=ts)
 
     # load and run models
     pred_df = forecast_v1_tilt_orientation(nwp_source, nwp_xr, pv_xr, ts, model=model)
 
     return pred_df
+
 
 def predict_tryolabs(
     site: PVSite, ts: datetime | str = None):
@@ -111,40 +93,23 @@ def predict_tryolabs(
 def run_forecast(
     site: PVSite,
     model: str = "gb",
-    ts: Optional[datetime | str] = None,
+    ts: datetime | str = None,
     nwp_source: str = "icon",
-    access_token: Optional[str] = None,
-    enphase_system_id: Optional[str] = None,
-    solis_data: Optional[pd.DataFrame] = None,
-    givenergy_data: Optional[pd.DataFrame] = None
 ) -> pd.DataFrame:
     """
     Predict solar power output for a given site using a specified model.
 
     :param site: the PV site
-    :param model: the model to use for prediction, choose between "gb" and "xgb",
-                    by default "gb" is used
+    :param model: the model to use for prediction, choose between "ocf" and "tryolabs",
+                    by default "ocf" is used
     :param ts: the timestamp of the site. If None, defaults to the current timestamp rounded down to 15 minutes.
     :param nwp_source: the nwp data source. Either "gfs" or "icon". Defaults to "icon" 
                        (only relevant if model=="gb")
-    :param access_token: optional access token for API calls
-    :param enphase_system_id: optional Enphase system ID
-    :param solis_data: optional pre-fetched Solis data
-    :param givenergy_data: optional pre-fetched GivEnergy data
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
 
     if model == "gb":
-        return predict_ocf(
-            site=site,
-            model=None,
-            ts=ts,
-            nwp_source=nwp_source,
-            access_token=access_token,
-            enphase_system_id=enphase_system_id,
-            solis_data=solis_data,
-            givenergy_data=givenergy_data
-        )
+        return predict_ocf(site, None, ts, nwp_source)
               
     elif model == "xgb":
         return predict_tryolabs(site, ts)

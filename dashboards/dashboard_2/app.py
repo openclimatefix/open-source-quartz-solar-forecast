@@ -78,29 +78,23 @@ if inverter_type == "Enphase":
             st.sidebar.write("After authorization, you will be redirected to a URL. Please copy the entire URL and paste it below:")
         
         enphase_redirect_url = st.sidebar.text_input("Enter the redirect URL:", key="enphase_redirect_url")
-        
-        if st.sidebar.button("Authorize Enphase"):
-            if enphase_redirect_url:
-                token_data = make_api_request("/enphase/access_token", method="POST", data={"full_auth_url": enphase_redirect_url})
-                if token_data and "access_token" in token_data:
-                    state.enphase_access_token = token_data["access_token"]
-                    state.enphase_system_id = os.getenv('ENPHASE_SYSTEM_ID')
-                    st.sidebar.success("Enphase authorized successfully!")
-            else:
-                st.sidebar.error("Please enter the Enphase authorization redirect URL.")
     else:
         st.sidebar.success("Enphase is authorized.")
 
-if st.sidebar.button("Run Forecast"):
-    access_token = None
-    enphase_system_id = None
-
+if st.sidebar.button("Authorize and Run Forecast"):
     if inverter_type == "Enphase":
-        if state.enphase_access_token and state.enphase_system_id:
-            access_token = state.enphase_access_token
-            enphase_system_id = state.enphase_system_id
+        if enphase_redirect_url:
+            # Get access token
+            token_data = make_api_request("/enphase/access_token", method="POST", data={"full_auth_url": enphase_redirect_url})
+            if token_data and "access_token" in token_data:
+                state.enphase_access_token = token_data["access_token"]
+                state.enphase_system_id = os.getenv('ENPHASE_SYSTEM_ID')
+                st.sidebar.success("Enphase authorized successfully!")
+            else:
+                st.error("Failed to obtain Enphase access token.")
+                st.stop()
         else:
-            st.error("Enphase authorization is required. Please complete the authorization process.")
+            st.error("Please enter the Enphase authorization redirect URL.")
             st.stop()
 
     # Create PVSite object with user-input or default values
@@ -116,8 +110,8 @@ if st.sidebar.button("Run Forecast"):
         "site": site.dict(),
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "nwp_source": "icon",
-        "access_token": access_token,
-        "enphase_system_id": enphase_system_id
+        "access_token": state.enphase_access_token if inverter_type == "Enphase" else None,
+        "enphase_system_id": state.enphase_system_id if inverter_type == "Enphase" else None
     }
 
     # Make the API request

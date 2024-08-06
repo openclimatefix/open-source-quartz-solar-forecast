@@ -30,7 +30,6 @@ def get_enphase_auth_url():
     auth_url = f"https://api.enphaseenergy.com/oauth/authorize?{urlencode(params)}"
     return auth_url
 
-
 def get_enphase_authorization_code(auth_url):
     """
     Retrieve the authorization code from the environment variable or user input.
@@ -38,20 +37,25 @@ def get_enphase_authorization_code(auth_url):
     :param auth_url: Authentication URL to get the code
     :return: The one time code for access to a system
     """
-    # Check if we're in an API context (environment variable is set)
     code = os.getenv('ENPHASE_AUTH_CODE')
     
     if code:
         return code
     else:
-        # We're in a CLI context, so prompt for user input
         print(f"Please visit the following URL and authorize the application: {auth_url}")
         print("After authorization, you will be redirected to a URL with the authorization code.")
         print("Please copy and paste the full redirect URL here:")
         redirect_url = input()
-        # Extract the authorization code from the redirect URL
         code = redirect_url.split("?code=")[1]
         return code
+
+def set_enphase_auth_code(auth_code):
+    """
+    Set the Enphase authorization code as an environment variable.
+
+    :param auth_code: The authorization code to set
+    """
+    os.environ['ENPHASE_AUTH_CODE'] = auth_code
 
 def get_enphase_access_token():
     """
@@ -59,12 +63,12 @@ def get_enphase_access_token():
     :param None
     :return: Access Token
     """
-        
     client_id = os.getenv('ENPHASE_CLIENT_ID')
     client_secret = os.getenv('ENPHASE_CLIENT_SECRET')
+    auth_code = os.getenv('ENPHASE_AUTH_CODE')
 
-    auth_url = get_enphase_auth_url()
-    auth_code = get_enphase_authorization_code(auth_url)
+    if not auth_code:
+        raise ValueError("No authorization code found. Please authorize the application first.")
 
     # Combine the client ID and secret with a colon separator
     credentials = f"{client_id}:{client_secret}"
@@ -79,16 +83,12 @@ def get_enphase_access_token():
     encoded_credentials_str = encoded_credentials.decode("utf-8")
 
     conn = http.client.HTTPSConnection("api.enphaseenergy.com")
-    payload = ""
+    payload = f"grant_type=authorization_code&redirect_uri=https://api.enphaseenergy.com/oauth/redirect_uri&code={auth_code}"
     headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
         "Authorization": f"Basic {encoded_credentials_str}"
     }
-    conn.request(
-        "POST",
-        f"/oauth/token?grant_type=authorization_code&redirect_uri=https://api.enphaseenergy.com/oauth/redirect_uri&code={auth_code}",
-        payload,
-        headers,
-    )
+    conn.request("POST", "/oauth/token", payload, headers)
     res = conn.getresponse()
     data = res.read()
 
@@ -97,10 +97,13 @@ def get_enphase_access_token():
 
     # Convert the decoded data into JSON format
     data_json = json.loads(decoded_data)
+    
+    if 'access_token' not in data_json:
+        raise ValueError(f"Failed to obtain access token. Response: {data_json}")
+    
     access_token = data_json["access_token"]
 
     return access_token
-
 
 def process_enphase_data(data_json: dict, start_at: int) -> pd.DataFrame:
     """
