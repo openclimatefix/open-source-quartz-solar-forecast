@@ -1,6 +1,6 @@
 import os
 import sys
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 from dotenv import load_dotenv
@@ -14,9 +14,7 @@ from .schemas import ForecastRequest, AuthUrlRequest
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.inverters.enphase import (
-    get_enphase_auth_url,
-    get_enphase_access_token,
-    set_enphase_auth_code,
+    get_enphase_auth_url
 )
 
 # Load environment variables
@@ -52,10 +50,6 @@ def forecast(request: ForecastRequest):
     formatted_timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
     if site.inverter_type:
-        if site.inverter_type == "enphase" and access_token and enphase_system_id:
-            # Set the Enphase auth code if provided
-            set_enphase_auth_code(access_token)
-
         # Run forecast with inverter data
         predictions_with_recent_pv_df = run_forecast(
             site=site,
@@ -69,10 +63,6 @@ def forecast(request: ForecastRequest):
 
         predictions_with_recent_pv_df["power_kw_no_live_pv"] = predictions_df["power_kw"]
         final_predictions = predictions_with_recent_pv_df
-
-        # Clear the Enphase auth code after use
-        if site.inverter_type == "enphase":
-            os.environ.pop('ENPHASE_AUTH_CODE', None)
     else:
         # Run forecast without inverter data
         final_predictions = run_forecast(
@@ -92,22 +82,3 @@ def forecast(request: ForecastRequest):
 def get_enphase_authorization_url():
     auth_url = get_enphase_auth_url()
     return {"auth_url": auth_url}
-
-@app.post("/solar_inverters/enphase/access_token")
-def get_enphase_token(request: AuthUrlRequest):
-    try:
-        # Extract the authorization code from the full URL
-        auth_code = request.full_auth_url.split("?code=")[1]
-        
-        # Set the authorization code using the new function
-        set_enphase_auth_code(auth_code)
-        
-        # Call get_enphase_access_token function without arguments
-        access_token = get_enphase_access_token()
-        
-        # Remove the environment variable after use
-        os.environ.pop('ENPHASE_AUTH_CODE', None)
-        
-        return {"access_token": access_token}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))

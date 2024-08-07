@@ -79,20 +79,6 @@ if inverter_type == "Enphase":
     enphase_redirect_url = st.text_input("Enter the redirect URL:", key="enphase_redirect_url")
 
 if st.sidebar.button("Run Forecast"):
-    if inverter_type == "Enphase":
-        if enphase_redirect_url:
-            # Get access token
-            token_data = make_api_request("/solar_inverters/enphase/access_token", method="POST", data={"full_auth_url": enphase_redirect_url})
-            if token_data and "access_token" in token_data:
-                state.enphase_access_token = token_data["access_token"]
-                state.enphase_system_id = os.getenv('ENPHASE_SYSTEM_ID')
-                st.sidebar.success("Enphase authorized successfully!")
-            else:
-                st.error("Failed to obtain Enphase access token. Please try authorizing again.")
-                st.stop()
-        else:
-            st.error("Please enter the Enphase authorization redirect URL.")
-            st.stop()
 
     # Create PVSite object with user-input or default values
     site = PVSite(

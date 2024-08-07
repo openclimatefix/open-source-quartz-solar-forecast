@@ -1,6 +1,5 @@
 import http.client
 import os
-from typing import Optional
 import pandas as pd
 import json
 import base64
@@ -8,7 +7,6 @@ from datetime import datetime, timedelta, timezone
 
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
 from urllib.parse import urlencode
@@ -33,66 +31,74 @@ def get_enphase_auth_url():
     auth_url = f"https://api.enphaseenergy.com/oauth/authorize?{urlencode(params)}"
     return auth_url
 
+
 def get_enphase_authorization_code(auth_url):
     """
-    Retrieve the authorization code from the environment variable or user input.
+    Open the authorization URL in a browser and retrieve the authorization code from the redirect URI.
 
     :param auth_url: Authentication URL to get the code
     :return: The one time code for access to a system
     """
-    code = os.getenv('ENPHASE_AUTH_CODE')
-    
-    if code:
-        return code
-    else:
-        print(f"Please visit the following URL and authorize the application: {auth_url}")
-        print("After authorization, you will be redirected to a URL with the authorization code.")
-        print("Please copy and paste the full redirect URL here:")
-        redirect_url = input()
-        code = redirect_url.split("?code=")[1]
-        return code
+    # Open the authorization URL in a browser
+    print(f"Please visit the following URL and authorize the application: {auth_url}")
+    print(
+        "After authorization, you will be redirected to a URL with the authorization code."
+    )
+    print("Please copy and paste the full redirect URL here:")
+    redirect_url = input()
+    # Extract the authorization code from the redirect URL
+    code = redirect_url.split("?code=")[1]
+    return code
 
-def set_enphase_auth_code(auth_code):
-    """
-    Set the Enphase authorization code as an environment variable.
-
-    :param auth_code: The authorization code to set
-    """
-    os.environ['ENPHASE_AUTH_CODE'] = auth_code
 
 def get_enphase_access_token():
+    """
+    Obtain an access token for the Enphase API using the Authorization Code Grant flow.
+    :param None
+    :return: Access Token
+    """
+        
     client_id = os.getenv('ENPHASE_CLIENT_ID')
     client_secret = os.getenv('ENPHASE_CLIENT_SECRET')
-    auth_code = os.getenv('ENPHASE_AUTH_CODE')
 
-    if not auth_code:
-        raise ValueError("No authorization code found. Please authorize the application first.")
+    auth_url = get_enphase_auth_url()
+    auth_code = get_enphase_authorization_code(auth_url)
 
+    # Combine the client ID and secret with a colon separator
     credentials = f"{client_id}:{client_secret}"
-    encoded_credentials = base64.b64encode(credentials.encode("utf-8")).decode("utf-8")
+
+    # Encode the credentials as bytes
+    credentials_bytes = credentials.encode("utf-8")
+
+    # Base64 encode the bytes
+    encoded_credentials = base64.b64encode(credentials_bytes)
+
+    # Convert the encoded bytes to a string
+    encoded_credentials_str = encoded_credentials.decode("utf-8")
 
     conn = http.client.HTTPSConnection("api.enphaseenergy.com")
-    payload = f"grant_type=authorization_code&redirect_uri=https://api.enphaseenergy.com/oauth/redirect_uri&code={auth_code}"
+    payload = ""
     headers = {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": f"Basic {encoded_credentials}"
+        "Authorization": f"Basic {encoded_credentials_str}"
     }
+    conn.request(
+        "POST",
+        f"/oauth/token?grant_type=authorization_code&redirect_uri=https://api.enphaseenergy.com/oauth/redirect_uri&code={auth_code}",
+        payload,
+        headers,
+    )
+    res = conn.getresponse()
+    data = res.read()
 
-    try:
-        conn.request("POST", "/oauth/token", payload, headers)
-        res = conn.getresponse()
-        data = res.read()
-        data_json = json.loads(data.decode("utf-8"))
+    # Decode the data read from the response
+    decoded_data = data.decode("utf-8")
 
-        if 'access_token' in data_json:
-            return data_json["access_token"]
-        else:
-            error_msg = f"Failed to obtain access token. Response: {data_json}"
-            print(error_msg)  # Log the full error response
-            raise ValueError(error_msg)
-    except Exception as e:
-        print(f"Error in get_enphase_access_token: {str(e)}")
-        raise
+    # Convert the decoded data into JSON format
+    data_json = json.loads(decoded_data)
+    access_token = data_json["access_token"]
+
+    return access_token
+
 
 def process_enphase_data(data_json: dict, start_at: int) -> pd.DataFrame:
     """
@@ -123,16 +129,14 @@ def process_enphase_data(data_json: dict, start_at: int) -> pd.DataFrame:
 
     return live_generation_kw
 
-def get_enphase_data(enphase_system_id: str, access_token: Optional[str] = None) -> pd.DataFrame:
-    """
+def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
+    """ 
     Get live PV generation data from Enphase API v4
     :param enphase_system_id: System ID for Enphase API
-    :param access_token: Optional access token for API calls
     :return: Live PV generation in Watt-hours, assumes to be a floating-point number
     """
     api_key = os.getenv('ENPHASE_API_KEY')
-    if not access_token:
-        access_token = get_enphase_access_token()
+    access_token = get_enphase_access_token()
 
     # Set the start time to 1 week from now
     start_at = int((datetime.now() - timedelta(weeks=1)).timestamp())
