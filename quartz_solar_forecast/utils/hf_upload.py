@@ -20,9 +20,9 @@ if __name__ == "__main__":
     login(hf_token)
     fs = HfFileSystem()
     now = datetime.utcnow()
-    latitude = 51.75
-    longitude = -1.25
-    capacity_kwp = 1.25
+    latitude = 51.59,
+    longitude = -1.89
+    capacity_kwp = 4
 
     for model in ["gb", "xgb"]:
         forecast = forecast_for_site(latitude, longitude, capacity_kwp, model, now)
