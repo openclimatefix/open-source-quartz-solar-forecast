@@ -8,6 +8,9 @@ from datetime import datetime, timedelta, timezone
 
 from dotenv import load_dotenv
 
+# Load environment variables
+load_dotenv()
+
 from urllib.parse import urlencode
 
 def get_enphase_auth_url():
@@ -58,11 +61,6 @@ def set_enphase_auth_code(auth_code):
     os.environ['ENPHASE_AUTH_CODE'] = auth_code
 
 def get_enphase_access_token():
-    """
-    Obtain an access token for the Enphase API using the Authorization Code Grant flow.
-    :param None
-    :return: Access Token
-    """
     client_id = os.getenv('ENPHASE_CLIENT_ID')
     client_secret = os.getenv('ENPHASE_CLIENT_SECRET')
     auth_code = os.getenv('ENPHASE_AUTH_CODE')
@@ -70,40 +68,31 @@ def get_enphase_access_token():
     if not auth_code:
         raise ValueError("No authorization code found. Please authorize the application first.")
 
-    # Combine the client ID and secret with a colon separator
     credentials = f"{client_id}:{client_secret}"
-
-    # Encode the credentials as bytes
-    credentials_bytes = credentials.encode("utf-8")
-
-    # Base64 encode the bytes
-    encoded_credentials = base64.b64encode(credentials_bytes)
-
-    # Convert the encoded bytes to a string
-    encoded_credentials_str = encoded_credentials.decode("utf-8")
+    encoded_credentials = base64.b64encode(credentials.encode("utf-8")).decode("utf-8")
 
     conn = http.client.HTTPSConnection("api.enphaseenergy.com")
     payload = f"grant_type=authorization_code&redirect_uri=https://api.enphaseenergy.com/oauth/redirect_uri&code={auth_code}"
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": f"Basic {encoded_credentials_str}"
+        "Authorization": f"Basic {encoded_credentials}"
     }
-    conn.request("POST", "/oauth/token", payload, headers)
-    res = conn.getresponse()
-    data = res.read()
 
-    # Decode the data read from the response
-    decoded_data = data.decode("utf-8")
+    try:
+        conn.request("POST", "/oauth/token", payload, headers)
+        res = conn.getresponse()
+        data = res.read()
+        data_json = json.loads(data.decode("utf-8"))
 
-    # Convert the decoded data into JSON format
-    data_json = json.loads(decoded_data)
-    
-    if 'access_token' not in data_json:
-        raise ValueError(f"Failed to obtain access token. Response: {data_json}")
-    
-    access_token = data_json["access_token"]
-
-    return access_token
+        if 'access_token' in data_json:
+            return data_json["access_token"]
+        else:
+            error_msg = f"Failed to obtain access token. Response: {data_json}"
+            print(error_msg)  # Log the full error response
+            raise ValueError(error_msg)
+    except Exception as e:
+        print(f"Error in get_enphase_access_token: {str(e)}")
+        raise
 
 def process_enphase_data(data_json: dict, start_at: int) -> pd.DataFrame:
     """
