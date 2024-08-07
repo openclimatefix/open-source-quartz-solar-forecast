@@ -9,8 +9,5 @@ class ForecastRequest(BaseModel):
     access_token: Optional[str] = None
     enphase_system_id: Optional[str] = None
 
-class AuthUrlRequest(BaseModel):
-    full_auth_url: str
-
-class EnphaseTokenRequest(BaseModel):
+class TokenRequest(BaseModel):
     redirect_url: str
