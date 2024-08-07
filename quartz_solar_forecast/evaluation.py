@@ -70,39 +70,28 @@ def run_eval(testset_path: str = "dataset/testset.csv"):
     # select last 10 values
     df_last10 = results_df[:10]
 
-    fig = make_subplots(
-        rows=2, cols=1, subplot_titles=("Predictions", "Actual"), vertical_spacing=0.05
-    )
-
-    # Add the first plot to the first column
-    fig.add_trace(
+    traces = []
+    traces.append(
         go.Scatter(
             x=df_last10.index,
             y=df_last10["forecast_power"],
             mode="lines",
             name="Forecasted Power",
-        ),
-        row=1,
-        col=1,
+        )
     )
-
-    # Add the second plot to the second column
-    fig.add_trace(
+    traces.append(
         go.Scatter(
             x=df_last10.index,
             y=df_last10["generation_power"],
             mode="lines",
             name="Generated Power",
-        ),
-        row=2,
-        col=1,
+        )
     )
 
-    # Update layout
+    fig = fig = go.Figure(data=traces)
     fig.update_layout(
         title="Evalution - Comparision Prediction vs. Actual",
         xaxis_tickformat="%Y-%m-%d",
-        xaxis2_tickformat="%Y-%m-%d",
     )
     fig.show(renderer="browser")
 
