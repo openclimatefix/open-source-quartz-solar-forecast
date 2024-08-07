@@ -88,12 +88,12 @@ def forecast(request: ForecastRequest):
     
     return response
 
-@app.get("/enphase/auth_url")
+@app.get("/solar_inverters/enphase/auth_url")
 def get_enphase_authorization_url():
     auth_url = get_enphase_auth_url()
     return {"auth_url": auth_url}
 
-@app.post("/enphase/access_token")
+@app.post("/solar_inverters/enphase/access_token")
 def get_enphase_token(request: AuthUrlRequest):
     try:
         # Extract the authorization code from the full URL

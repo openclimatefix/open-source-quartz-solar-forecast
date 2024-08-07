@@ -69,7 +69,7 @@ inverter_type = st.sidebar.selectbox("Select Inverter", ["No Inverter", "Enphase
 
 if inverter_type == "Enphase":
     st.write("Enphase Authorization")
-    auth_url_data = make_api_request("/enphase/auth_url")
+    auth_url_data = make_api_request("/solar_inverters/enphase/auth_url")
     if auth_url_data:
         auth_url = auth_url_data["auth_url"]
         st.write("Please visit the following URL to authorize the application:")
@@ -82,7 +82,7 @@ if st.sidebar.button("Run Forecast"):
     if inverter_type == "Enphase":
         if enphase_redirect_url:
             # Get access token
-            token_data = make_api_request("/enphase/access_token", method="POST", data={"full_auth_url": enphase_redirect_url})
+            token_data = make_api_request("/solar_inverters/enphase/access_token", method="POST", data={"full_auth_url": enphase_redirect_url})
             if token_data and "access_token" in token_data:
                 state.enphase_access_token = token_data["access_token"]
                 state.enphase_system_id = os.getenv('ENPHASE_SYSTEM_ID')
