@@ -10,7 +10,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(os.path.dirname(current_dir))
 sys.path.append(project_root)
 
-from .models import ForecastRequest, AuthUrlRequest
+from .schemas import ForecastRequest, AuthUrlRequest
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.inverters.enphase import (
