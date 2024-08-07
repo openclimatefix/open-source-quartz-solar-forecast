@@ -11,3 +11,6 @@ class ForecastRequest(BaseModel):
 
 class AuthUrlRequest(BaseModel):
     full_auth_url: str
+
+class EnphaseTokenRequest(BaseModel):
+    redirect_url: str

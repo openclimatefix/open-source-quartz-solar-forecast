@@ -47,6 +47,14 @@ def make_api_request(endpoint, method="GET", data=None):
     except requests.exceptions.RequestException as e:
         st.error(f"API request error: {e}")
         return None
+    
+def get_enphase_auth_url():
+    response = requests.get(f"{FASTAPI_BASE_URL}/solar_inverters/enphase/auth_url")
+    return response.json()["auth_url"]
+
+def get_enphase_token(redirect_url):
+    response = requests.post(f"{FASTAPI_BASE_URL}/solar_inverters/enphase/token", json={"redirect_url": redirect_url})
+    return response.json()["access_token"]
 
 # Main app logic
 st.sidebar.header("PV Site Configuration")
@@ -69,14 +77,18 @@ inverter_type = st.sidebar.selectbox("Select Inverter", ["No Inverter", "Enphase
 
 if inverter_type == "Enphase":
     st.write("Enphase Authorization")
-    auth_url_data = make_api_request("/solar_inverters/enphase/auth_url")
-    if auth_url_data:
-        auth_url = auth_url_data["auth_url"]
+    if state.enphase_access_token is None:
+        auth_url = get_enphase_auth_url()
         st.write("Please visit the following URL to authorize the application:")
         st.markdown(f"[Enphase Authorization URL]({auth_url})")
         st.write("After authorization, you will be redirected to a URL. Please copy the entire URL and paste it below:")
-    
-    enphase_redirect_url = st.text_input("Enter the redirect URL:", key="enphase_redirect_url")
+        
+        enphase_redirect_url = st.text_input("Enter the redirect URL:", key="enphase_redirect_url")
+        
+    else:
+        st.success("Enphase token is already available.")
+                
+    state.enphase_system_id = os.getenv("ENPHASE_SYSTEM_ID")
 
 if st.sidebar.button("Run Forecast"):
 
@@ -118,47 +130,31 @@ if st.sidebar.button("Run Forecast"):
             predictions['index'] = pd.to_datetime(predictions['index'])
         
         predictions.set_index('index', inplace=True)
-        
-        with col1:
-            current_power = predictions['power_kw'].iloc[-1]
-            st.metric("Current Power", f"{current_power:.2f} kW")
 
-        with col2:
-            total_energy = predictions['power_kw'].sum() * 0.25  # Assuming 15-minute intervals
-            st.metric("Total Forecasted Energy", f"{total_energy:.2f} kWh")
-
-        with col3:
-            peak_power = predictions['power_kw'].max()
-            st.metric("Peak Forecasted Power", f"{peak_power:.2f} kW")
-
-        # Create a line chart of power generation
+        # Plotting logic
         if inverter_type == "No Inverter":
             fig = px.line(
                 predictions.reset_index(),
                 x="index",
-                y="power_kw",
+                y=["power_kw_no_live_pv"],
                 title="Forecasted Power Generation",
                 labels={
-                    "power_kw": "Forecast without recent PV data",
+                    "power_kw_no_live_pv": "Forecast without live data",
                     "index": "Time"
                 }
             )
         else:
-            # If an inverter is selected, we assume both 'power_kw' and 'power_kw_no_live_pv' exist
-            if 'power_kw_no_live_pv' not in predictions.columns:
-                st.error("Expected 'power_kw_no_live_pv' column is missing. Please check the API response.")
-            else:
-                fig = px.line(
-                    predictions.reset_index(),
-                    x="index",
-                    y=["power_kw", "power_kw_no_live_pv"],
-                    title="Forecasted Power Generation",
-                    labels={
-                        "power_kw": f"Forecast with {inverter_type}",
-                        "power_kw_no_live_pv": "Forecast without recent PV data",
-                        "index": "Time"
-                    }
-                )
+            fig = px.line(
+                predictions.reset_index(),
+                x="index",
+                y=["power_kw", "power_kw_no_live_pv"],
+                title="Forecasted Power Generation",
+                labels={
+                    "power_kw": f"Forecast with {inverter_type} data",
+                    "power_kw_no_live_pv": "Forecast without live data",
+                    "index": "Time"
+                }
+            )
 
         fig.update_layout(
             xaxis_title="Time",
@@ -176,7 +172,12 @@ if st.sidebar.button("Run Forecast"):
 
         # Display raw data
         st.subheader("Raw Forecast Data")
-        st.dataframe(predictions, use_container_width=True)
+        if inverter_type == "No Inverter":
+            st.dataframe(predictions[['power_kw_no_live_pv']], use_container_width=True)
+        else:
+            st.dataframe(predictions, use_container_width=True)
+    else:
+        st.error("No forecast data available. Please check your inputs and try again.")
 
 # Some information about the app
 st.sidebar.info(

@@ -1,3 +1,4 @@
+from http.client import HTTPException
 import os
 import sys
 from fastapi import FastAPI
@@ -10,9 +11,13 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(os.path.dirname(current_dir))
 sys.path.append(project_root)
 
-from .schemas import ForecastRequest, AuthUrlRequest
-from quartz_solar_forecast.pydantic_models import PVSite
+from .schemas import ForecastRequest, EnphaseTokenRequest
 from quartz_solar_forecast.forecast import run_forecast
+from quartz_solar_forecast.pydantic_models import PVSite
+from .utils.enphase_utils import (
+    get_enphase_auth_url_wrapper,
+    get_enphase_access_token_wrapper
+)
 from quartz_solar_forecast.inverters.enphase import (
     get_enphase_auth_url
 )
@@ -49,36 +54,33 @@ def forecast(request: ForecastRequest):
     timestamp = pd.Timestamp(ts).tz_localize(None)
     formatted_timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
-    if site.inverter_type:
-        # Run forecast with inverter data
-        predictions_with_recent_pv_df = run_forecast(
-            site=site,
-            ts=timestamp,
-            nwp_source=nwp_source
-        )
+    # Run forecast without live data
+    site_no_live = PVSite(latitude=site.latitude, longitude=site.longitude, capacity_kwp=site.capacity_kwp)
+    predictions_no_live = run_forecast(site=site_no_live, ts=timestamp, nwp_source=nwp_source)
 
-        # Run forecast without inverter data
-        site_no_live = PVSite(latitude=site.latitude, longitude=site.longitude, capacity_kwp=site.capacity_kwp)
-        predictions_df = run_forecast(site=site_no_live, ts=timestamp, nwp_source=nwp_source)
-
-        predictions_with_recent_pv_df["power_kw_no_live_pv"] = predictions_df["power_kw"]
-        final_predictions = predictions_with_recent_pv_df
+    if site.inverter_type:  # Run forecast with live data only if inverter is specified
+        predictions_with_live = run_forecast(site=site, ts=timestamp, nwp_source=nwp_source)
+        predictions_with_live['power_kw_no_live_pv'] = predictions_no_live['power_kw']
+        predictions = predictions_with_live
     else:
-        # Run forecast without inverter data
-        final_predictions = run_forecast(
-            site=site,
-            ts=timestamp,
-            nwp_source=nwp_source
-        )
+        predictions = predictions_no_live.rename(columns={'power_kw': 'power_kw_no_live_pv'})
 
     response = {
         "timestamp": formatted_timestamp,
-        "predictions": final_predictions.to_dict()
+        "predictions": predictions.to_dict()
     }
     
     return response
 
 @app.get("/solar_inverters/enphase/auth_url")
 def get_enphase_authorization_url():
-    auth_url = get_enphase_auth_url()
+    auth_url = get_enphase_auth_url_wrapper()
     return {"auth_url": auth_url}
+
+@app.post("/solar_inverters/enphase/token")
+def get_enphase_token(request: EnphaseTokenRequest):
+    try:
+        access_token = get_enphase_access_token_wrapper(request.redirect_url)
+        return {"access_token": access_token}
+    except Exception as e:
+        print(e)
