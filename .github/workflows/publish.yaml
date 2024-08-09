@@ -1,6 +1,9 @@
 name: Run forecast
 
 on:
+  push:
+    branches:
+    - topic/fix-paths
   schedule:
     - cron: "0 9 * * *"
 
@@ -27,6 +30,5 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN_PUSH }}
           HF_REPO: ${{ secrets.HF_REPO }}
         run: |
-          cd scripts
-          python hf_upload.py
+          python quartz_solar_forecast/utils/hf_upload.py
 
