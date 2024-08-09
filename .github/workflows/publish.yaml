@@ -1,9 +1,6 @@
 name: Run forecast
 
 on:
-  push:
-    branches:
-    - topic/fix-paths
   schedule:
     - cron: "0 9 * * *"
 
