@@ -69,9 +69,6 @@ inverter_type = st.sidebar.selectbox("Select Inverter", ["No Inverter", "Enphase
 
 access_token = None
 enphase_system_id = None
-solis_data = None
-givenergy_data = None
-solarman_data = None
 
 def get_enphase_auth_url():
     response = requests.get(f"{FASTAPI_BASE_URL}/solar_inverters/enphase/auth_url")
