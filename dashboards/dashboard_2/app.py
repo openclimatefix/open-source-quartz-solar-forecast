@@ -6,7 +6,6 @@ import os
 import requests
 from PIL import Image
 from dotenv import load_dotenv
-from streamlit import session_state as state
 
 from quartz_solar_forecast.pydantic_models import PVSite
 
