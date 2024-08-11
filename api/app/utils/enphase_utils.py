@@ -12,7 +12,7 @@ from quartz_solar_forecast.forecasts import forecast_v1_tilt_orientation
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.forecast import predict_tryolabs
 from quartz_solar_forecast.data import get_nwp, process_pv_data
-from quartz_solar_forecast.inverters.enphase import get_enphase_auth_url, process_enphase_data
+from quartz_solar_forecast.inverters.enphase import process_enphase_data
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -135,49 +135,3 @@ def run_forecast_for_enphase(
         return predict_tryolabs(site, ts)
     else:
         raise ValueError(f"Unsupported model: {model}. Choose between 'xgb' and 'gb'")
-
-def fetch_data_and_run_forecast(
-    site: PVSite,
-    access_token: str = None,
-    enphase_system_id: str = None,
-    solis_data: pd.DataFrame = None,
-    givenergy_data: pd.DataFrame = None,
-    solarman_data: pd.DataFrame = None
-):
-    with st.spinner("Running forecast..."):
-        try:
-            timestamp = datetime.now().timestamp()
-            timestamp_str = datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-            ts = pd.to_datetime(timestamp_str)
-
-            # Run forecast with the given site
-            predictions_with_inverter = run_forecast_for_enphase(
-                site=site,
-                ts=ts,
-                access_token=access_token,
-                enphase_system_id=enphase_system_id,
-                solis_data=solis_data,
-                givenergy_data=givenergy_data,
-                solarman_data=solarman_data
-            )
-
-            # Create a site without inverter for comparison
-            site_without_inverter = PVSite(
-                latitude=site.latitude,
-                longitude=site.longitude,
-                capacity_kwp=site.capacity_kwp
-            )
-            predictions_without_inverter = run_forecast_for_enphase(site=site_without_inverter, ts=ts)
-
-            # Combine the results
-            predictions_df = predictions_with_inverter.copy()
-            predictions_df["power_kw_no_live_pv"] = predictions_without_inverter["power_kw"]
-
-            return predictions_df, ts
-
-        except Exception as e:
-            logger.error(f"An error occurred: {str(e)}")
-            st.error(f"An error occurred: {str(e)}")
-            return None, None

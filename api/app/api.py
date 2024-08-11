@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timezone
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -87,3 +88,11 @@ def get_enphase_token(request: TokenRequest):
         return {"access_token": access_token}
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error getting access token: {str(e)}")
+    
+@app.get("/solar_inverters/enphase/system_id")
+def get_enphase_id():
+    enphase_system_id = os.getenv("ENPHASE_SYSTEM_ID")
+    try:
+        return {"enphase_system_id": enphase_system_id}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error getting the system ID: {str(e)}")

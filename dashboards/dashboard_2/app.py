@@ -81,6 +81,10 @@ def get_enphase_access_token(redirect_url):
     response = requests.post(f"{FASTAPI_BASE_URL}/solar_inverters/enphase/token", json={"redirect_url": redirect_url})
     return response.json()["access_token"]
 
+def get_enphase_system_id():
+    response = requests.get(f"{FASTAPI_BASE_URL}/solar_inverters/enphase/system_id")
+    return response.json()["enphase_system_id"]
+
 def enphase_authorization():
     if st.session_state.enphase_access_token == None:
         auth_url = get_enphase_auth_url()
@@ -101,13 +105,15 @@ def enphase_authorization():
 
             try:
                 access_token = get_enphase_access_token(redirect_url)
+                enphase_system_id = get_enphase_system_id()
                 st.session_state.enphase_access_token = access_token
-                return access_token, os.getenv("ENPHASE_SYSTEM_ID")
+                st.session_state.enphase_system_id = enphase_system_id
+                return access_token, enphase_system_id
             except Exception as e:
                 st.error(f"Error getting access token: {str(e)}")
                 return None, None
     else:
-        return st.session_state.enphase_access_token, os.getenv("ENPHASE_SYSTEM_ID")
+        return st.session_state.enphase_access_token, st.session_state.enphase_system_id
 
     return None, None
 
