@@ -20,7 +20,7 @@ if __name__ == "__main__":
     login(hf_token)
     fs = HfFileSystem()
     now = datetime.utcnow()
-    latitude = 51.59,
+    latitude = 51.59
     longitude = -1.89
     capacity_kwp = 4
 
