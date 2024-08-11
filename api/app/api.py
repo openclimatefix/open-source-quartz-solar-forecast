@@ -76,22 +76,15 @@ def get_enphase_authorization_url():
     auth_url = get_enphase_auth_url()
     return {"auth_url": auth_url}
 
-@app.post("/solar_inverters/enphase/token")
-def get_enphase_token(request: TokenRequest):
+@app.post("/solar_inverters/enphase/token_and_id")
+def get_enphase_token_and_system_id(request: TokenRequest):
     if "?code=" not in request.redirect_url:
         raise HTTPException(status_code=400, detail="Invalid redirect URL")
     
     auth_code = request.redirect_url.split("?code=")[1]
     try:
         access_token = get_enphase_access_token(auth_code)
-        return {"access_token": access_token}
+        enphase_system_id = os.getenv("ENPHASE_SYSTEM_ID")
+        return {"access_token": access_token, "enphase_system_id": enphase_system_id}
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error getting access token: {str(e)}")
-    
-@app.get("/solar_inverters/enphase/system_id")
-def get_enphase_id():
-    enphase_system_id = os.getenv("ENPHASE_SYSTEM_ID")
-    try:
-        return {"enphase_system_id": enphase_system_id}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error getting the system ID: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Error getting access toke and system ID: {str(e)}")

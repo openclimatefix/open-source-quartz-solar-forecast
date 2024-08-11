@@ -75,17 +75,11 @@ def get_enphase_auth_url():
         return response["auth_url"]
     return None
 
-def get_enphase_access_token(redirect_url):
+def get_enphase_access_token_and_id(redirect_url):
     data = {"redirect_url": redirect_url}
-    response = make_api_request("/solar_inverters/enphase/token", method="POST", data=data)
+    response = make_api_request("/solar_inverters/enphase/token_and_id", method="POST", data=data)
     if response:
-        return response["access_token"]
-    return None
-
-def get_enphase_system_id():
-    response = make_api_request("/solar_inverters/enphase/system_id")
-    if response:
-        return response["enphase_system_id"]
+        return response["access_token"], response["enphase_system_id"]
     return None
 
 def enphase_authorization():
@@ -107,8 +101,7 @@ def enphase_authorization():
                 return None, None
 
             try:
-                access_token = get_enphase_access_token(redirect_url)
-                enphase_system_id = get_enphase_system_id()
+                access_token, enphase_system_id = get_enphase_access_token_and_id(redirect_url)
                 st.session_state.enphase_access_token = access_token
                 st.session_state.enphase_system_id = enphase_system_id
                 return access_token, enphase_system_id
