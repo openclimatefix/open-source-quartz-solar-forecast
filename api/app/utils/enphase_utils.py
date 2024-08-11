@@ -1,22 +1,17 @@
 import streamlit as st
 import http.client
 import pandas as pd
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta
 import os
 import xarray as xr
 import base64
 import json
-import logging
 
 from quartz_solar_forecast.forecasts import forecast_v1_tilt_orientation
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.forecast import predict_tryolabs
 from quartz_solar_forecast.data import get_nwp, process_pv_data
 from quartz_solar_forecast.inverters.enphase import process_enphase_data
-
-# Set up logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 def get_enphase_auth_url():
     client_id = os.getenv("ENPHASE_CLIENT_ID")
