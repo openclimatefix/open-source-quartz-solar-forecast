@@ -16,6 +16,8 @@ if 'enphase_access_token' not in st.session_state:
     st.session_state.enphase_access_token = None
 if 'enphase_system_id' not in st.session_state:
     st.session_state.enphase_system_id = None
+if 'redirect_url' not in st.session_state:
+    st.session_state.redirect_url = ""
 
 # Set up the base URL for the FastAPI server
 FASTAPI_BASE_URL = "http://localhost:8000"
@@ -113,118 +115,119 @@ def enphase_authorization():
 
     return None, None
 
-if inverter_type == "Enphase":
-    enphase_access_token, enphase_system_id = enphase_authorization()
-    if enphase_access_token is None or enphase_system_id is None:
-        st.warning("Enphase authorization is not complete. Please complete the authorization process.")
-else:
-    enphase_access_token, enphase_system_id = None, None
+
+# Display Enphase authorization UI if Enphase is selected
+if inverter_type == "Enphase" and not st.session_state.enphase_access_token:
+    auth_url = get_enphase_auth_url()
+    st.write("Please visit the following URL to authorize the application:")
+    st.markdown(f"[Enphase Authorization URL]({auth_url})")
+    st.write("After authorization, you will be redirected to a URL. Please copy the entire URL and paste it below:")
+    
+    st.session_state.redirect_url = st.text_input("Enter the redirect URL:", value=st.session_state.redirect_url)
 
 if st.sidebar.button("Run Forecast"):
-    if inverter_type == "Enphase" and (enphase_access_token is None or enphase_system_id is None):
-        st.error(
-            "Enphase authorization is required. Please complete the authorization process."
-        )
-    else:
-        # Create PVSite object with user-input or default values
-        site = PVSite(
-            latitude=latitude,
-            longitude=longitude,
-            capacity_kwp=capacity_kwp,
-            inverter_type=inverter_type.lower() if inverter_type != "No Inverter" else ""
-        )
+    if inverter_type == "Enphase":
+        if not st.session_state.redirect_url:
+            st.error("Please enter the redirect URL to complete Enphase authorization.")
+        elif "?code=" not in st.session_state.redirect_url:
+            st.error("Invalid redirect URL. Please make sure you copied the entire URL.")
+        else:
+            try:
+                enphase_access_token, enphase_system_id = get_enphase_access_token_and_id(st.session_state.redirect_url)
+                if enphase_access_token and enphase_system_id:
+                    st.session_state.enphase_access_token = enphase_access_token
+                    st.session_state.enphase_system_id = enphase_system_id
+                    st.success("Enphase authorization successful!")
+                else:
+                    st.error("Failed to obtain Enphase access token and system ID.")
+                    st.stop()
+            except Exception as e:
+                st.error(f"Error getting access token: {str(e)}")
+                st.stop()
+    
+    # Create PVSite object with user-input or default values
+    site = PVSite(
+        latitude=latitude,
+        longitude=longitude,
+        capacity_kwp=capacity_kwp,
+        inverter_type=inverter_type.lower() if inverter_type != "No Inverter" else ""
+    )
 
-        # Prepare data for API request
-        data = {
-            "site": site.dict(),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "nwp_source": "icon",
-            "access_token": st.session_state.enphase_access_token if inverter_type == "Enphase" else None,
-            "enphase_system_id": st.session_state.enphase_system_id if inverter_type == "Enphase" else None
-        }
+    # Prepare data for API request
+    data = {
+        "site": site.dict(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "nwp_source": "icon",
+        "access_token": st.session_state.enphase_access_token if inverter_type == "Enphase" else None,
+        "enphase_system_id": st.session_state.enphase_system_id if inverter_type == "Enphase" else None
+    }
 
-        # Make the API request
-        forecast_data = make_api_request("/forecast/", method="POST", data=data)
+    # Make the API request
+    forecast_data = make_api_request("/forecast/", method="POST", data=data)
 
-        if forecast_data:
-            st.success("Forecast completed successfully!")
+    if forecast_data:
+        st.success("Forecast completed successfully!")
 
-            # Display current timestamp
-            st.subheader(f"Forecast generated at: {forecast_data['timestamp']}")
+        # Display current timestamp
+        st.subheader(f"Forecast generated at: {forecast_data['timestamp']}")
 
-            # Create three columns
-            col1, col2, col3 = st.columns(3)
+        # Create three columns
+        col1, col2, col3 = st.columns(3)
 
-            predictions = pd.DataFrame(forecast_data['predictions'])
-            
-            # Ensure 'index' column exists and is of datetime type
-            if 'index' not in predictions.columns:
-                predictions['index'] = pd.to_datetime(predictions.index)
-            else:
-                predictions['index'] = pd.to_datetime(predictions['index'])
-            
-            predictions.set_index('index', inplace=True)
+        predictions = pd.DataFrame(forecast_data['predictions'])
+        
+        # Ensure 'index' column exists and is of datetime type
+        if 'index' not in predictions.columns:
+            predictions['index'] = pd.to_datetime(predictions.index)
+        else:
+            predictions['index'] = pd.to_datetime(predictions['index'])
+        
+        predictions.set_index('index', inplace=True)
 
-            # Plotting logic
-            if inverter_type == "No Inverter":
-                fig = px.line(
-                    predictions.reset_index(),
-                    x="index",
-                    y=["power_kw_no_live_pv"],
-                    title="Forecasted Power Generation",
-                    labels={
-                        "power_kw_no_live_pv": "Forecast without live data",
-                        "index": "Time"
-                    }
-                )
-            else:
-                fig = px.line(
-                    predictions.reset_index(),
-                    x="index",
-                    y=["power_kw", "power_kw_no_live_pv"],
-                    title="Forecasted Power Generation",
-                    labels={
-                        "power_kw": f"Forecast with {inverter_type} data",
-                        "power_kw_no_live_pv": "Forecast without live data",
-                        "index": "Time"
-                    }
-                )
-
-            fig.update_layout(
-                xaxis_title="Time",
-                yaxis_title="Power (kW)",
-                legend_title="Forecast Type",
-                legend=dict(
-                    yanchor="top",
-                    y=0.99,
-                    xanchor="left",
-                    x=0.01
-                )
+        # Plotting logic
+        if inverter_type == "No Inverter":
+            fig = px.line(
+                predictions.reset_index(),
+                x="index",
+                y=["power_kw_no_live_pv"],
+                title="Forecasted Power Generation",
+                labels={
+                    "power_kw_no_live_pv": "Forecast without live data",
+                    "index": "Time"
+                }
+            )
+        else:
+            fig = px.line(
+                predictions.reset_index(),
+                x="index",
+                y=["power_kw", "power_kw_no_live_pv"],
+                title="Forecasted Power Generation",
+                labels={
+                    "power_kw": f"Forecast with {inverter_type} data",
+                    "power_kw_no_live_pv": "Forecast without live data",
+                    "index": "Time"
+                }
             )
 
-            st.plotly_chart(fig, use_container_width=True)
+        fig.update_layout(
+            xaxis_title="Time",
+            yaxis_title="Power (kW)",
+            legend_title="Forecast Type",
+            legend=dict(
+                yanchor="top",
+                y=0.99,
+                xanchor="left",
+                x=0.01
+            )
+        )
 
-            # Display raw data
-            st.subheader("Raw Forecast Data")
-            if inverter_type == "No Inverter":
-                st.dataframe(predictions[['power_kw_no_live_pv']], use_container_width=True)
-            else:
-                st.dataframe(predictions, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True)
+
+        # Display raw data
+        st.subheader("Raw Forecast Data")
+        if inverter_type == "No Inverter":
+            st.dataframe(predictions[['power_kw_no_live_pv']], use_container_width=True)
         else:
-            st.error("No forecast data available. Please check your inputs and try again.")
-
-# Some information about the app
-st.sidebar.info(
-    """
-    This dashboard runs
-    [Open Climate Fix](https://openclimatefix.org/)'s
-    
-    [Open Source Quartz Solar Forecast](https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/).
-    
-    Click 'Run Forecast' and add the Home-Owner approved authentication URL to see the results.
-    """
-)
-
-# Footer
-st.markdown("---")
-st.markdown(f"Created with ❤️ by [Open Climate Fix](https://openclimatefix.org/)")
+            st.dataframe(predictions, use_container_width=True)
+    else:
+        st.error("No forecast data available. Please check your inputs and try again.")
