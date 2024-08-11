@@ -70,16 +70,23 @@ access_token = None
 enphase_system_id = None
 
 def get_enphase_auth_url():
-    response = requests.get(f"{FASTAPI_BASE_URL}/solar_inverters/enphase/auth_url")
-    return response.json()["auth_url"]
+    response = make_api_request("/solar_inverters/enphase/auth_url")
+    if response:
+        return response["auth_url"]
+    return None
 
 def get_enphase_access_token(redirect_url):
-    response = requests.post(f"{FASTAPI_BASE_URL}/solar_inverters/enphase/token", json={"redirect_url": redirect_url})
-    return response.json()["access_token"]
+    data = {"redirect_url": redirect_url}
+    response = make_api_request("/solar_inverters/enphase/token", method="POST", data=data)
+    if response:
+        return response["access_token"]
+    return None
 
 def get_enphase_system_id():
-    response = requests.get(f"{FASTAPI_BASE_URL}/solar_inverters/enphase/system_id")
-    return response.json()["enphase_system_id"]
+    response = make_api_request("/solar_inverters/enphase/system_id")
+    if response:
+        return response["enphase_system_id"]
+    return None
 
 def enphase_authorization():
     if st.session_state.enphase_access_token == None:
