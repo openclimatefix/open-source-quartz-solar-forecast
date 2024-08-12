@@ -84,38 +84,6 @@ def get_enphase_access_token_and_id(redirect_url):
         return response["access_token"], response["enphase_system_id"]
     return None
 
-def enphase_authorization():
-    if st.session_state.enphase_access_token == None:
-        auth_url = get_enphase_auth_url()
-        st.write("Please visit the following URL to authorize the application:")
-        st.markdown(f"[Enphase Authorization URL]({auth_url})")
-        st.write(
-            "After authorization, you will be redirected to a URL. Please copy the entire URL and paste it below:"
-        )
-
-        redirect_url = st.text_input("Enter the redirect URL:")
-
-        if redirect_url:
-            if "?code=" not in redirect_url:
-                st.error(
-                    "Invalid redirect URL. Please make sure you copied the entire URL."
-                )
-                return None, None
-
-            try:
-                access_token, enphase_system_id = get_enphase_access_token_and_id(redirect_url)
-                st.session_state.enphase_access_token = access_token
-                st.session_state.enphase_system_id = enphase_system_id
-                return access_token, enphase_system_id
-            except Exception as e:
-                st.error(f"Error getting access token: {str(e)}")
-                return None, None
-    else:
-        return st.session_state.enphase_access_token, st.session_state.enphase_system_id
-
-    return None, None
-
-
 # Display Enphase authorization UI if Enphase is selected
 if inverter_type == "Enphase" and not st.session_state.enphase_access_token:
     auth_url = get_enphase_auth_url()
