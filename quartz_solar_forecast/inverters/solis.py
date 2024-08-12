@@ -1,6 +1,5 @@
 from __future__ import annotations
 import asyncio
-import os
 import pandas as pd
 from datetime import datetime, timedelta, timezone
 from aiohttp import ClientSession, ClientError
@@ -11,16 +10,18 @@ import re
 from enum import Enum
 from http import HTTPStatus
 import json
-from typing import Any
+from typing import Any, Optional
+
+from pydantic import Field
+from pydantic_settings import BaseSettings
+
+from inverters.inverter import AbstractInverter
+
 try:
     import async_timeout
 except:
     print('Could not import `async_timeout`')
 
-from dotenv import load_dotenv
-
-SOLIS_CLOUD_API_URL = os.environ.get('SOLIS_CLOUD_API_URL', 'https://www.soliscloud.com')
-SOLIS_CLOUD_API_PORT = os.environ.get('SOLIS_CLOUD_API_PORT', '13333')
 
 # VERSION
 RESOURCE_PREFIX = '/v1/api/'
@@ -30,6 +31,26 @@ VERB = "POST"
 # Endpoints
 INVERTER_LIST = RESOURCE_PREFIX + 'inverterList'
 INVERTER_DAY = RESOURCE_PREFIX + 'inverterDay'
+
+
+class SolisSettings(BaseSettings):
+    api_url: str = Field(alias="SOLIS_CLOUD_API_URL", default='https://www.soliscloud.com')
+    port: str = Field(alias="SOLIS_CLOUD_API_PORT", default='13333')
+    api_key: str = Field(alias="SOLIS_CLOUD_API_KEY")
+    client_secret: str = Field(alias="SOLIS_CLOUD_API_KEY_SECRET")
+
+
+class SolisInverter(AbstractInverter):
+    def __init__(self, settings: SolisSettings = SolisSettings()):
+        self.__settings = settings
+
+    def get_data(self, ts: pd.Timestamp) -> Optional[pd.DataFrame]:
+        try:
+            return asyncio.run(get_solis_data(self.__settings))
+        except Exception as e:
+            print(f"Error retrieving Solis data: {str(e)}")
+            return None
+
 class SoliscloudAPI():
     """Class with functions for reading data from the Soliscloud Portal."""
 
@@ -275,17 +296,14 @@ class SoliscloudAPI():
         return
 
 class SolisData:
-    def __init__(self, domain: str = None):
-        load_dotenv()  
-        if domain is None:
-            domain = f"{SOLIS_CLOUD_API_URL}:{SOLIS_CLOUD_API_PORT}"
-        self.domain = domain
-        self.api_key = os.environ.get('SOLIS_CLOUD_API_KEY')
-        api_secret_str = os.environ.get('SOLIS_CLOUD_API_KEY_SECRET')
+    def __init__(self, settings: SolisSettings):
+        # load_dotenv()
+        self.domain = f"{settings.api_url}:{settings.port}"
+        self.api_key = settings.api_key
+        api_secret_str = settings.client_secret
         if not self.api_key or not api_secret_str:
             raise ValueError("SOLIS_CLOUD_API_KEY or SOLIS_CLOUD_API_KEY_SECRET environment variable is not set")
         self.api_secret = api_secret_str.encode('utf-8')  # Convert to binary string
-        self.domain = domain
 
     async def get_inverter_list(self, soliscloud: SoliscloudAPI):
         """Fetch the list of inverters"""
@@ -387,7 +405,8 @@ class SolisData:
             processed_df = processed_df.reset_index(drop=True)
             
             return processed_df
-        
-async def get_solis_data():
-    solis_data = SolisData()
+
+
+async def get_solis_data(settings: SolisSettings):
+    solis_data = SolisData(settings)
     return await solis_data.get_solis_data()

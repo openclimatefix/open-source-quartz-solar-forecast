@@ -1,22 +1,43 @@
 import http.client
 import os
+from typing import Optional
+
 import pandas as pd
 import json
 import base64
 from datetime import datetime, timedelta, timezone
 
-from dotenv import load_dotenv
-
 from urllib.parse import urlencode
 
-def get_enphase_auth_url():
+from inverters.inverter import AbstractInverter
+from pydantic import Field
+from pydantic_settings import BaseSettings
+
+
+class EnphaseSettings(BaseSettings):
+    client_id: str = Field(alias="ENPHASE_CLIENT_ID")
+    system_id: str = Field(alias="ENPHASE_SYSTEM_ID")
+    api_key: str = Field(alias="ENPHASE_API_KEY")
+    client_secret: str = Field(alias="ENPHASE_CLIENT_SECRET")
+
+
+class EnphaseInverter(AbstractInverter):
+
+    def __init__(self, settings: EnphaseSettings = EnphaseSettings()):
+        self.__settings = settings
+
+    def get_data(self, ts: pd.Timestamp) -> Optional[pd.DataFrame]:
+        return get_enphase_data(self.__settings)
+
+
+def get_enphase_auth_url(settings: EnphaseSettings):
     """
     Generate the authorization URL for the Enphase API.
 
-    :param None
+    :param settings: the Enphase settings
     :return: Authentication URL
     """
-    client_id = os.getenv('ENPHASE_CLIENT_ID')
+    client_id = settings.client_id
 
     redirect_uri = (
         "https://api.enphaseenergy.com/oauth/redirect_uri"  # Or your own redirect URI
@@ -49,17 +70,17 @@ def get_enphase_authorization_code(auth_url):
     return code
 
 
-def get_enphase_access_token():
+def get_enphase_access_token(settings: EnphaseSettings):
     """
     Obtain an access token for the Enphase API using the Authorization Code Grant flow.
     :param None
     :return: Access Token
     """
         
-    client_id = os.getenv('ENPHASE_CLIENT_ID')
-    client_secret = os.getenv('ENPHASE_CLIENT_SECRET')
+    client_id = settings.client_id
+    client_secret = settings.client_secret
 
-    auth_url = get_enphase_auth_url()
+    auth_url = get_enphase_auth_url(settings)
     auth_code = get_enphase_authorization_code(auth_url)
 
     # Combine the client ID and secret with a colon separator
@@ -127,14 +148,15 @@ def process_enphase_data(data_json: dict, start_at: int) -> pd.DataFrame:
 
     return live_generation_kw
 
-def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
+
+def get_enphase_data(settings: EnphaseSettings) -> pd.DataFrame:
     """ 
     Get live PV generation data from Enphase API v4
+    :param settings: the Enphase settings
     :param enphase_system_id: System ID for Enphase API
     :return: Live PV generation in Watt-hours, assumes to be a floating-point number
     """
-    api_key = os.getenv('ENPHASE_API_KEY')
-    access_token = get_enphase_access_token()
+    access_token = get_enphase_access_token(settings)
 
     # Set the start time to 1 week from now
     start_at = int((datetime.now() - timedelta(weeks=1)).timestamp())
@@ -145,11 +167,11 @@ def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
     conn = http.client.HTTPSConnection("api.enphaseenergy.com")
     headers = {
         "Authorization": f"Bearer {str(access_token)}",
-        "key": str(api_key)
+        "key": str(settings.api_key)
     }
 
     # Add the system_id and duration parameters to the URL
-    url = f"/api/v4/systems/{enphase_system_id}/telemetry/production_micro?start_at={start_at}&granularity={granularity}"
+    url = f"/api/v4/systems/{settings.system_id}/telemetry/production_micro?start_at={start_at}&granularity={granularity}"
     conn.request("GET", url, headers=headers)
 
     res = conn.getresponse()

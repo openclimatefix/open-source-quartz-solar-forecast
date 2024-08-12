@@ -1,4 +1,12 @@
+import os
+
+import pandas as pd
 from pydantic import BaseModel, Field
+
+from inverters.enphase import EnphaseInverter, EnphaseSettings
+from inverters.givenergy import GivEnergySettings, GivEnergyInverter
+from inverters.mock import MockInverter
+from inverters.solis import SolisSettings, SolisInverter
 
 
 class PVSite(BaseModel):
@@ -24,3 +32,15 @@ class PVSite(BaseModel):
         description="The type of inverter used",
         json_schema_extra=["enphase", "solis", "givenergy", "solarman", None],
     )
+
+    def get_inverter(self):
+        if self.inverter_type == 'enphase':
+            return EnphaseInverter()
+        elif self.inverter_type == 'solis':
+            return SolisInverter()
+        elif self.inverter_type == 'givenergy':
+            return GivEnergyInverter()
+        # elif self.inverter_type == 'solarman':
+        #     return fetch_solarman_data()
+        else:
+            return MockInverter()

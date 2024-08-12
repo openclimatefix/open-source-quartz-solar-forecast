@@ -1,19 +1,35 @@
-import os
+from typing import Optional
+
 import requests
 import pandas as pd
 from datetime import datetime
-from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+from pydantic import Field
+from pydantic_settings import BaseSettings
 
-def get_inverter_serial_number():
+from inverters.inverter import AbstractInverter
+
+
+class GivEnergySettings(BaseSettings):
+    api_key: str = Field(alias="GIVENERGY_API_KEY")
+
+
+class GivEnergyInverter(AbstractInverter):
+
+    def __init__(self, settings: GivEnergySettings = GivEnergySettings()):
+        self.__settings = settings
+
+    def get_data(self, ts: pd.Timestamp) -> Optional[pd.DataFrame]:
+        return get_givenergy_data(self.__settings)
+
+
+def get_inverter_serial_number(settings: GivEnergySettings):
     """
     Fetch the inverter serial number from the GivEnergy communication device API.
     
     :return: Inverter serial number as a string
     """
-    api_key = os.getenv('GIVENERGY_API_KEY')
+    api_key = settings.api_key
     
     if not api_key:
         raise ValueError("GIVENERGY_API_KEY not set in environment variables")
@@ -38,18 +54,19 @@ def get_inverter_serial_number():
     inverter_serial_number = data[0]['inverter']['serial']
     return inverter_serial_number
 
-def get_givenergy_data():
+
+def get_givenergy_data(settings: GivEnergySettings):
     """
     Fetch the latest data from the GivEnergy API and return a DataFrame.
     
     :return: DataFrame with timestamp and power_kw columns
     """
-    api_key = os.getenv('GIVENERGY_API_KEY')
+    api_key = settings.api_key
     
     if not api_key:
         raise ValueError("GIVENERGY_API_KEY not set in environment variables")
 
-    inverter_serial_number = get_inverter_serial_number()
+    inverter_serial_number = get_inverter_serial_number(settings)
 
     url = f'https://api.givenergy.cloud/v1/inverter/{inverter_serial_number}/system-data/latest'
     
