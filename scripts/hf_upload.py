@@ -1,15 +1,8 @@
 import os
 from datetime import datetime
-from huggingface_hub import login, HfFileSystem
+from huggingface_hub import login, HfFileSystem, HfApi
 from quartz_solar_forecast.utils.forecast_csv import forecast_for_site
-
-
-def get_file_path(latitude: float,
-                  longitude: float,
-                  capacity_kwp: float,
-                  model: str = "gb",
-                  time: datetime = None) -> str:
-    return time.strftime(f"data/%Y/%-m/%-d/{model}_{latitude}_{longitude}_{capacity_kwp}_%Y%m%d_%H.csv")
+from quartz_solar_forecast.utils.file_path import get_file_path
 
 
 if __name__ == "__main__":
@@ -29,5 +22,5 @@ if __name__ == "__main__":
         forecast = forecast_for_site(latitude, longitude, capacity_kwp, model, now)
 
         path = get_file_path(latitude, longitude, capacity_kwp, model, now)
-        with fs.open(f"datasets/{hf_repo}/{path}", "w") as f:
+        with fs.open(f"{hf_repo}/{path}", "w") as f:
             forecast.to_csv(path_or_buf=f)
