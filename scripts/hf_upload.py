@@ -1,3 +1,12 @@
+""" This script is used to run the forecast every day at 9am
+
+Github actions runs this script every day at 9am to generate the forecast for the next 48 hours.
+The results are saved to HF -
+https://huggingface.co/openclimatefix/open-source-quartz-solar-forecast/tree/main/data
+
+This means we can start to compare the difference between the forecasts and the actual generation.
+"""
+
 import os
 from datetime import datetime
 from huggingface_hub import login, HfFileSystem, HfApi
