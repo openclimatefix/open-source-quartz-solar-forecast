@@ -60,7 +60,7 @@ def get_solarman_data(start_date, end_date, settings: SolarmanSettings):
         url = f"{settings.url}/{settings.id}/record"
         
         headers = {
-            'Authorization': f'Bearer {SOLARMAN_TOKEN}',
+            'Authorization': f'Bearer {settings.token}',
             'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
         }
         
