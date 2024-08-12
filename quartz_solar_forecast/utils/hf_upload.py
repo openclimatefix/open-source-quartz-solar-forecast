@@ -16,6 +16,7 @@ if __name__ == "__main__":
 
     hf_token = os.getenv("HF_TOKEN")
     hf_repo = os.getenv("HF_REPO")
+    print(hf_repo)
 
     login(hf_token)
     fs = HfFileSystem()
