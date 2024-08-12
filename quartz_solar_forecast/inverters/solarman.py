@@ -1,17 +1,12 @@
-import os
 from typing import Optional
 
 import requests
 import pandas as pd
-from datetime import timedelta
-from dotenv import load_dotenv
+from datetime import timedelta, datetime
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
 from inverters.inverter import AbstractInverter
-
-# Load environment variables
-load_dotenv()
 
 
 class SolarmanSettings(BaseSettings):
@@ -26,7 +21,22 @@ class SolarmanInverter(AbstractInverter):
         self.__settings = settings
 
     def get_data(self, ts: pd.Timestamp) -> Optional[pd.DataFrame]:
-        return get_solarman_data(self.__settings)
+        try:
+            end_date = datetime.now()
+            start_date = end_date - timedelta(weeks=1)
+            solarman_data = get_solarman_data(start_date, end_date, self.__settings)
+
+            # Filter out rows with null power_kw values
+            valid_data = solarman_data.dropna(subset=['power_kw'])
+
+            if valid_data.empty:
+                print("No valid Solarman data found.")
+                return pd.DataFrame(columns=['timestamp', 'power_kw'])
+
+            return valid_data
+        except Exception as e:
+            print(f"Error retrieving Solarman data: {str(e)}")
+            return pd.DataFrame(columns=['timestamp', 'power_kw'])
 
 
 def get_solarman_data(start_date, end_date, settings: SolarmanSettings):

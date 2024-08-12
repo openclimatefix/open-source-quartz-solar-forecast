@@ -148,60 +148,7 @@ def format_nwp_data(df: pd.DataFrame, nwp_source: str, site: PVSite):
     return data_xr
 
 
-def fetch_enphase_data() -> Optional[pd.DataFrame]:
-    system_id = os.getenv('ENPHASE_SYSTEM_ID')
-    if not system_id:
-        print("Error: Enphase inverter ID is not provided in the environment variables.")
-        return None
-    return get_enphase_data(system_id)
 
-
-def fetch_solis_data() -> Optional[pd.DataFrame]:
-    try:
-        return asyncio.run(get_solis_data())
-    except Exception as e:
-        print(f"Error retrieving Solis data: {str(e)}")
-        return None
-
-
-def fetch_givenergy_data() -> Optional[pd.DataFrame]:
-    try:
-        return get_givenergy_data()
-    except Exception as e:
-        print(f"Error retrieving GivEnergy data: {str(e)}")
-        return None
-
-
-def fetch_solarman_data() -> pd.DataFrame:
-    try:
-        end_date = datetime.now()
-        start_date = end_date - timedelta(weeks=1)
-        solarman_data = get_solarman_data(start_date, end_date)
-
-        # Filter out rows with null power_kw values
-        valid_data = solarman_data.dropna(subset=['power_kw'])
-
-        if valid_data.empty:
-            print("No valid Solarman data found.")
-            return pd.DataFrame(columns=['timestamp', 'power_kw'])
-
-        return valid_data
-    except Exception as e:
-        print(f"Error retrieving Solarman data: {str(e)}")
-        return pd.DataFrame(columns=['timestamp', 'power_kw'])
-
-
-# def fetch_live_generation_data(inverter_type: str) -> Optional[pd.DataFrame]:
-#     if inverter_type == 'enphase':
-#         return fetch_enphase_data()
-#     elif inverter_type == 'solis':
-#         return fetch_solis_data()
-#     elif inverter_type == 'givenergy':
-#         return fetch_givenergy_data()
-#     elif inverter_type == 'solarman':
-#         return fetch_solarman_data()
-#     else:
-#         return pd.DataFrame(columns=['timestamp', 'power_kw'])
 
 
 def process_pv_data(live_generation_kw: Optional[pd.DataFrame], ts: pd.Timestamp, site: 'PVSite') -> xr.Dataset:
