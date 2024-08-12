@@ -12,7 +12,7 @@ if __name__ == "__main__":
     print(hf_repo)
 
     login(hf_token)
-    fs = HfFileSystem()
+    fs = HfFileSystem(token=hf_token)
     now = datetime.utcnow()
     latitude = 51.59
     longitude = -1.89
