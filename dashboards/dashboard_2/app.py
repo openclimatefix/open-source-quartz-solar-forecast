@@ -159,28 +159,36 @@ if st.sidebar.button("Run Forecast"):
 
         # Plotting logic
         if inverter_type == "No Inverter":
-            fig = px.line(
-                predictions.reset_index(),
-                x="index",
-                y=["power_kw_no_live_pv"],
-                title="Forecasted Power Generation",
-                labels={
-                    "power_kw_no_live_pv": "Forecast without live data",
-                    "index": "Time"
-                }
-            )
+            if 'power_kw' in predictions.columns:
+                fig = px.line(
+                    predictions.reset_index(),
+                    x="index",
+                    y="power_kw",
+                    title="Forecasted Power Generation (No Inverter)",
+                    labels={
+                        "power_kw": "Forecast",
+                        "index": "Time"
+                    }
+                )
+            else:
+                st.error("Expected column 'power_kw' not found in the data for No Inverter scenario.")
+                st.stop()
         else:
-            fig = px.line(
-                predictions.reset_index(),
-                x="index",
-                y=["power_kw", "power_kw_no_live_pv"],
-                title="Forecasted Power Generation",
-                labels={
-                    "power_kw": f"Forecast with {inverter_type} data",
-                    "power_kw_no_live_pv": "Forecast without live data",
-                    "index": "Time"
-                }
-            )
+            if 'power_kw' in predictions.columns and 'power_kw_no_live_pv' in predictions.columns:
+                fig = px.line(
+                    predictions.reset_index(),
+                    x="index",
+                    y=["power_kw", "power_kw_no_live_pv"],
+                    title="Forecasted Power Generation",
+                    labels={
+                        "power_kw": f"Forecast with {inverter_type} data",
+                        "power_kw_no_live_pv": "Forecast without live data",
+                        "index": "Time"
+                    }
+                )
+            else:
+                st.error("Expected columns 'power_kw' and 'power_kw_no_live_pv' not found in the data for Inverter scenario.")
+                st.stop()
 
         fig.update_layout(
             xaxis_title="Time",
@@ -198,9 +206,6 @@ if st.sidebar.button("Run Forecast"):
 
         # Display raw data
         st.subheader("Raw Forecast Data")
-        if inverter_type == "No Inverter":
-            st.dataframe(predictions[['power_kw_no_live_pv']], use_container_width=True)
-        else:
-            st.dataframe(predictions, use_container_width=True)
+        st.dataframe(predictions, use_container_width=True)
     else:
         st.error("No forecast data available. Please check your inputs and try again.")

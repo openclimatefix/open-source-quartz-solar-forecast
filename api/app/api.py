@@ -40,30 +40,33 @@ def forecast(request: ForecastRequest):
     timestamp = pd.Timestamp(ts).tz_localize(None)
     formatted_timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
-    # Run forecast without live data
-    site_no_live = PVSite(latitude=site.latitude, longitude=site.longitude, capacity_kwp=site.capacity_kwp)
-    predictions_no_live = run_forecast(site=site_no_live, ts=timestamp, nwp_source=nwp_source)
+    # If no inverter type is specified, run the standard forecast
+    if not site.inverter_type:
+        predictions = run_forecast(site=site, ts=timestamp, nwp_source=nwp_source)
+    else:
+        # Run forecast without live data
+        site_no_live = PVSite(latitude=site.latitude, longitude=site.longitude, capacity_kwp=site.capacity_kwp)
+        predictions_no_live = run_forecast(site=site_no_live, ts=timestamp, nwp_source=nwp_source)
 
-    if site.inverter_type == 'enphase' and access_token and enphase_system_id:
-        try:
-            live_data = get_enphase_data(enphase_system_id, access_token)
-            predictions_with_live = run_forecast_for_enphase(
-                site=site, 
-                ts=timestamp, 
-                nwp_source=nwp_source, 
-                access_token=access_token, 
-                enphase_system_id=enphase_system_id
-            )
+        if site.inverter_type == 'enphase' and access_token and enphase_system_id:
+            try:
+                predictions_with_live = run_forecast_for_enphase(
+                    site=site, 
+                    ts=timestamp, 
+                    nwp_source=nwp_source, 
+                    access_token=access_token, 
+                    enphase_system_id=enphase_system_id
+                )
+                predictions_with_live['power_kw_no_live_pv'] = predictions_no_live['power_kw']
+                predictions = predictions_with_live
+            except Exception as e:
+                print(f"Error fetching Enphase data: {str(e)}")
+                predictions = predictions_no_live.rename(columns={'power_kw': 'power_kw_no_live_pv'})
+        else:
+            # For all other inverter types, use the standard run_forecast function
+            predictions_with_live = run_forecast(site=site, ts=timestamp, nwp_source=nwp_source)
             predictions_with_live['power_kw_no_live_pv'] = predictions_no_live['power_kw']
             predictions = predictions_with_live
-        except Exception as e:
-            print(f"Error fetching Enphase data: {str(e)}")
-            predictions = predictions_no_live.rename(columns={'power_kw': 'power_kw_no_live_pv'})
-    else:
-        # For all other inverter types, use the standard run_forecast function
-        predictions_with_live = run_forecast(site=site, ts=timestamp, nwp_source=nwp_source)
-        predictions_with_live['power_kw_no_live_pv'] = predictions_no_live['power_kw']
-        predictions = predictions_with_live
 
     response = {
         "timestamp": formatted_timestamp,
