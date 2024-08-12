@@ -7,3 +7,5 @@ quartz_solar_forecast.egg-info
 venv
 frontend/node_modules
 frontend/.vite
+__pycache__/
+.cache.sqlite

@@ -23,7 +23,7 @@ class EnphaseSettings(BaseSettings):
 
 class EnphaseInverter(AbstractInverter):
 
-    def __init__(self, settings: EnphaseSettings = EnphaseSettings()):
+    def __init__(self, settings: EnphaseSettings):
         self.__settings = settings
 
     def get_data(self, ts: pd.Timestamp) -> Optional[pd.DataFrame]:

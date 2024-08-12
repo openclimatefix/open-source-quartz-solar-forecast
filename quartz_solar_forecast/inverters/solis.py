@@ -41,7 +41,7 @@ class SolisSettings(BaseSettings):
 
 
 class SolisInverter(AbstractInverter):
-    def __init__(self, settings: SolisSettings = SolisSettings()):
+    def __init__(self, settings: SolisSettings):
         self.__settings = settings
 
     def get_data(self, ts: pd.Timestamp) -> Optional[pd.DataFrame]:

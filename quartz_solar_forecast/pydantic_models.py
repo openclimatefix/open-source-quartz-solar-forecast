@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 from inverters.enphase import EnphaseInverter, EnphaseSettings
 from inverters.givenergy import GivEnergySettings, GivEnergyInverter
 from inverters.mock import MockInverter
+from inverters.solarman import SolarmanSettings, SolarmanInverter
 from inverters.solis import SolisSettings, SolisInverter
 
 
@@ -35,12 +36,12 @@ class PVSite(BaseModel):
 
     def get_inverter(self):
         if self.inverter_type == 'enphase':
-            return EnphaseInverter()
+            return EnphaseInverter(EnphaseSettings(_env_file='.env'))
         elif self.inverter_type == 'solis':
-            return SolisInverter()
+            return SolisInverter(SolisSettings(_env_file='.env'))
         elif self.inverter_type == 'givenergy':
-            return GivEnergyInverter()
-        # elif self.inverter_type == 'solarman':
-        #     return fetch_solarman_data()
+            return GivEnergyInverter(GivEnergySettings(_env_file='.env'))
+        elif self.inverter_type == 'solarman':
+            return SolarmanInverter(SolarmanSettings(_env_file='.env'))
         else:
             return MockInverter()

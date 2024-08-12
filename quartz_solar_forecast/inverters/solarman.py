@@ -1,23 +1,41 @@
 import os
+from typing import Optional
+
 import requests
 import pandas as pd
 from datetime import timedelta
 from dotenv import load_dotenv
+from pydantic import Field
+from pydantic_settings import BaseSettings
+
+from inverters.inverter import AbstractInverter
 
 # Load environment variables
 load_dotenv()
 
-# Constants
-SOLARMAN_API_URL = os.getenv('SOLARMAN_API_URL')
-SOLARMAN_TOKEN = os.getenv('SOLARMAN_TOKEN')
-SOLARMAN_ID = os.getenv('SOLARMAN_ID')
 
-def get_solarman_data(start_date, end_date):
+class SolarmanSettings(BaseSettings):
+    url: str = Field(alias="SOLARMAN_API_URL")
+    token: str = Field(alias="SOLARMAN_TOKEN")
+    id: str = Field(alias="SOLARMAN_ID")
+
+
+class SolarmanInverter(AbstractInverter):
+
+    def __init__(self, settings: SolarmanSettings):
+        self.__settings = settings
+
+    def get_data(self, ts: pd.Timestamp) -> Optional[pd.DataFrame]:
+        return get_solarman_data(self.__settings)
+
+
+def get_solarman_data(start_date, end_date, settings: SolarmanSettings):
     """
     Fetch data from the Solarman API from start_date to end_date.
     
     :param start_date: Start date (datetime object)
     :param end_date: End date (datetime object)
+    :param settings: the Solarman settings
     :return: DataFrame with timestamp and power_kw columns
     """
     all_data = []
@@ -29,7 +47,7 @@ def get_solarman_data(start_date, end_date):
         month = current_date.month
         day = current_date.day
         
-        url = f"{SOLARMAN_API_URL}/{SOLARMAN_ID}/record"
+        url = f"{settings.url}/{settings.id}/record"
         
         headers = {
             'Authorization': f'Bearer {SOLARMAN_TOKEN}',

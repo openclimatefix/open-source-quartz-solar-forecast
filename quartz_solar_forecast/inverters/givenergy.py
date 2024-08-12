@@ -16,7 +16,7 @@ class GivEnergySettings(BaseSettings):
 
 class GivEnergyInverter(AbstractInverter):
 
-    def __init__(self, settings: GivEnergySettings = GivEnergySettings()):
+    def __init__(self, settings: GivEnergySettings):
         self.__settings = settings
 
     def get_data(self, ts: pd.Timestamp) -> Optional[pd.DataFrame]:
