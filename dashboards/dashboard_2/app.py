@@ -95,23 +95,28 @@ if inverter_type == "Enphase" and not st.session_state.enphase_access_token:
 
 if st.sidebar.button("Run Forecast"):
     if inverter_type == "Enphase":
-        if not st.session_state.redirect_url:
-            st.error("Please enter the redirect URL to complete Enphase authorization.")
-        elif "?code=" not in st.session_state.redirect_url:
-            st.error("Invalid redirect URL. Please make sure you copied the entire URL.")
-        else:
-            try:
-                enphase_access_token, enphase_system_id = get_enphase_access_token_and_id(st.session_state.redirect_url)
-                if enphase_access_token and enphase_system_id:
-                    st.session_state.enphase_access_token = enphase_access_token
-                    st.session_state.enphase_system_id = enphase_system_id
-                    st.success("Enphase authorization successful!")
-                else:
-                    st.error("Failed to obtain Enphase access token and system ID.")
-                    st.stop()
-            except Exception as e:
-                st.error(f"Error getting access token: {str(e)}")
+        if not st.session_state.enphase_access_token or not st.session_state.enphase_system_id:
+            if not st.session_state.redirect_url:
+                st.error("Please enter the redirect URL to complete Enphase authorization.")
                 st.stop()
+            elif "?code=" not in st.session_state.redirect_url:
+                st.error("Invalid redirect URL. Please make sure you copied the entire URL.")
+                st.stop()
+            else:
+                try:
+                    enphase_access_token, enphase_system_id = get_enphase_access_token_and_id(st.session_state.redirect_url)
+                    if enphase_access_token and enphase_system_id:
+                        st.session_state.enphase_access_token = enphase_access_token
+                        st.session_state.enphase_system_id = enphase_system_id
+                        st.success("Enphase authorization successful!")
+                    else:
+                        st.error("Failed to obtain Enphase access token and system ID.")
+                        st.stop()
+                except Exception as e:
+                    st.error(f"Error getting access token: {str(e)}")
+                    st.stop()
+        else:
+            st.success("Using existing Enphase authorization.")
     
     # Create PVSite object with user-input or default values
     site = PVSite(
