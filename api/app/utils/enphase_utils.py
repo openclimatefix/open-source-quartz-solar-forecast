@@ -12,11 +12,6 @@ from quartz_solar_forecast.forecast import predict_tryolabs
 from quartz_solar_forecast.data import get_nwp, process_pv_data
 from quartz_solar_forecast.inverters.enphase import process_enphase_data
 
-def get_enphase_auth_url():
-    client_id = os.getenv("ENPHASE_CLIENT_ID")
-    redirect_uri = os.getenv("ENPHASE_REDIRECT_URI", "https://api.enphaseenergy.com/oauth/redirect_uri")
-    return f"https://api.enphaseenergy.com/oauth/authorize?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}"
-
 def get_enphase_access_token(auth_code):
     client_id = os.getenv("ENPHASE_CLIENT_ID")
     client_secret = os.getenv("ENPHASE_CLIENT_SECRET")

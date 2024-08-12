@@ -6,7 +6,8 @@ import pandas as pd
 from dotenv import load_dotenv
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite, ForecastRequest, TokenRequest
-from .utils.enphase_utils import get_enphase_auth_url, get_enphase_access_token, get_enphase_data, run_forecast_for_enphase
+from .utils.enphase_utils import get_enphase_access_token, get_enphase_data, run_forecast_for_enphase
+from quartz_solar_forecast.inverters.enphase import get_enphase_auth_url
 
 load_dotenv()
 
