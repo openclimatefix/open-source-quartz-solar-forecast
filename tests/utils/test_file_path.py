@@ -1,4 +1,4 @@
-from quartz_solar_forecast.utils.hf_upload import get_file_path
+from quartz_solar_forecast.utils.file_path import get_file_path
 from datetime import datetime
 
 

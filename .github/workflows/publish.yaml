@@ -27,5 +27,5 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN_PUSH }}
           HF_REPO: ${{ secrets.HF_REPO }}
         run: |
-          python quartz_solar_forecast/utils/hf_upload.py
+          python scripts/hf_upload.py
 
