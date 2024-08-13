@@ -7,7 +7,7 @@ from datetime import datetime
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
-from inverters.inverter import AbstractInverter
+from quartz_solar_forecast.inverters.inverter import AbstractInverter
 
 
 class GivEnergySettings(BaseSettings):
