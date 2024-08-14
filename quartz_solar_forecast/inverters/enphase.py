@@ -51,9 +51,18 @@ def get_enphase_authorization_code(auth_url):
     return code
 
 
-def get_enphase_access_token(auth_code):
+def get_enphase_access_token(auth_code=None):
+    """
+    Obtain an access token for the Enphase API using the Authorization Code Grant flow.
+    :param auth_code: Optional authorization code. If not provided, it will be obtained.
+    :return: Access Token
+    """
     client_id = os.getenv('ENPHASE_CLIENT_ID')
     client_secret = os.getenv('ENPHASE_CLIENT_SECRET')
+
+    if auth_code is None:
+        auth_url = get_enphase_auth_url()
+        auth_code = get_enphase_authorization_code(auth_url)
 
     credentials = f"{client_id}:{client_secret}"
     encoded_credentials = base64.b64encode(credentials.encode("utf-8")).decode("utf-8")
@@ -120,7 +129,11 @@ def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
     api_key = os.getenv('ENPHASE_API_KEY')
     access_token = os.getenv('ENPHASE_ACCESS_TOKEN')
 
-    # Set the start time to 1 week from now
+    # If access token is not in environment variables, get a new one
+    if not access_token:
+        access_token = get_enphase_access_token()
+
+    # Set the start time to 1 week ago
     start_at = int((datetime.now() - timedelta(weeks=1)).timestamp())
 
     # Set the granularity to week
@@ -147,5 +160,5 @@ def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
 
     # Process the data using the new function
     live_generation_kw = process_enphase_data(data_json, start_at)
-    
+
     return live_generation_kw
