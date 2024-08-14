@@ -30,12 +30,12 @@ app.add_middleware(
 )
 
 @app.post("/forecast/")
-def forecast(request: ForecastRequest):
-    site = request.site
-    ts = request.timestamp if request.timestamp else datetime.now(timezone.utc).isoformat()
-    nwp_source = request.nwp_source
-    access_token = request.access_token
-    enphase_system_id = request.enphase_system_id
+def forecast(forecast_request: ForecastRequest):
+    site = forecast_request.site
+    ts = forecast_request.timestamp if forecast_request.timestamp else datetime.now(timezone.utc).isoformat()
+    nwp_source = forecast_request.nwp_source
+    access_token = forecast_request.access_token
+    enphase_system_id = forecast_request.enphase_system_id
 
     timestamp = pd.Timestamp(ts).tz_localize(None)
     formatted_timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
