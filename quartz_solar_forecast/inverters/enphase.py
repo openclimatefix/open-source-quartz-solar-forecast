@@ -1,5 +1,4 @@
 import http.client
-import logging
 import os
 import pandas as pd
 import json
@@ -82,12 +81,9 @@ def get_enphase_access_token(auth_code):
     return access_token
 
 
-def process_enphase_data(data_json: dict, start_at: int) -> pd.DataFrame:
-    logging.info(f"Processing Enphase data: {data_json}")
-    
+def process_enphase_data(data_json: dict, start_at: int) -> pd.DataFrame:    
     # Check if 'intervals' key exists in the response
     if 'intervals' not in data_json:
-        logging.error("No 'intervals' key in Enphase response")
         return pd.DataFrame(columns=["timestamp", "power_kw"])
 
     # Initialize an empty list to store the data
@@ -108,7 +104,6 @@ def process_enphase_data(data_json: dict, start_at: int) -> pd.DataFrame:
 
     # If DataFrame is empty, return with correct columns
     if live_generation_kw.empty:
-        logging.warning("No data points found in the specified time range")
         return pd.DataFrame(columns=["timestamp", "power_kw"])
 
     # Convert to datetime
@@ -139,13 +134,10 @@ def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
 
     # Add the system_id and duration parameters to the URL
     url = f"/api/v4/systems/{enphase_system_id}/telemetry/production_micro?start_at={start_at}&granularity={granularity}"
-    logging.info(f"Requesting Enphase data with URL: {url}")
     conn.request("GET", url, headers=headers)
 
     res = conn.getresponse()
     data = res.read()
-    logging.info(f"Enphase API response status: {res.status}")
-    logging.info(f"Enphase API response: {data.decode('utf-8')}")
 
     # Decode the data read from the response
     decoded_data = data.decode("utf-8")
@@ -155,6 +147,5 @@ def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
 
     # Process the data using the new function
     live_generation_kw = process_enphase_data(data_json, start_at)
-    logging.info(f"Processed Enphase data:\n{live_generation_kw}")
-
+    
     return live_generation_kw

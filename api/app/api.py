@@ -1,6 +1,4 @@
-import json
 import os
-import logging
 from datetime import datetime, timezone
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,13 +6,11 @@ import pandas as pd
 from dotenv import load_dotenv
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite, ForecastRequest, TokenRequest
-from quartz_solar_forecast.inverters.enphase import get_enphase_auth_url, get_enphase_access_token, get_enphase_data
+from quartz_solar_forecast.inverters.enphase import get_enphase_auth_url, get_enphase_access_token
 
 load_dotenv()
 
 app = FastAPI()
-
-logging.basicConfig(level=logging.INFO)
 
 # CORS middleware setup
 origins = [
