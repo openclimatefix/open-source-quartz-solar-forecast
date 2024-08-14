@@ -68,30 +68,15 @@ else:
 
 inverter_type = st.sidebar.selectbox("Select Inverter", ["No Inverter", "Enphase", "Solis", "GivEnergy", "Solarman"])
 
-access_token = None
-enphase_system_id = None
-
-def get_enphase_auth_url():
-    response = make_api_request("/solar_inverters/enphase/auth_url")
-    if response:
-        return response["auth_url"]
-    return None
-
-def get_enphase_access_token_and_id(redirect_url):
-    data = {"redirect_url": redirect_url}
-    response = make_api_request("/solar_inverters/enphase/token_and_id", method="POST", data=data)
-    if response:
-        return response["access_token"], response["enphase_system_id"]
-    return None
-
-# Display Enphase authorization UI if Enphase is selected
 if inverter_type == "Enphase" and not st.session_state.enphase_access_token:
-    auth_url = get_enphase_auth_url()
-    st.write("Please visit the following URL to authorize the application:")
-    st.markdown(f"[Enphase Authorization URL]({auth_url})")
-    st.write("After authorization, you will be redirected to a URL. Please copy the entire URL and paste it below:")
-    
-    st.session_state.redirect_url = st.text_input("Enter the redirect URL:", value=st.session_state.redirect_url)
+    auth_url_response = make_api_request("/solar_inverters/enphase/auth_url")
+    if auth_url_response:
+        auth_url = auth_url_response["auth_url"]
+        st.write("Please visit the following URL to authorize the application:")
+        st.markdown(f"[Enphase Authorization URL]({auth_url})")
+        st.write("After authorization, you will be redirected to a URL. Please copy the entire URL and paste it below:")
+        
+        st.session_state.redirect_url = st.text_input("Enter the redirect URL:", value=st.session_state.redirect_url)
 
 if st.sidebar.button("Run Forecast"):
     if inverter_type == "Enphase":
@@ -104,10 +89,10 @@ if st.sidebar.button("Run Forecast"):
                 st.stop()
             else:
                 try:
-                    enphase_access_token, enphase_system_id = get_enphase_access_token_and_id(st.session_state.redirect_url)
-                    if enphase_access_token and enphase_system_id:
-                        st.session_state.enphase_access_token = enphase_access_token
-                        st.session_state.enphase_system_id = enphase_system_id
+                    token_response = make_api_request("/solar_inverters/enphase/token_and_id", method="POST", data={"redirect_url": st.session_state.redirect_url})
+                    if token_response:
+                        st.session_state.enphase_access_token = token_response["access_token"]
+                        st.session_state.enphase_system_id = token_response["enphase_system_id"]
                         st.success("Enphase authorization successful!")
                     else:
                         st.error("Failed to obtain Enphase access token and system ID.")
@@ -118,7 +103,6 @@ if st.sidebar.button("Run Forecast"):
         else:
             st.success("Using existing Enphase authorization.")
     
-    # Create PVSite object with user-input or default values
     site = PVSite(
         latitude=latitude,
         longitude=longitude,
@@ -126,20 +110,20 @@ if st.sidebar.button("Run Forecast"):
         inverter_type=inverter_type.lower() if inverter_type != "No Inverter" else ""
     )
 
-    # Prepare data for API request
     data = {
         "site": site.dict(),
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "nwp_source": "icon",
-        "access_token": st.session_state.enphase_access_token if inverter_type == "Enphase" else None,
-        "enphase_system_id": st.session_state.enphase_system_id if inverter_type == "Enphase" else None
     }
 
-    # Make the API request
     forecast_data = make_api_request("/forecast/", method="POST", data=data)
 
     if forecast_data:
         st.success("Forecast completed successfully!")
+        # Display raw Enphase data if available
+        if forecast_data.get('raw_enphase_data'):
+            st.subheader("Raw Enphase Data")
+            raw_enphase_df = pd.DataFrame(forecast_data['raw_enphase_data'])
+            st.dataframe(raw_enphase_df)
 
         # Display current timestamp
         st.subheader(f"Forecast generated at: {forecast_data['timestamp']}")
