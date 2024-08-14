@@ -1,9 +1,8 @@
 import json
 import os
 import logging
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 from dotenv import load_dotenv
@@ -46,44 +45,17 @@ def forecast(forecast_request: ForecastRequest):
 
     if not site.inverter_type:
         predictions = predictions_no_live
-    elif site.inverter_type == 'enphase':
-        try:
-            enphase_system_id = os.getenv('ENPHASE_SYSTEM_ID')
-            start_at = int((timestamp - timedelta(weeks=1)).timestamp())
-            predictions_with_live = get_enphase_data(enphase_system_id, start_at, "week")
-            
-            logging.info(f"Predictions with live data:\n{predictions_with_live}")
-            logging.info(f"Predictions without live data:\n{predictions_no_live}")
-
-            if predictions_with_live.empty:
-                logging.warning("No Enphase data available, using predictions without live data")
-                predictions = predictions_no_live.rename(columns={'power_kw': 'power_kw_no_live_pv'})
-            else:
-                # Ensure both DataFrames have the same index
-                common_index = predictions_with_live.index.intersection(predictions_no_live.index)
-                predictions_with_live = predictions_with_live.loc[common_index]
-                predictions_no_live = predictions_no_live.loc[common_index]
-                
-                predictions_with_live['power_kw_no_live_pv'] = predictions_no_live['power_kw']
-                predictions = predictions_with_live
-        except Exception as e:
-            logging.error(f"Error fetching Enphase data: {str(e)}")
-            predictions = predictions_no_live.rename(columns={'power_kw': 'power_kw_no_live_pv'})
     else:
         predictions_with_live = run_forecast(site=site, ts=timestamp)
         predictions_with_live['power_kw_no_live_pv'] = predictions_no_live['power_kw']
         predictions = predictions_with_live
 
-    # Convert DataFrame to a format that's JSON serializable
-    predictions_dict = predictions.reset_index().to_dict(orient='records')
-
     response = {
         "timestamp": formatted_timestamp,
-        "predictions": predictions_dict,
-        "raw_enphase_data": predictions_with_live.to_dict(orient='records') if site.inverter_type == 'enphase' else None
+        "predictions": predictions.to_dict(),
     }
 
-    return JSONResponse(content=response)
+    return response
 
 @app.get("/solar_inverters/enphase/auth_url")
 def get_enphase_authorization_url():

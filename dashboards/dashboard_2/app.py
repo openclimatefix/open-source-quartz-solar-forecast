@@ -119,11 +119,6 @@ if st.sidebar.button("Run Forecast"):
 
     if forecast_data:
         st.success("Forecast completed successfully!")
-        # Display raw Enphase data if available
-        if forecast_data.get('raw_enphase_data'):
-            st.subheader("Raw Enphase Data")
-            raw_enphase_df = pd.DataFrame(forecast_data['raw_enphase_data'])
-            st.dataframe(raw_enphase_df)
 
         # Display current timestamp
         st.subheader(f"Forecast generated at: {forecast_data['timestamp']}")

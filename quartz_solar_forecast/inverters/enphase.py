@@ -116,9 +116,20 @@ def process_enphase_data(data_json: dict, start_at: int) -> pd.DataFrame:
 
     return live_generation_kw
 
-def get_enphase_data(enphase_system_id: str, start_at: int, granularity: str) -> pd.DataFrame:
+def get_enphase_data(enphase_system_id: str) -> pd.DataFrame:
+    """ 
+    Get live PV generation data from Enphase API v4
+    :param enphase_system_id: System ID for Enphase API
+    :return: Live PV generation in Watt-hours, assumes to be a floating-point number
+    """
     api_key = os.getenv('ENPHASE_API_KEY')
     access_token = os.getenv('ENPHASE_ACCESS_TOKEN')
+
+    # Set the start time to 1 week from now
+    start_at = int((datetime.now() - timedelta(weeks=1)).timestamp())
+
+    # Set the granularity to week
+    granularity = "week"
 
     conn = http.client.HTTPSConnection("api.enphaseenergy.com")
     headers = {
@@ -126,6 +137,7 @@ def get_enphase_data(enphase_system_id: str, start_at: int, granularity: str) ->
         "key": api_key
     }
 
+    # Add the system_id and duration parameters to the URL
     url = f"/api/v4/systems/{enphase_system_id}/telemetry/production_micro?start_at={start_at}&granularity={granularity}"
     logging.info(f"Requesting Enphase data with URL: {url}")
     conn.request("GET", url, headers=headers)
@@ -134,10 +146,15 @@ def get_enphase_data(enphase_system_id: str, start_at: int, granularity: str) ->
     data = res.read()
     logging.info(f"Enphase API response status: {res.status}")
     logging.info(f"Enphase API response: {data.decode('utf-8')}")
-    
-    data_json = json.loads(data.decode("utf-8"))
 
-    df = process_enphase_data(data_json, start_at)
-    logging.info(f"Processed Enphase data:\n{df}")
-    
-    return df
+    # Decode the data read from the response
+    decoded_data = data.decode("utf-8")
+
+    # Convert the decoded data into JSON format
+    data_json = json.loads(decoded_data)
+
+    # Process the data using the new function
+    live_generation_kw = process_enphase_data(data_json, start_at)
+    logging.info(f"Processed Enphase data:\n{live_generation_kw}")
+
+    return live_generation_kw
