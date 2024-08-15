@@ -14,10 +14,6 @@ from quartz_solar_forecast.pydantic_models import PVSite
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
 
 def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     """
