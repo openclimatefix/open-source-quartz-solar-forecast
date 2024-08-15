@@ -1,5 +1,7 @@
 # Solar Forecast API Documentation
 
+https://github.com/user-attachments/assets/a7b1d3ac-b2c0-4c0d-bf23-45ebbbda9b88
+
 ## Overview
 
 This API provides solar power forecast data based on the given site information and handles authorization with Enphase solar inverters. It has been developed using FastAPI and includes the following key endpoints:
