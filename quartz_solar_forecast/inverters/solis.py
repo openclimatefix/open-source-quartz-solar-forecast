@@ -297,7 +297,6 @@ class SoliscloudAPI():
 
 class SolisData:
     def __init__(self, settings: SolisSettings):
-        # load_dotenv()
         self.domain = f"{settings.api_url}:{settings.port}"
         self.api_key = settings.api_key
         api_secret_str = settings.client_secret
