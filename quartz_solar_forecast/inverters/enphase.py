@@ -82,7 +82,7 @@ def get_enphase_access_token(settings: EnphaseSettings, auth_code=None):
     client_secret = settings.client_secret
 
     if auth_code is None:
-        auth_url = get_enphase_auth_url()
+        auth_url = get_enphase_auth_url(settings)
         auth_code = get_enphase_authorization_code(auth_url)
 
     credentials = f"{client_id}:{client_secret}"
