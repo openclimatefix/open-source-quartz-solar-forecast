@@ -51,7 +51,7 @@ export function PVForecastForm({ updatePredictions }) {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const response = await fetch(`http://localhost:8000/forecast/`, {
+    const response = await fetch(`http://localhost:8000/forecast`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),
