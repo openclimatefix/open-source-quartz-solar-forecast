@@ -92,5 +92,5 @@ def get_givenergy_data(settings: GivEnergySettings):
         'timestamp': [timestamp],
         'power_kw': [power_kw]
     })
-    print(df)
+
     return df

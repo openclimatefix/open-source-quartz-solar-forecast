@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 
 from quartz_solar_forecast.inverters.enphase import EnphaseInverter, EnphaseSettings
 from quartz_solar_forecast.inverters.givenergy import GivEnergySettings, GivEnergyInverter
@@ -42,3 +43,10 @@ class PVSite(BaseModel):
             return SolarmanInverter(SolarmanSettings(_env_file='.env'))
         else:
             return MockInverter()
+
+class ForecastRequest(BaseModel):
+    site: PVSite
+    timestamp: Optional[str] = None
+
+class TokenRequest(BaseModel):
+    redirect_url: str
