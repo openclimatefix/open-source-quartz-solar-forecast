@@ -20,7 +20,11 @@ class GivEnergyInverter(AbstractInverter):
         self.__settings = settings
 
     def get_data(self, ts: pd.Timestamp) -> Optional[pd.DataFrame]:
-        return get_givenergy_data(self.__settings)
+        try:
+            return get_givenergy_data(self.__settings)
+        except Exception as e:
+            print(f"Error retrieving GivEnergy data: {e}")
+            return None
 
 
 def get_inverter_serial_number(settings: GivEnergySettings):
