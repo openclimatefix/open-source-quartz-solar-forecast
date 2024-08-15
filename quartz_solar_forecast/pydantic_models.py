@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-
+from typing import Optional
 
 class PVSite(BaseModel):
     latitude: float = Field(..., description="the latitude of the site", ge=-90, le=90)
@@ -24,3 +24,10 @@ class PVSite(BaseModel):
         description="The type of inverter used",
         json_schema_extra=["enphase", "solis", "givenergy", "solarman", None],
     )
+
+class ForecastRequest(BaseModel):
+    site: PVSite
+    timestamp: Optional[str] = None
+
+class TokenRequest(BaseModel):
+    redirect_url: str
