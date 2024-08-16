@@ -96,7 +96,6 @@ def body_wrong():
         "timestamp": "2021-01-26 01:15:00",
     }
 
-
 def test_api_ok(client, body):
     response = client.post("/forecast/", json=body)
     response_body = response.json()
@@ -123,3 +122,8 @@ def test_api_wrong_body(client, body_wrong):
 
     assert response.status_code == 422
     assert response_body == expected_response_on_wrong_types
+
+def test_getenphse_authorization_url(client):
+    response = client.get("/solar_inverters/enphase/auth_url")
+    assert response.status_code == 200
+    assert isinstance(response.json()["auth_url"], str)
