@@ -3,40 +3,45 @@
 This Streamlit Dashboard provides an interactive interface for running and visualizing solar forecasts using the [Open Source Quartz Solar Forecast](https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast) model developed by [Open Climate Fix](https://openclimatefix.org/).
 
 
-https://github.com/user-attachments/assets/940ca4a7-65a4-40ea-a602-ea0f65e96746
+https://github.com/user-attachments/assets/a7b1d3ac-b2c0-4c0d-bf23-45ebbbda9b88
 
 
 ## Features
 
 - Configure PV site parameters (latitude, longitude, capacity)
-- Select inverter type (No Inverter or Enphase)
+- Select inverter type (No Inverter, Enphase, Solis, GivEnergy, or Solarman)
 - Enphase API authentication flow (if applicable)
 - Run solar forecast
 - Visualize forecast results with interactive charts
 - Compare forecasts with and without recent PV data (if applicable)
 - Display raw forecast data and provide an option to download it as CSV
 
-## How to Run
+## Development Environment Setup
 
 1. Clone the repository and install all the dependencies in a virtual environment on a Linux System(or WSL):
    `pip install -e .` and `pip install -r requirements.txt`
 
-2. Set up environment variables (if applicable):
+2. Set up environment variables for your inverter (if applicable):
 
 - Create a `.env` file in your root directory
-- Add the following variables:
-  ```
-  ENPHASE_CLIENT_ID=your_client_id
-  ENPHASE_CLIENT_SECRET=your_client_secret
-  ENPHASE_API_KEY=your_api_key
-  ENPHASE_SYSTEM_ID=your_system_id
-  ```
+- Check out `.env.example` file and copy paste the contents of the file in the `.env` file that you just created
+- Replace the placeholder for all the variables that are relevant to your inverter
 
-3. Navigate to the `dashboards/dashboard_2` directory.
+## How to Run the Backend
 
-4. Run the Streamlit app: `streamlit run app.py`
+1. Navigate to the `api` directory
 
-5. Open your web browser and go to the URL provided by Streamlit (usually `http://localhost:8501`).
+2. Run the API: `python main.py`
+
+3. Ensure that this API is running before you use the frontend
+
+## How to Run the Frontend
+
+1. Navigate to the `dashboards/dashboard_2` directory.
+
+2. Run the Streamlit app: `streamlit run app.py`
+
+3. Open your web browser and go to the URL provided by Streamlit (usually `http://localhost:8501`).
 
 ## Using the App
 
@@ -47,7 +52,7 @@ https://github.com/user-attachments/assets/940ca4a7-65a4-40ea-a602-ea0f65e96746
 
 2. **Select Inverter Type:**
 
-- Choose between "No Inverter" and "Enphase" from the dropdown menu.
+- Choose between "No Inverter", "Enphase", "Solis", "GivEnergy", and "Solarman" from the dropdown menu.
 
 3. **Enphase Authorization (if applicable):**
 
