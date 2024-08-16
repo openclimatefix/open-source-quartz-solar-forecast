@@ -30,13 +30,18 @@ class EnphaseInverter(AbstractInverter):
         return get_enphase_data(self.__settings)
 
 
-def get_enphase_auth_url(settings: EnphaseSettings):
+def get_enphase_auth_url(settings: Optional[EnphaseSettings] = None):
     """
     Generate the authorization URL for the Enphase API.
 
     :param settings: the Enphase settings
     :return: Authentication URL
     """
+    if settings is None:
+        # Because this uses env variables we don't want to set it as a default argument, otherwise it will be evaluated
+        # even if the method is not called
+        settings = EnphaseSettings()
+
     client_id = settings.client_id
 
     redirect_uri = (
@@ -70,14 +75,18 @@ def get_enphase_authorization_code(auth_url):
     return code
 
 
-def get_enphase_access_token(settings: EnphaseSettings, auth_code=None):
+def get_enphase_access_token(auth_code: Optional[str] = None, settings: Optional[EnphaseSettings] = None):
     """
     Obtain an access token for the Enphase API using the Authorization Code Grant flow.
-    :param settings: Enphase settings
     :param auth_code: Optional authorization code. If not provided, it will be obtained.
+    :param settings: Optional Enphase settings
     :return: Access Token
     """
-        
+    if settings is None:
+        # Because this uses env variables we don't want to set it as a default argument, otherwise it will be evaluated
+        # even if the method is not called
+        settings = EnphaseSettings()
+
     client_id = settings.client_id
     client_secret = settings.client_secret
 
@@ -127,7 +136,7 @@ def process_enphase_data(data_json: dict, start_at: int) -> pd.DataFrame:
             timestamp = datetime.fromtimestamp(end_at, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
 
             # Append the data to the list
-            data_list.append({"timestamp": timestamp, "power_kw": interval['powr']/1000})
+            data_list.append({"timestamp": timestamp, "power_kw": interval['powr'] / 1000})
 
     # Convert the list to a DataFrame
     live_generation_kw = pd.DataFrame(data_list)
