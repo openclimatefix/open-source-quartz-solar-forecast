@@ -57,15 +57,14 @@ def client():
 @pytest.fixture
 def body():
     return {
-        "site":
-            {
-        "latitude": -90,
-        "longitude": -180,
-        "capacity_kwp": 0,
-        "tilt": 35,
-        "orientation": 180,
-        "inverter_type": "string",
-        },
+        "site":{
+            "latitude": -90,
+            "longitude": -180,
+            "capacity_kwp": 0,
+            "tilt": 35,
+            "orientation": 180,
+            "inverter_type": "string",
+            },
         "timestamp": "2021-01-26 01:15:00",
     }
 
@@ -95,6 +94,14 @@ def body_wrong():
         },
         "timestamp": "2021-01-26 01:15:00",
     }
+
+@pytest.fixture
+def bad_redirect_url(client):
+    return "url"
+
+@pytest.fixture
+def bad_redirect_url_correct_param(client):
+    return "url?code=code"
 
 def test_api_ok(client, body):
     response = client.post("/forecast/", json=body)
@@ -127,3 +134,16 @@ def test_getenphse_authorization_url(client):
     response = client.get("/solar_inverters/enphase/auth_url")
     assert response.status_code == 200
     assert isinstance(response.json()["auth_url"], str)
+    
+def test_getenphse_token_and_system_id_bad_redirect_url(client, bad_redirect_url):
+
+    response = client.post("/solar_inverters/enphase/token_and_id", json={"redirect_url": bad_redirect_url})
+    response_body = response.json()
+    assert response.status_code == 400
+    assert response_body['detail'] == 'Invalid redirect URL'
+
+def test_getenphse_token_and_system_id_bad_redirect_url(client, bad_redirect_url_correct_param):
+    response = client.post("/solar_inverters/enphase/token_and_id", json={"redirect_url": bad_redirect_url_correct_param})
+    response_body = response.json()
+    assert response.status_code == 400
+    assert  'Error getting access token and system ID: ' in response_body['detail']
