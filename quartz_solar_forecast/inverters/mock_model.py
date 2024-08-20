@@ -1,6 +1,6 @@
 import pandas as pd
 
-from quartz_solar_forecast.inverters.inverter import AbstractInverter
+from quartz_solar_forecast.inverters.inverter_model import AbstractInverter
 
 
 class MockInverter(AbstractInverter):

@@ -1,11 +1,11 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 
-from quartz_solar_forecast.inverters.enphase import EnphaseInverter, EnphaseSettings
-from quartz_solar_forecast.inverters.givenergy import GivEnergySettings, GivEnergyInverter
-from quartz_solar_forecast.inverters.mock import MockInverter
-from quartz_solar_forecast.inverters.solarman import SolarmanSettings, SolarmanInverter
-from quartz_solar_forecast.inverters.solis import SolisSettings, SolisInverter
+from quartz_solar_forecast.inverters.enphase.enphase import EnphaseInverter, EnphaseSettings
+from quartz_solar_forecast.inverters.givenergy.givenergy_model import GivEnergySettings, GivEnergyInverter
+from quartz_solar_forecast.inverters.mock_model import MockInverter
+from quartz_solar_forecast.inverters.solarman.solarman_model import SolarmanSettings, SolarmanInverter
+from quartz_solar_forecast.inverters.solis.solis_model import SolisSettings, SolisInverter
 
 
 class PVSite(BaseModel):
