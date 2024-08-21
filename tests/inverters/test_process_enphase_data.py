@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from quartz_solar_forecast.inverters.enphase.enphase import process_enphase_data
+from inverters.enphase.enphase import process_enphase_data
 
 @pytest.fixture
 def sample_data():
