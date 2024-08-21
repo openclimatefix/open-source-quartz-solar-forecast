@@ -1,8 +1,30 @@
+from typing import Optional
+
 import requests
 import pandas as pd
 from datetime import datetime
 
-from quartz_solar_forecast.inverters.givenergy.givenergy_model import GivEnergySettings
+from pydantic import Field
+from pydantic_settings import BaseSettings
+
+from quartz_solar_forecast.inverters.inverter import AbstractInverter
+
+
+class GivEnergySettings(BaseSettings):
+    api_key: str = Field(alias="GIVENERGY_API_KEY")
+
+
+class GivEnergyInverter(AbstractInverter):
+
+    def __init__(self, settings: GivEnergySettings):
+        self.__settings = settings
+
+    def get_data(self, ts: pd.Timestamp) -> Optional[pd.DataFrame]:
+        try:
+            return get_givenergy_data(self.__settings)
+        except Exception as e:
+            print(f"Error retrieving GivEnergy data: {e}")
+            return None
 
 
 def get_inverter_serial_number(settings: GivEnergySettings):

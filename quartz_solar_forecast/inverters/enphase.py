@@ -9,7 +9,25 @@ from datetime import datetime, timedelta, timezone
 
 from urllib.parse import urlencode
 
-from quartz_solar_forecast.inverters.enphase.enphase_model import EnphaseSettings
+from quartz_solar_forecast.inverters.inverter import AbstractInverter
+from pydantic import Field
+from pydantic_settings import BaseSettings
+
+
+class EnphaseSettings(BaseSettings):
+    client_id: str = Field(alias="ENPHASE_CLIENT_ID")
+    system_id: str = Field(alias="ENPHASE_SYSTEM_ID")
+    api_key: str = Field(alias="ENPHASE_API_KEY")
+    client_secret: str = Field(alias="ENPHASE_CLIENT_SECRET")
+
+
+class EnphaseInverter(AbstractInverter):
+
+    def __init__(self, settings: EnphaseSettings):
+        self.__settings = settings
+
+    def get_data(self, ts: pd.Timestamp) -> Optional[pd.DataFrame]:
+        return get_enphase_data(self.__settings)
 
 
 def get_enphase_auth_url(settings: Optional[EnphaseSettings] = None):
