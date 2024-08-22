@@ -11,10 +11,12 @@ from urllib.parse import urlencode
 
 from quartz_solar_forecast.inverters.inverter import AbstractInverter
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class EnphaseSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_file='.env', extra='ignore')
+
     client_id: str = Field(alias="ENPHASE_CLIENT_ID")
     system_id: str = Field(alias="ENPHASE_SYSTEM_ID")
     api_key: str = Field(alias="ENPHASE_API_KEY")

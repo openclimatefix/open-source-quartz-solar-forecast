@@ -13,7 +13,7 @@ import json
 from typing import Any, Optional
 
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from quartz_solar_forecast.inverters.inverter import AbstractInverter
 
@@ -34,6 +34,8 @@ INVERTER_DAY = RESOURCE_PREFIX + 'inverterDay'
 
 
 class SolisSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_file='.env', extra='ignore')
+
     api_url: str = Field(alias="SOLIS_CLOUD_API_URL", default='https://www.soliscloud.com')
     port: str = Field(alias="SOLIS_CLOUD_API_PORT", default='13333')
     api_key: str = Field(alias="SOLIS_CLOUD_API_KEY")

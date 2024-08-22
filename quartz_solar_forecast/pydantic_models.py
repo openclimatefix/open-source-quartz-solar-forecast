@@ -34,13 +34,13 @@ class PVSite(BaseModel):
 
     def get_inverter(self):
         if self.inverter_type == 'enphase':
-            return EnphaseInverter(EnphaseSettings(_env_file='.env'))
+            return EnphaseInverter(EnphaseSettings())
         elif self.inverter_type == 'solis':
-            return SolisInverter(SolisSettings(_env_file='.env'))
+            return SolisInverter(SolisSettings())
         elif self.inverter_type == 'givenergy':
-            return GivEnergyInverter(GivEnergySettings(_env_file='.env'))
+            return GivEnergyInverter(GivEnergySettings())
         elif self.inverter_type == 'solarman':
-            return SolarmanInverter(SolarmanSettings(_env_file='.env'))
+            return SolarmanInverter(SolarmanSettings())
         else:
             return MockInverter()
 

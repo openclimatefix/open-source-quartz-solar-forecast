@@ -4,12 +4,14 @@ import requests
 import pandas as pd
 from datetime import timedelta, datetime
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from quartz_solar_forecast.inverters.inverter import AbstractInverter
 
 
 class SolarmanSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_file='.env', extra='ignore')
+
     url: str = Field(alias="SOLARMAN_API_URL")
     token: str = Field(alias="SOLARMAN_TOKEN")
     id: str = Field(alias="SOLARMAN_ID")

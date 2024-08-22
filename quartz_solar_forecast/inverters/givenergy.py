@@ -5,12 +5,14 @@ import pandas as pd
 from datetime import datetime
 
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from quartz_solar_forecast.inverters.inverter import AbstractInverter
 
 
 class GivEnergySettings(BaseSettings):
+    model_config = SettingsConfigDict(env_file='.env', extra='ignore')
+
     api_key: str = Field(alias="GIVENERGY_API_KEY")
 
 
