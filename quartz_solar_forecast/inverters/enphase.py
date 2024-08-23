@@ -160,7 +160,7 @@ def get_enphase_data(settings: EnphaseSettings) -> pd.DataFrame:
     :param enphase_system_id: System ID for Enphase API
     :return: Live PV generation in Watt-hours, assumes to be a floating-point number
     """
-    access_token = get_enphase_access_token(settings)
+    access_token = get_enphase_access_token(settings=settings)
 
     # Set the start time to 1 week ago
     start_at = int((datetime.now() - timedelta(weeks=1)).timestamp())
