@@ -1,5 +1,5 @@
 import pandas as pd
-import datetime
+from datetime import datetime, timedelta
 from quartz_solar_forecast.inverters.inverter import AbstractInverter
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -23,7 +23,10 @@ class VictronInverter(AbstractInverter):
         # get first site (bit of a guess)
         first_site_id = sites["records"][0]["idSite"]
         diag = self._api.get_diag(first_site_id)
-        stats = self._api.get_kwh_stats(first_site_id, start=datetime.datetime(2024, 8, 14), end=datetime.datetime(2024, 8, 21))
+
+        end = datetime.now()
+        start = end - timedelta(weeks=1)
+        stats = self._api.get_kwh_stats(first_site_id, start=start, end=end)
 
         kwh = stats["records"]["kwh"]
 
