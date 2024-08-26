@@ -34,6 +34,7 @@ Open-Source-Quartz-Solar-Forecast/
    * `pydantic_models.py`: Contains the PVSite class
    * `inverters/`:
      * This is the directory where you'd want to create a new file among the other `<inverter_name>.py` files to add your inverter
+     * You will need to create a new inverter model that extends `AbstractInverter` which is defined in `inverter.py`
      * You will need to follow the appropriate authentication flow as mentioned in the documentation of the inverter you're trying to add
      * We need the past 7 days data formatted in intervals of 5 minutes for this model. Given below is an example with Enphase
 
