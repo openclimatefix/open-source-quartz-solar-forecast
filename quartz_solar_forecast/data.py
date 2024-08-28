@@ -1,28 +1,19 @@
 """ Function to get NWP data and create fake PV dataset"""
 import ssl
-from datetime import datetime, timedelta
-import os  
-import numpy as np
-import pandas as pd
-import xarray as xr
-import openmeteo_requests
-import requests_cache
-import asyncio
-
-from retry_requests import retry
+from datetime import datetime
 from typing import Optional
 
+import numpy as np
+import openmeteo_requests
+import pandas as pd
+import requests_cache
+import xarray as xr
+from retry_requests import retry
+
 from quartz_solar_forecast.pydantic_models import PVSite
-from quartz_solar_forecast.inverters.enphase import get_enphase_data
-from quartz_solar_forecast.inverters.solis import get_solis_data
-from quartz_solar_forecast.inverters.givenergy import get_givenergy_data
-from quartz_solar_forecast.inverters.solarman import get_solarman_data
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-from dotenv import load_dotenv
-
-load_dotenv()  
 
 def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     """
@@ -41,13 +32,13 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
 
     # Define the variables we want. Visibility is handled separately after the main request
     variables = [
-        "temperature_2m", 
-        "precipitation", 
-        "cloud_cover_low", 
-        "cloud_cover_mid", 
-        "cloud_cover_high", 
-        "wind_speed_10m", 
-        "shortwave_radiation", 
+        "temperature_2m",
+        "precipitation",
+        "cloud_cover_low",
+        "cloud_cover_mid",
+        "cloud_cover_high",
+        "wind_speed_10m",
+        "shortwave_radiation",
         "direct_radiation"
     ]
 
@@ -59,7 +50,7 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     # check whether the time stamp is more than 3 months in the past
     if (datetime.now() - ts).days > 90:
         print("Warning: The requested timestamp is more than 3 months in the past. The weather data are provided by a reanalyse model and not ICON or GFS.")
-        
+
         # load data from open-meteo Historical Weather API
         url = "https://archive-api.open-meteo.com/v1/archive"
 
@@ -104,7 +95,7 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     hourly_data["dswrf"] = hourly.Variables(6).ValuesAsNumpy()
     hourly_data["dlwrf"] = hourly.Variables(7).ValuesAsNumpy()
 
-    # handle visibility 
+    # handle visibility
     if (datetime.now() - ts).days <= 90:
         # load data from open-meteo gfs model
         params = {
@@ -144,61 +135,11 @@ def format_nwp_data(df: pd.DataFrame, nwp_source:str, site: PVSite):
     )
     return data_xr
 
-def fetch_enphase_data() -> Optional[pd.DataFrame]:
-    system_id = os.getenv('ENPHASE_SYSTEM_ID')
-    if not system_id:
-        print("Error: Enphase inverter ID is not provided in the environment variables.")
-        return None
-    return get_enphase_data(system_id)
-
-def fetch_solis_data() -> Optional[pd.DataFrame]:
-    try:
-        return asyncio.run(get_solis_data())
-    except Exception as e:
-        print(f"Error retrieving Solis data: {str(e)}")
-        return None
-
-def fetch_givenergy_data() -> Optional[pd.DataFrame]:
-    try:
-        return get_givenergy_data()
-    except Exception as e:
-        print(f"Error retrieving GivEnergy data: {str(e)}")
-        return None
-
-def fetch_solarman_data() -> pd.DataFrame:
-    try:
-        end_date = datetime.now()
-        start_date = end_date - timedelta(weeks=1)
-        solarman_data = get_solarman_data(start_date, end_date)
-        
-        # Filter out rows with null power_kw values
-        valid_data = solarman_data.dropna(subset=['power_kw'])
-        
-        if valid_data.empty:
-            print("No valid Solarman data found.")
-            return pd.DataFrame(columns=['timestamp', 'power_kw'])
-        
-        return valid_data
-    except Exception as e:
-        print(f"Error retrieving Solarman data: {str(e)}")
-        return pd.DataFrame(columns=['timestamp', 'power_kw'])
-
-def fetch_live_generation_data(inverter_type: str) -> Optional[pd.DataFrame]:
-    if inverter_type == 'enphase':
-        return fetch_enphase_data()
-    elif inverter_type == 'solis':
-        return fetch_solis_data()
-    elif inverter_type == 'givenergy':
-        return fetch_givenergy_data()
-    elif inverter_type == 'solarman':
-        return fetch_solarman_data()
-    else:
-        return pd.DataFrame(columns=['timestamp', 'power_kw'])
 
 def process_pv_data(live_generation_kw: Optional[pd.DataFrame], ts: pd.Timestamp, site: 'PVSite') -> xr.Dataset:
     """
     Process PV data and create an xarray Dataset.
-    
+
     :param live_generation_kw: DataFrame containing live generation data, or None
     :param ts: Current timestamp
     :param site: PV site information
@@ -231,7 +172,7 @@ def process_pv_data(live_generation_kw: Optional[pd.DataFrame], ts: pd.Timestamp
 
     return da
 
-def make_pv_data(site: 'PVSite', ts: pd.Timestamp) -> xr.Dataset:
+def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     """
     Make PV data by combining live data from various inverters.
     
@@ -239,7 +180,7 @@ def make_pv_data(site: 'PVSite', ts: pd.Timestamp) -> xr.Dataset:
     :param ts: the timestamp of the site
     :return: The combined PV dataset in xarray form
     """
-    live_generation_kw = fetch_live_generation_data(site.inverter_type)
+    live_generation_kw = site.get_inverter().get_data(ts)
     # Process the PV data
     da = process_pv_data(live_generation_kw, ts, site)
 
