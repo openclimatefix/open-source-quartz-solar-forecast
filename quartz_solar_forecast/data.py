@@ -55,25 +55,31 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
         url = "https://archive-api.open-meteo.com/v1/archive"
 
     else:
-
-        # Getting NWP from open meteo weather forecast API by ICON or GFS model within the last 3 months
-        url_nwp_source = None
+        # Getting NWP from open meteo weather forecast API by ICON, GFS, or UKMO within the last 3 months
         if nwp_source == "icon":
             url_nwp_source = "dwd-icon"
+            url = f"https://api.open-meteo.com/v1/{url_nwp_source}"
         elif nwp_source == "gfs":
             url_nwp_source = "gfs"
+            url = f"https://api.open-meteo.com/v1/{url_nwp_source}"
+        elif nwp_source == "ukmo_seamless":
+            url = "https://api.open-meteo.com/v1/forecast"
         else:
-            raise Exception(f'Source ({nwp_source}) must be either "icon" or "gfs"')
-
-        url = f"https://api.open-meteo.com/v1/{url_nwp_source}"
+            raise Exception(f'Source ({nwp_source}) must be either "icon", "gfs", or "ukmo_seamless"')
 
     params = {
-    	"latitude": site.latitude,
-    	"longitude": site.longitude,
-    	"start_date": f"{start}",
-    	"end_date": f"{end}",
-    	"hourly": variables
+        "latitude": site.latitude,
+        "longitude": site.longitude,
+        "start_date": f"{start}",
+        "end_date": f"{end}",
+        "hourly": variables
     }
+
+    # Add the "models" parameter if using "ukmo_seamless"
+    if nwp_source == "ukmo_seamless":
+        params["models"] = "ukmo_seamless"
+
+    # Make API call to URL
     response = openmeteo.weather_api(url, params=params)
     hourly = response[0].Hourly()
 
