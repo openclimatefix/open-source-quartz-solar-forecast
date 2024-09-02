@@ -9,7 +9,7 @@ def main():
     
     ts = datetime.today() - timedelta(weeks=1)
 
-    # User has three options for the 'nwp_source': 'icon', 'gfs', or 'ukmo_seamless'.
+    # User has three options for the 'nwp_source': 'icon', 'gfs', or 'ukmo'.
     predictions_df = run_forecast(site=site, ts=ts, nwp_source="icon")
 
     print(predictions_df)

@@ -10,7 +10,7 @@ def test_run_forecast():
     # run model with icon, gfs and ukmo nwp
     predications_df_gfs = run_forecast(site=site, model="gb", ts=ts, nwp_source="gfs")
     predications_df_icon = run_forecast(site=site, model="gb", ts=ts, nwp_source="icon")
-    predications_df_ukmo = run_forecast(site=site, model="gb", ts=ts, nwp_source="ukmo_seamless")
+    predications_df_ukmo = run_forecast(site=site, model="gb", ts=ts, nwp_source="ukmo")
     predications_df_xgb = run_forecast(site=site, ts=ts)
 
     print("\n Prediction based on GFS NWP\n")
@@ -39,7 +39,7 @@ def test_run_forecast_historical():
     # run model with icon, gfs and ukmo nwp
     predications_df_gfs = run_forecast(site=site, ts=ts, model="gb", nwp_source="gfs")
     predications_df_icon = run_forecast(site=site, ts=ts, model="gb", nwp_source="icon")
-    predications_df_ukmo = run_forecast(site=site, ts=ts, model="gb", nwp_source="ukmo_seamless")
+    predications_df_ukmo = run_forecast(site=site, ts=ts, model="gb", nwp_source="ukmo")
     predications_df_xgb = run_forecast(site=site, ts=ts, model="xgb")
 
     print("\nPrediction for a date more than 180 days in the past")
