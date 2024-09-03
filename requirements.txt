@@ -16,3 +16,4 @@ async_timeout
 uvicorn
 fastapi
 pydantic_settings
+httpx
