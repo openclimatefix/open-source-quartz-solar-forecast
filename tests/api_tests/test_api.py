@@ -130,11 +130,13 @@ def test_api_wrong_body(client, body_wrong):
     assert response.status_code == 422
     assert response_body == expected_response_on_wrong_types
 
+@pytest.mark.skip('There needs to be some extra mocking here')
 def test_getenphse_authorization_url(client):
     response = client.get("/solar_inverters/enphase/auth_url")
     assert response.status_code == 200
     assert isinstance(response.json()["auth_url"], str)
-    
+
+@pytest.mark.skip('There needs to be some extra mocking here')
 def test_getenphse_token_and_system_id_bad_redirect_url(client, bad_redirect_url):
 
     response = client.post("/solar_inverters/enphase/token_and_id", json={"redirect_url": bad_redirect_url})
@@ -142,6 +144,7 @@ def test_getenphse_token_and_system_id_bad_redirect_url(client, bad_redirect_url
     assert response.status_code == 400
     assert response_body['detail'] == 'Invalid redirect URL'
 
+@pytest.mark.skip('There needs to be some extra mocking here')
 def test_getenphse_token_and_system_id_bad_redirect_url(client, bad_redirect_url_correct_param):
     response = client.post("/solar_inverters/enphase/token_and_id", json={"redirect_url": bad_redirect_url_correct_param})
     response_body = response.json()
