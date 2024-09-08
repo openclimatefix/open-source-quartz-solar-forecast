@@ -49,6 +49,13 @@ expected_response_on_wrong_types = {
     ]
 }
 
+envs = {
+    "ENPHASE_CLIENT_ID": "1",
+    "ENPHASE_SYSTEM_ID": "1",
+    "ENPHASE_API_KEY": "test_key",
+    "ENPHASE_CLIENT_SECRET": "secret_secret",
+}
+
 
 @pytest.fixture
 def client():
@@ -143,12 +150,6 @@ def test_api_wrong_body(client, body_wrong):
 
 def test_getenphse_authorization_url(client, monkeypatch):
 
-    envs = {
-        "ENPHASE_CLIENT_ID": "1",
-        "ENPHASE_SYSTEM_ID": "1",
-        "ENPHASE_API_KEY": "test_key",
-        "ENPHASE_CLIENT_SECRET": "secret_secret",
-    }
     monkeypatch.setattr(os, "environ", envs)
 
     response = client.get("/solar_inverters/enphase/auth_url")
@@ -158,12 +159,6 @@ def test_getenphse_authorization_url(client, monkeypatch):
 
 def test_getenphse_token_and_system_id_bad_redirect_url(client, bad_redirect_url, monkeypatch):
 
-    envs = {
-        "ENPHASE_CLIENT_ID": "1",
-        "ENPHASE_SYSTEM_ID": "1",
-        "ENPHASE_API_KEY": "test_key",
-        "ENPHASE_CLIENT_SECRET": "secret_secret",
-    }
     monkeypatch.setattr(os, "environ", envs)
 
     response = client.post(
@@ -178,12 +173,6 @@ def test_getenphse_token_and_system_id_bad_redirect_url(
     client, bad_redirect_url_correct_param, monkeypatch
 ):
 
-    envs = {
-        "ENPHASE_CLIENT_ID": "1",
-        "ENPHASE_SYSTEM_ID": "1",
-        "ENPHASE_API_KEY": "test_key",
-        "ENPHASE_CLIENT_SECRET": "secret_secret",
-    }
     monkeypatch.setattr(os, "environ", envs)
 
     response = client.post(
