@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quartz_solar_forecast"
+version = "1.0.69"
+description = "Open Source Solar Forecasting for a Site"
+authors = [
+    { name = "Peter Dudfield", email = "info@openclimatefix.org" }
+]
+readme = "README.md"
+readme-content-type = "text/markdown"
+requires-python = ">=3.6"
+license = { text = "MIT" }
+dependencies = [
+    # Add dependencies from your requirements.txt here, e.g.
+    # "some_package>=1.0",
+]
+
+[project.urls]
+"Company" = "Open Climate Fix Ltd"
+
+[tool.setuptools.packages.find]
+include = ["*"]
+
+[tool.setuptools.package-data]
+"quartz_solar_forecast" = ["*"]
+
+[tool.setuptools.dynamic]
+readme = { file = "README.md", content-type = "text/markdown" }
+
+[project.optional-dependencies]
+# Add any optional dependencies you need here, e.g.
+# dev = [
+#     "pytest",
+#     "flake8"
+# ]
+
+[tool.mypy]
+exclude = ["^tests/"]
+disallow_untyped_defs = true
+disallow_any_unimported = true
+no_implicit_optional = true
+check_untyped_defs = true
+warn_return_any = true
+warn_unused_ignores = true
+show_error_codes = true
+warn_unreachable = true
