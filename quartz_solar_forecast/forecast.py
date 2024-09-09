@@ -16,7 +16,7 @@ def predict_ocf(
     :param site: the PV site
     :param model: the model to use for prediction
     :param ts: the timestamp of the site. If None, defaults to the current timestamp rounded down to 15 minutes.
-    :param nwp_source: the nwp data source. Either "gfs" or "icon". Defaults to "icon" 
+    :param nwp_source: the nwp data source. Either "gfs", "icon" or "ukmo". Defaults to "icon" 
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
     if ts is None:
@@ -103,7 +103,7 @@ def run_forecast(
     :param model: the model to use for prediction, choose between "ocf" and "tryolabs",
                     by default "ocf" is used
     :param ts: the timestamp of the site. If None, defaults to the current timestamp rounded down to 15 minutes.
-    :param nwp_source: the nwp data source. Either "gfs" or "icon". Defaults to "icon" 
+    :param nwp_source: the nwp data source. Either "gfs", "icon" or "ukmo". Defaults to "icon" 
                        (only relevant if model=="gb")
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
