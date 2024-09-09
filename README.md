@@ -1,7 +1,7 @@
 # Quartz Solar Forecast
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-20-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-21-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 The aim of the project is to build an open source PV forecast that is free and easy to use.
@@ -253,6 +253,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Ludecan"><img src="https://avatars.githubusercontent.com/u/17169248?v=4?s=100" width="100px;" alt="Pablo Alfaro"/><br /><sub><b>Pablo Alfaro</b></sub></a><br /><a href="https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/pulls?q=is%3Apr+reviewed-by%3ALudecan" title="Reviewed Pull Requests">👀</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/KelRem"><img src="https://avatars.githubusercontent.com/u/175075550?v=4?s=100" width="100px;" alt="KelRem"/><br /><sub><b>KelRem</b></sub></a><br /><a href="#question-KelRem" title="Answering Questions">💬</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sicunchen"><img src="https://avatars.githubusercontent.com/u/14258987?v=4?s=100" width="100px;" alt="Lia Chen"/><br /><sub><b>Lia Chen</b></sub></a><br /><a href="https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/commits?author=sicunchen" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://clementlumumba.netlify.app/"><img src="https://avatars.githubusercontent.com/u/43673340?v=4?s=100" width="100px;" alt="Clement Lumumba"/><br /><sub><b>Clement Lumumba</b></sub></a><br /><a href="https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/commits?author=Clemo97" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
