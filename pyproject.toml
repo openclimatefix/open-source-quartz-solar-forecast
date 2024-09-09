@@ -42,12 +42,9 @@ Source Code = "https://github.com/openclimatefix/Open-Source-Quartz-Solar-Foreca
 [tool.setuptools]
 packages = { find = { include = ["*"] } }
 package-data = { "quartz_solar_forecast" = ["*"] }
-dynamic = { readme = { file = "README.md", content-type = "text/markdown" } }
 
 [project.optional-dependencies]
-dev = [
-    
-]
+dev = []
 
 [tool.mypy]
 
