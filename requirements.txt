@@ -20,3 +20,4 @@ httpx
 cattrs==24.1.0
 msgpack==1.0.8
 multidict==6.0.5
+narwhals==1.6.3
