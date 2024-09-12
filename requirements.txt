@@ -17,3 +17,4 @@ uvicorn
 fastapi
 pydantic_settings
 httpx
+cattrs==24.1.0
