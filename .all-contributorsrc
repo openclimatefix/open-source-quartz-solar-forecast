@@ -199,12 +199,21 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "aayushyatiwari",
+      "name": "aayush",
+      "avatar_url": "https://avatars.githubusercontent.com/u/169576527?v=4",
+      "profile": "https://github.com/aayushyatiwari",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
   "skipCi": true,
   "repoType": "github",
   "repoHost": "https://github.com",
-  "projectName": "Open-Source-Quartz-Solar-Forecast",
+  "projectName": "open-source-quartz-solar-forecast",
   "projectOwner": "openclimatefix"
 }
