@@ -62,7 +62,9 @@ class TryolabsSolarPowerPredictor:
         downloaded_file = hf_hub_download(repo_id=repo_id, filename=file_path, cache_dir=download_dir)
         
         target_path = os.path.join(download_dir, filename)
-        shutil.copy2(downloaded_file, target_path)
+
+        # copy file from downloaded_file to target_path
+        shutil.copyfile(downloaded_file, target_path)
         
         return target_path
 
