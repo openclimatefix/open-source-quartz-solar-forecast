@@ -129,7 +129,7 @@ class TryolabsSolarPowerPredictor:
         logger.info("Files in download_dir:")
         files = glob.glob(download_dir + "/*")
         print(f'Number of files: {len(files)} in {download_dir}')
-        for file in files
+        for file in files:
             print(file)
         # TEMP
 
