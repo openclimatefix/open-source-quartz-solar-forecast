@@ -122,10 +122,11 @@ class TryolabsSolarPowerPredictor:
         # list all files in download_dir
         import glob
         logger.info("Files in download_dir:")
-        for file in glob.glob(download_dir + "/*"):
+        files = glob.glob(download_dir + "/*")
+        print(f'Number of files: {len(files)} in {download_dir}')
+        for file in files
             print(file)
         # TEMP
-
 
         logger.info("Loading model...")
         loaded_model = XGBRegressor()
