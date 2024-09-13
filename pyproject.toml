@@ -10,7 +10,6 @@ authors = [
     { name = "Peter Dudfield", email = "info@openclimatefix.org" }
 ]
 readme = "README.md"
-readme-content-type = "text/markdown"
 requires-python = ">=3.6"
 license = { text = "MIT" }
 
