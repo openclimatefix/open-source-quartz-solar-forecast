@@ -37,7 +37,7 @@ dependencies = [
 
 [project.urls]
 Company = "Open Climate Fix Ltd"
-Source Code = "https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast.git"
+"Source Code" = "https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast.git"
 
 [tool.setuptools]
 packages = { find = { include = ["*"] } }
