@@ -17,10 +17,3 @@ uvicorn
 fastapi
 pydantic_settings
 httpx
-cattrs==24.1.0
-msgpack==1.0.8
-multidict==6.0.5
-narwhals==1.6.3
-protobuf==5.28.0
-pyasn1==0.6.0
-pytz==2024.1

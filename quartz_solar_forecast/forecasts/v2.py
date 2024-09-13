@@ -123,16 +123,6 @@ class TryolabsSolarPowerPredictor:
             logger.info("Preparing model...")
             self._decompress_zipfile(zipfile_model)
 
-        # TEMP
-        # list all files in download_dir
-        import glob
-        logger.info("Files in download_dir:")
-        files = glob.glob(download_dir + "/*")
-        print(f'Number of files: {len(files)} in {download_dir}')
-        for file in files:
-            print(file)
-        # TEMP
-
         logger.info("Loading model...")
         loaded_model = XGBRegressor()
         loaded_model.load_model(model_path)
