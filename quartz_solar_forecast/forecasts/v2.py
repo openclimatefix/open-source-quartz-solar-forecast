@@ -76,8 +76,11 @@ class TryolabsSolarPowerPredictor:
         filename : str
             The name of the .zip file to be decompressed
         """
+        # get the directory of the file
+        directory = os.path.dirname(filename)
+
         with zipfile.ZipFile(filename, "r") as zip_file:
-            zip_file.extractall()
+            zip_file.extractall(path=directory)
 
     def load_model(
         self, 
