@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools", "wheel", "poetry-core>=1.0.8"]
-build-backend = ["setuptools.build_meta", "poetry.core.masonry.api"]
+requires = ["setuptools", "wheel"]
+build-backend = setuptools.build_meta"
 
 [project]
 name = "quartz_solar_forecast"
