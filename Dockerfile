@@ -14,6 +14,7 @@ COPY pyproject.toml .
 
 # Install the project and its dependencies
 RUN pip install --no-cache-dir .
+RUN pip install quartz-solar-forecast
 
 # Install wait-for-it script
 ADD https://github.com/vishnubob/wait-for-it/raw/master/wait-for-it.sh /usr/local/bin/wait-for-it
