@@ -31,15 +31,16 @@ services:
     container_name: quartz-solar-forecast-api
     ports:
       - "8000:8000"
+    env_file:
+      - .env
     volumes:
       - .:/app
-    working_dir: /app
     restart: always
     environment:
       <<: *shared_environment
     command: python api/main.py
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -58,7 +59,7 @@ services:
     restart: always
     environment:
       <<: *shared_environment
-      FASTAPI_BASE_URL: ${FASTAPI_BASE_URL:-http://web:8000}
+      FASTAPI_BASE_URL: ${FASTAPI_BASE_URL}
     command: streamlit run dashboards/dashboard_2/app.py
     depends_on:
       web:
