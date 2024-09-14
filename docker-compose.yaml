@@ -33,9 +33,10 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
+    working_dir: /app
     restart: always
     environment:
-      - LOG_LEVEL=${LOG_LEVEL}
+      <<: *shared_environment
     command: python api/main.py
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
@@ -53,10 +54,11 @@ services:
       - "8501:8501"
     volumes:
       - .:/app
+    working_dir: /app
     restart: always
     environment:
-      - LOG_LEVEL=${LOG_LEVEL}
-      - FASTAPI_BASE_URL=${FASTAPI_BASE_URL}
+      <<: *shared_environment
+      FASTAPI_BASE_URL: ${FASTAPI_BASE_URL:-http://web:8000}
     command: streamlit run dashboards/dashboard_2/app.py
     depends_on:
       web:

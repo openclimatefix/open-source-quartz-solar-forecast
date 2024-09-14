@@ -9,19 +9,15 @@ RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy the pyproject.toml file
-COPY pyproject.toml .
+# Copy the entire project directory
+COPY . /app
 
-# Install the project and its dependencies
-RUN pip install --no-cache-dir .
-RUN pip install quartz-solar-forecast
+# Install the project in editable mode
+RUN pip install -e .
 
 # Install wait-for-it script
 ADD https://github.com/vishnubob/wait-for-it/raw/master/wait-for-it.sh /usr/local/bin/wait-for-it
 RUN chmod +x /usr/local/bin/wait-for-it
-
-# Copy the entire project directory
-COPY . /app
 
 # Expose ports 8000 (API) and 8501 (Streamlit) to the outside world
 EXPOSE 8000 8501
