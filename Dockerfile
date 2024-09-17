@@ -7,6 +7,12 @@ WORKDIR /app
 # Copy the entire project directory (including quartz_solar_forecast)
 COPY . /app
 
+# Install HDF5 using apt
+RUN apt-get update && apt-get install -y libhdf5-dev
+
+# Install h5py with no-binary flag
+RUN pip install --no-binary h5py h5py
+
 # Copy the pyproject.toml file
 COPY pyproject.toml .
 
