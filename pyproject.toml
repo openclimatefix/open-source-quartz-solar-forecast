@@ -38,8 +38,8 @@ dependencies = [
 "Source Code" = "https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast.git"
 
 [tool.setuptools]
-packages = { find_namespace = { include = ["*"] } }
-package-data = { "quartz_solar_forecast" = ["*"] }
+packages = ["quartz_solar_forecast"]
+
 
 [project.optional-dependencies]
 dev = []

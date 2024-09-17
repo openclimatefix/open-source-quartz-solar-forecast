@@ -19,8 +19,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Upgrade pip and setuptools
 RUN pip install --upgrade pip setuptools wheel
 
-# Install the quartz_solar_forecast package in editable mode
-RUN pip install -e . --verbose
+# Install the quartz_solar_forecast package normally
+RUN pip install . --verbose
 
 # Expose port 8000 and 8501 to the outside world
 EXPOSE 8000 8501
