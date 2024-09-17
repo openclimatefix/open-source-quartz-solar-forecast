@@ -7,8 +7,11 @@ WORKDIR /app
 # Copy the entire project directory (including quartz_solar_forecast)
 COPY . /app
 
+# Copy the pyproject.toml file
+COPY pyproject.toml .
+
 # Install the quartz_solar_forecast package in editable mode
-RUN pip install .
+RUN pip install -e .
 
 # Expose port 8000 and 8501 to the outside world
 EXPOSE 8000 8501
