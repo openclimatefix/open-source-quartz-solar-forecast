@@ -10,8 +10,17 @@ COPY . /app
 # Copy the pyproject.toml file
 COPY pyproject.toml .
 
+# Install system dependencies needed for building Python packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    python3-dev
+
+# Upgrade pip and setuptools
+RUN pip install --upgrade pip setuptools wheel
+
 # Install the quartz_solar_forecast package in editable mode
-RUN pip install -e .
+RUN pip install -e . --verbose
 
 # Expose port 8000 and 8501 to the outside world
 EXPOSE 8000 8501
