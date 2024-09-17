@@ -14,6 +14,7 @@ requires-python = ">=3.6"
 license = { text = "MIT" }
 
 dependencies = [
+    "pandas==2.2.1",
     "xarray==2022.12.0",
     "pv-site-prediction==0.1.19",
     "pydantic==2.6.2",
@@ -39,6 +40,7 @@ dependencies = [
 
 [tool.setuptools]
 packages = { find = { include = ["quartz_solar_forecast*"] } }
+package-data = { "quartz_solar_forecast" = ["*"] }
 
 [project.optional-dependencies]
 dev = []
