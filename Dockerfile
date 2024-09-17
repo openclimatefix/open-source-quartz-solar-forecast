@@ -14,7 +14,15 @@ COPY pyproject.toml .
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
-    python3-dev
+    python3-dev \
+    libhdf5-dev \
+    libhdf5-serial-dev \
+    hdf5-tools \
+    libhdf5-dev \
+    zlib1g-dev \
+    libjpeg-dev \
+    libblosc-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip and setuptools
 RUN pip install --upgrade pip setuptools wheel
