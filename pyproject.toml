@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quartz_solar_forecast"
+version = "1.0.75"
+description = "Open Source Solar Forecasting for a Site"
+authors = [
+    { name = "Peter Dudfield", email = "info@openclimatefix.org" }
+]
+readme = "README.md"
+requires-python = ">=3.6"
+license = { text = "MIT" }
+
+dependencies = [
+    "xarray==2022.12.0",
+    "pv-site-prediction==0.1.19",
+    "pydantic==2.6.2",
+    "huggingface_hub==0.17.3", # only for evaluation
+    "python-dotenv==1.0.1",
+    "openmeteo-requests==1.2.0",
+    "requests-cache==1.2.0",
+    "retry-requests==2.0.0",
+    "gdown==5.1.0",
+    "xgboost==2.0.3",
+    "plotly",
+    "typer",
+    "streamlit",
+    "async_timeout",
+    "uvicorn",
+    "fastapi",
+    "pydantic_settings",
+    "httpx"
+]
+
+[project.urls]
+"Source Code" = "https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast.git"
+
+[tool.setuptools]
+packages = { find = { include = ["*"] } }
+package-data = { "quartz_solar_forecast" = ["*"] }
+
+[project.optional-dependencies]
+dev = []
+
+[tool.mypy]
+
+[tool.ruff]
+line-length = 100
+exclude = ["tests", "data", "scripts", "^tests/"]
+disallow-untyped-defs = true
+disallow-any-unimported = true
+no-implicit-optional = true
+check-untyped-defs = true
+warn-return-any = true
+warn-unused-ignores = true
+show-error-codes = true
+warn-unreachable = true

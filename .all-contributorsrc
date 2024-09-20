@@ -190,12 +190,39 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Clemo97",
+      "name": "Clement Lumumba",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43673340?v=4",
+      "profile": "https://clementlumumba.netlify.app/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "aayushyatiwari",
+      "name": "aayush",
+      "avatar_url": "https://avatars.githubusercontent.com/u/169576527?v=4",
+      "profile": "https://github.com/aayushyatiwari",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "Brohan7524",
+      "name": "Rohan Singh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/85754035?v=4",
+      "profile": "https://github.com/Brohan7524",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
   "skipCi": true,
   "repoType": "github",
   "repoHost": "https://github.com",
-  "projectName": "Open-Source-Quartz-Solar-Forecast",
+  "projectName": "open-source-quartz-solar-forecast",
   "projectOwner": "openclimatefix"
 }

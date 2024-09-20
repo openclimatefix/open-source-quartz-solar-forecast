@@ -7,9 +7,10 @@ def test_run_forecast():
     site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
     ts = datetime.today() - timedelta(weeks=2)
 
-    # run model with icon and gfs nwp
+    # run model with icon, gfs and ukmo nwp
     predications_df_gfs = run_forecast(site=site, model="gb", ts=ts, nwp_source="gfs")
     predications_df_icon = run_forecast(site=site, model="gb", ts=ts, nwp_source="icon")
+    predications_df_ukmo = run_forecast(site=site, model="gb", ts=ts, nwp_source="ukmo")
     predications_df_xgb = run_forecast(site=site, ts=ts)
 
     print("\n Prediction based on GFS NWP\n")
@@ -19,6 +20,10 @@ def test_run_forecast():
     print("\n Prediction based on ICON NWP\n")
     print(predications_df_icon)
     print(f" Max: {predications_df_icon['power_kw'].max()}")
+
+    print("\n Prediction based on UKMO NWP\n")
+    print(predications_df_ukmo)
+    print(f" Max: {predications_df_ukmo['power_kw'].max()}")
 
     print("\n Prediction based on XGB\n")
     print(predications_df_xgb)
@@ -31,9 +36,10 @@ def test_run_forecast_historical():
     site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
     ts = datetime.today() - timedelta(days=200)
 
-    # run model with icon and gfs nwp
+    # run model with icon, gfs and ukmo nwp
     predications_df_gfs = run_forecast(site=site, ts=ts, model="gb", nwp_source="gfs")
     predications_df_icon = run_forecast(site=site, ts=ts, model="gb", nwp_source="icon")
+    predications_df_ukmo = run_forecast(site=site, ts=ts, model="gb", nwp_source="ukmo")
     predications_df_xgb = run_forecast(site=site, ts=ts, model="xgb")
 
     print("\nPrediction for a date more than 180 days in the past")
@@ -45,6 +51,10 @@ def test_run_forecast_historical():
     print("\n Prediction based on ICON NWP\n")
     print(predications_df_icon)
     print(f" Max: {predications_df_icon['power_kw'].max()}")
+
+    print("\n Prediction based on UKMO NWP\n")
+    print(predications_df_ukmo)
+    print(f" Max: {predications_df_ukmo['power_kw'].max()}")
     
     print("\n Prediction based on XGB\n")
     print(predications_df_xgb)
