@@ -43,7 +43,7 @@ class PVSite(BaseModel):
         elif self.inverter_type == 'solarman':
             return SolarmanInverter(SolarmanSettings())
         elif self.inverter_type == 'victron':
-            return VictronInverter(VictronSettings())
+            return VictronInverter.from_settings(VictronSettings())
         else:
             return MockInverter()
 
