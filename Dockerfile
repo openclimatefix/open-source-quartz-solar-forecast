@@ -7,6 +7,13 @@ WORKDIR /app
 # Copy the entire project directory
 COPY . /app
 
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    make \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy the pyproject.toml file
 COPY pyproject.toml .
 
