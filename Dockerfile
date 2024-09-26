@@ -4,23 +4,18 @@ FROM python:3.11-slim
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the entire project directory (including quartz_solar_forecast)
+# Copy the entire project directory
 COPY . /app
-
-# Install HDF5 using apt
-RUN apt-get update && apt-get install -y libhdf5-dev
-
-# Install h5py with no-binary flag
-RUN pip install --no-binary h5py h5py
 
 # Copy the pyproject.toml file
 COPY pyproject.toml .
 
-# Install the quartz_solar_forecast package normally
-RUN pip install . --verbose
+# Install build dependencies and the project
+RUN pip install --no-cache-dir build && \
+    pip install --no-cache-dir .
 
-# Expose port 8000 and 8501 to the outside world
-EXPOSE 8000 8501
+# Expose port 8000 to the outside world
+EXPOSE 8000
 
-# The CMD will be provided by docker-compose.yml
-CMD ["sh", "-c", "$CMD"]
+# Run the application using python main.py
+CMD ["python", "api/main.py"]

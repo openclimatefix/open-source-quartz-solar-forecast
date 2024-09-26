@@ -1,5 +1,5 @@
 x-shared_environment: &shared_environment
-  LOG_LEVEL: ${LOG_LEVEL}
+  LOG_LEVEL: ${LOG_LEVEL:-info}
 
 services:
   open-meteo-api:
@@ -28,42 +28,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: quartz-solar-forecast-api
+    container_name: fastapi-app
     ports:
       - "8000:8000"
     env_file:
       - .env
     volumes:
       - .:/app
-    restart: always
-    environment:
-      <<: *shared_environment
-    command: python api/main.py
-    healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-
-  streamlit:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: quartz-solar-forecast-frontend
-    ports:
-      - "8501:8501"
-    volumes:
-      - .:/app
-    working_dir: /app
-    restart: always
-    environment:
-      <<: *shared_environment
-      FASTAPI_BASE_URL: ${FASTAPI_BASE_URL}
-    command: streamlit run dashboards/dashboard_2/app.py
     depends_on:
-      web:
-        condition: service_healthy
+      - open-meteo-api
+      - open-meteo-sync
+    restart: always
 
 volumes:
   data:
