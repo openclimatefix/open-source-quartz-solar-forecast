@@ -17,11 +17,14 @@ RUN apt-get update && apt-get install -y \
 # Copy the pyproject.toml file
 COPY pyproject.toml .
 
+# Create a constraints file
+RUN echo "numcodecs==0.10.2" > constraints.txt
+
 # Install build dependencies and the project
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
     pip install --no-cache-dir build && \
-    pip install --no-cache-dir . --no-warn-script-location --ignore-installed --no-deps && \
-    pip install --no-cache-dir -e . --no-warn-script-location
+    pip install --no-cache-dir -c constraints.txt . && \
+    pip install --no-cache-dir -e .
 
 # Copy the entire project directory
 COPY . /app
