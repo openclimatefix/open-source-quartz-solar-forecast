@@ -28,10 +28,6 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-# @app.get("/health")
-# async def root():
-#     return {"status": "ok"}
-
 @app.post("/forecast/")
 def forecast(forecast_request: ForecastRequest):
     site = forecast_request.site
