@@ -1,32 +1,36 @@
-# Use an official Python runtime as a parent image
-FROM python:3.11-slim
+# Use Miniconda3 as the base image
+FROM continuumio/miniconda3:latest
 
 # Set the working directory in the container
 WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && \
-    apt-get install git unzip g++ gcc libgeos++-dev libproj-dev proj-data proj-bin -y
+    apt-get install -y git unzip g++ gcc libgeos++-dev libproj-dev proj-data proj-bin && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && \
-    apt-get install git unzip g++ gcc libgeos++-dev libproj-dev proj-data proj-bin -y
-
-# Copy the pyproject.toml file
+# Copy the pyproject.toml file and the entire project directory
 COPY pyproject.toml .
-
-# Copy the entire project directory
 COPY . /app
 
-# Install requirements
-RUN conda install python=3.12
+# Create a new conda environment
+RUN conda create -n myenv python=3.12 -y
+
+# Activate the conda environment
+SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
+
+# Install conda packages
 RUN conda install -c conda-forge xesmf esmpy h5py pytorch-cpu=2.3.1 torchvision -y
+
+# Install PyTorch with pip
 RUN pip install torch==2.3.1 torchvision --index-url https://download.pytorch.org/whl/cpu
 
-# Install build dependencies and the project
+# Install the project and its dependencies
 RUN pip install --no-cache-dir -e .
 
 # Expose port 8000 to the outside world
 EXPOSE 8000
 
-# Run the application using python main.py
-CMD ["python", "api/main.py"]
+# Set the default command to run when the container starts
+CMD ["conda", "run", "--no-capture-output", "-n", "myenv", "python", "api/main.py"]
