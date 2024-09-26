@@ -5,29 +5,25 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    make \
-    libc-dev \
-    libz-dev \
-    liblzma-dev \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install git unzip g++ gcc libgeos++-dev libproj-dev proj-data proj-bin -y
+
+RUN apt-get update && \
+    apt-get install git unzip g++ gcc libgeos++-dev libproj-dev proj-data proj-bin -y
 
 # Copy the pyproject.toml file
 COPY pyproject.toml .
 
-# Create a constraints file
-RUN echo "numcodecs==0.10.2" > constraints.txt
-
-# Install build dependencies and the project
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir build && \
-    pip install --no-cache-dir -c constraints.txt . && \
-    pip install --no-cache-dir -e .
-
 # Copy the entire project directory
 COPY . /app
+
+# Install requirements
+RUN conda install python=3.12
+RUN conda install -c conda-forge xesmf esmpy h5py pytorch-cpu=2.3.1 torchvision -y
+RUN pip install torch==2.3.1 torchvision --index-url https://download.pytorch.org/whl/cpu
+
+# Install build dependencies and the project
+RUN pip install --no-cache-dir -e .
 
 # Expose port 8000 to the outside world
 EXPOSE 8000
