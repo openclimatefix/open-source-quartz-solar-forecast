@@ -21,10 +21,7 @@ RUN conda create -n myenv python=3.12 -y
 SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
 
 # Install conda packages
-RUN conda install -c conda-forge xesmf esmpy h5py pytorch-cpu=2.3.1 torchvision -y
-
-# Install PyTorch with pip
-RUN pip install torch==2.3.1 torchvision --index-url https://download.pytorch.org/whl/cpu
+RUN conda install -c conda-forge xesmf esmpy h5py numcodecs -y
 
 # Install the project and its dependencies
 RUN pip install --no-cache-dir -e .
