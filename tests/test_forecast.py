@@ -59,3 +59,16 @@ def test_run_forecast_historical():
     print("\n Prediction based on XGB\n")
     print(predications_df_xgb)
 
+
+def test_large_capacity():
+
+    # make input data
+    site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=4)
+    site_large = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=4000)
+    ts = datetime.today() - timedelta(weeks=2)
+
+    # run model with icon, gfs and ukmo nwp
+    predications_df = run_forecast(site=site, model="gb", ts=ts, nwp_source="gfs")
+    predications_df_large = run_forecast(site=site_large, model="gb", ts=ts, nwp_source="gfs")
+
+    assert predications_df['power_kw'].sum()*1000 == predications_df_large['power_kw'].sum()
