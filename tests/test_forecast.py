@@ -2,6 +2,9 @@ from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
 from datetime import datetime, timedelta
 
+import numpy as np
+
+
 def test_run_forecast():
     # make input data
     site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
@@ -55,7 +58,7 @@ def test_run_forecast_historical():
     print("\n Prediction based on UKMO NWP\n")
     print(predications_df_ukmo)
     print(f" Max: {predications_df_ukmo['power_kw'].max()}")
-    
+
     print("\n Prediction based on XGB\n")
     print(predications_df_xgb)
 
@@ -71,4 +74,6 @@ def test_large_capacity():
     predications_df = run_forecast(site=site, model="gb", ts=ts, nwp_source="gfs")
     predications_df_large = run_forecast(site=site_large, model="gb", ts=ts, nwp_source="gfs")
 
-    assert predications_df['power_kw'].sum()*1000 == predications_df_large['power_kw'].sum()
+    assert np.round(predications_df["power_kw"].sum() * 1000, 8) == np.round(
+        predications_df_large["power_kw"].sum(), 8
+    )
