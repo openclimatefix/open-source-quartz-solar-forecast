@@ -44,7 +44,7 @@ cd scripts
 2. Run the forecast_csv.py script with desired inputs
 
 ```bash
-python forecast_csv.py
+python scripts/forecast_csv.py
 ```
 
 Replace the --init_time_freq, --start_datetime, --end_datetime, and --site_name with your desired forecast initialization frequency (in hours), start datetime, end datetime, and the name of the forecast or site, respectively.
