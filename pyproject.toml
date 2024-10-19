@@ -45,7 +45,7 @@ package-data = { "quartz_solar_forecast" = ["*"] }
 dev = []
 # additional vendor-specific dependencies for connecting to inverter APIs
 inverters = [
-    "vrmapi @ git+https://github.com/mduffin95/vrm-api-python-client@fe16d06"
+    "vrmapi @ git+https://github.com/mduffin95/vrm-api-python-client@fe16d06" # victron
 ]
 
 [tool.mypy]
