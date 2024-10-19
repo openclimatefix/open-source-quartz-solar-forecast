@@ -31,8 +31,7 @@ dependencies = [
     "uvicorn",
     "fastapi",
     "pydantic_settings",
-    "httpx",
-    "vrmapi @ git+https://github.com/mduffin95/vrm-api-python-client@fe16d06"
+    "httpx"
 ]
 
 [project.urls]
@@ -44,6 +43,10 @@ package-data = { "quartz_solar_forecast" = ["*"] }
 
 [project.optional-dependencies]
 dev = []
+# additional vendor-specific dependencies for connecting to inverter APIs
+inverters = [
+    "vrmapi @ git+https://github.com/mduffin95/vrm-api-python-client@fe16d06"
+]
 
 [tool.mypy]
 
