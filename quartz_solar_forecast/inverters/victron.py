@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from quartz_solar_forecast.inverters.inverter import AbstractInverter
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from vrmapi.vrm import VRM_API
+from ocf_vrmapi.vrm import VRM_API
 
 
 class VictronSettings(BaseSettings):
