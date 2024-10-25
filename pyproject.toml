@@ -44,9 +44,8 @@ package-data = { "quartz_solar_forecast" = ["*"] }
 [project.optional-dependencies]
 dev = []
 # additional vendor-specific dependencies for connecting to inverter APIs
-inverters = [
-    "ocf_vrmapi" # victron
-]
+inverters = ["ocf_vrmapi"] # victron
+all = ["ocf_vrmapi"]
 
 [tool.mypy]
 
