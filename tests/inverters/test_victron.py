@@ -1,6 +1,6 @@
 import pandas as pd
 
-from inverters.victron import VictronInverter
+from quartz_solar_forecast.inverters.victron import VictronInverter
 
 
 def test_get_data():
