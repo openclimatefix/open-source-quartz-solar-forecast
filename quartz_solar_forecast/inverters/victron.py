@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 try:
     from ocf_vrmapi.vrm import VRM_API
 except:
-    print('Tried to import ocf_vrmapi but couldnt, Victron Inverter functions won't work')
+    print("Tried to import ocf_vrmapi but couldnt, Victron Inverter functions won't work")
 
 class VictronSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env', extra='ignore')
