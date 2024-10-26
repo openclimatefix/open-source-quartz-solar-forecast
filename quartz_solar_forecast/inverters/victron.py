@@ -5,8 +5,10 @@ from datetime import datetime, timedelta
 from quartz_solar_forecast.inverters.inverter import AbstractInverter
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from ocf_vrmapi.vrm import VRM_API
-
+try:
+    from ocf_vrmapi.vrm import VRM_API
+except:
+    print('Tried to import ocf_vrmapi but couldnt, Victron Inverter functions won't work')
 
 class VictronSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env', extra='ignore')
