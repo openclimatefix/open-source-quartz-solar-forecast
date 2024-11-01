@@ -4,6 +4,13 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-25-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
+![image](https://github.com/user-attachments/assets/6563849b-b355-4842-93e4-61c15a9a9ebf)
+[![tags badge](https://img.shields.io/github/v/tag/openclimatefix/open-source-quartz-solar-forecast?include_prereleases&sort=semver&color=FFAC5F)](https://github.com/openclimatefix/open-source-quartz-solar-forecast/tags)
+[![pypi badge](https://img.shields.io/pypi/v/quartz-solar-forecast?&color=07BCDF)](https://pypi.org/project/quartz-solar-forecast/)
+[![ease of contribution: easy](https://img.shields.io/badge/ease%20of%20contribution:%20easy-32bd50)](https://github.com/openclimatefix/ocf-meta-repo?tab=readme-ov-file#overview-of-ocfs-nowcasting-repositories) 
+[![Python package tests](https://github.com/openclimatefix/open-source-quartz-solar-forecast/actions/workflows/pytest.yaml/badge.svg)](https://github.com/openclimatefix/open-source-quartz-solar-forecast/actions/workflows/pytest.yaml)
+
+
 The aim of the project is to build an open source PV forecast that is free and easy to use.
 The forecast provides the expected generation in `kw` for 0 to 48 hours for a single PV site.
 
