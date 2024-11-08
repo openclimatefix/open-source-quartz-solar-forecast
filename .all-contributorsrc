@@ -235,6 +235,15 @@
       "contributions": [
         "test"
       ]
+    },
+    {
+      "login": "sergejlazuk",
+      "name": "sergejla",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33606741?v=4",
+      "profile": "https://github.com/sergejlazuk",
+      "contributions": [
+        "question"
+      ]
     }
   ],
   "contributorsPerLine": 7,
