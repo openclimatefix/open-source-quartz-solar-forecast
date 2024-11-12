@@ -1,8 +1,15 @@
 # Quartz Solar Forecast
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-23-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-26-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
+
+![image](https://github.com/user-attachments/assets/6563849b-b355-4842-93e4-61c15a9a9ebf)
+[![tags badge](https://img.shields.io/github/v/tag/openclimatefix/open-source-quartz-solar-forecast?include_prereleases&sort=semver&color=FFAC5F)](https://github.com/openclimatefix/open-source-quartz-solar-forecast/tags)
+[![pypi badge](https://img.shields.io/pypi/v/quartz-solar-forecast?&color=07BCDF)](https://pypi.org/project/quartz-solar-forecast/)
+[![ease of contribution: easy](https://img.shields.io/badge/ease%20of%20contribution:%20easy-32bd50)](https://github.com/openclimatefix/ocf-meta-repo?tab=readme-ov-file#overview-of-ocfs-nowcasting-repositories) 
+[![Python package tests](https://github.com/openclimatefix/open-source-quartz-solar-forecast/actions/workflows/pytest.yaml/badge.svg)](https://github.com/openclimatefix/open-source-quartz-solar-forecast/actions/workflows/pytest.yaml)
+
 
 The aim of the project is to build an open source PV forecast that is free and easy to use.
 The forecast provides the expected generation in `kw` for 0 to 48 hours for a single PV site.
@@ -35,16 +42,10 @@ A colab notebook providing some examples can be found [here](https://colab.resea
 
 To generate solar forecasts and save them into a CSV file, follow these steps:
 
-1. Navigate to the scripts directory
+- Run the forecast_csv.py script with desired inputs
 
 ```bash
-cd scripts
-```
-
-2. Run the forecast_csv.py script with desired inputs
-
-```bash
-python forecast_csv.py
+python scripts/forecast_csv.py
 ```
 
 Replace the --init_time_freq, --start_datetime, --end_datetime, and --site_name with your desired forecast initialization frequency (in hours), start datetime, end datetime, and the name of the forecast or site, respectively.
@@ -258,6 +259,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/aayushyatiwari"><img src="https://avatars.githubusercontent.com/u/169576527?v=4?s=100" width="100px;" alt="aayush"/><br /><sub><b>aayush</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=aayushyatiwari" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Brohan7524"><img src="https://avatars.githubusercontent.com/u/85754035?v=4?s=100" width="100px;" alt="Rohan Singh"/><br /><sub><b>Rohan Singh</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=Brohan7524" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/sumana-2705"><img src="https://avatars.githubusercontent.com/u/110307215?v=4?s=100" width="100px;" alt="Sumana Sree Angajala"/><br /><sub><b>Sumana Sree Angajala</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=sumana-2705" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/EmilyIsCoding"><img src="https://avatars.githubusercontent.com/u/98443131?v=4?s=100" width="100px;" alt="Emily"/><br /><sub><b>Emily</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=EmilyIsCoding" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/sergejlazuk"><img src="https://avatars.githubusercontent.com/u/33606741?v=4?s=100" width="100px;" alt="sergejla"/><br /><sub><b>sergejla</b></sub></a><br /><a href="#question-sergejlazuk" title="Answering Questions">💬</a></td>
     </tr>
   </tbody>
 </table>

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "quartz_solar_forecast"
-version = "1.0.75"
+version = "1.0.81"
 description = "Open Source Solar Forecasting for a Site"
 authors = [
     { name = "Peter Dudfield", email = "info@openclimatefix.org" }
@@ -43,6 +43,9 @@ package-data = { "quartz_solar_forecast" = ["*"] }
 
 [project.optional-dependencies]
 dev = []
+# additional vendor-specific dependencies for connecting to inverter APIs
+inverters = ["ocf_vrmapi"] # victron
+all = ["ocf_vrmapi"]
 
 [tool.mypy]
 
