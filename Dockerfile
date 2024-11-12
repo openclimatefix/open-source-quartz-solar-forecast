@@ -1,14 +1,23 @@
 # Use an official Python runtime as a parent image
-FROM python:3.11
+FROM python:3.11-slim
 
 # Install necessary build tools and curl
-RUN apt-get update && apt-get install -y build-essential curl
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    gcc \
+    libzstd-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Rust using rustup
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 
 # Add Rust to PATH
 ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Set environment variables to disable SSE2 and AVX2 for numcodecs
+ENV BLOSC_DISABLE_AVX2=1
+ENV BLOSC_DISABLE_SSE2=1
 
 # Set the working directory in the container
 WORKDIR /app
