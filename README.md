@@ -16,7 +16,12 @@ The forecast provides the expected generation in `kw` for 0 to 48 hours for a si
 
 Open Climate Fix also provides a commercial PV forecast, please get in touch at quartz.support@openclimatefix.org
 
-We recently presented the Quartz Solar Forecast project at FOSDEM 2024 (Free and Open source Software Developers' European Meeting), providing an introduction to Open Climate Fix's motivation for this project and its impact on aiding organizations in resource optimization. To learn more about predictive model's functionality, visit here: [Video Recording](https://www.youtube.com/watch?v=NAZ2VeiN1N8)
+Want to learn more about the project? We recently presented Quartz Solar Forecast at two major open source conferences:
+
+- FOSDEM 2024 (Free and Open source Software Developers' European Meeting): How we built an open-source AI solar forecast for everyone [Watch the talk](https://www.youtube.com/watch?v=NAZ2VeiN1N8)
+
+- LF Energy 2024: Developments with Open Quartz and our Open Source Journey [Watch the talk](https://www.youtube.com/watch?v=YTaq41ztEDg)
+
 
 The current model uses GFS or ICON NWPs to predict the solar generation at a site
 
