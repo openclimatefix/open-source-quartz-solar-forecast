@@ -11,35 +11,23 @@ readme = "README.md"
 requires-python = ">=3.6"
 license = { text = "MIT" }
 
+[project]
 dependencies = [
-    # Core data processing and ML
+    # Keep core dependencies that are needed for the app to run
     "xarray==2022.12.0",
     "pv-site-prediction==0.1.19",
     "pydantic==2.6.2",
-    "xgboost==2.0.3",
-    # API and server dependencies
-    "fastapi",
-    "uvicorn",
-    "pydantic_settings",
-    "httpx",
-    "async_timeout",
-    # HTTP/Request handling
     "python-dotenv==1.0.1",
     "openmeteo-requests==1.2.0",
     "requests-cache==1.2.0",
     "retry-requests==2.0.0",
-    # CLI tools
+    "xgboost==2.0.3",
     "typer",
-]
-
-dev = [
-    # Development and visualization tools
-    "streamlit", # Development UI/dashboards
-    "plotly",    # Visualization during development
-
-    # Model evaluation and data download
-    "huggingface_hub==0.17.3", # Noted as evaluation only
-    "gdown==5.1.0",            # Data/model download during development
+    "async_timeout",
+    "uvicorn",
+    "fastapi",
+    "pydantic_settings",
+    "httpx",
 ]
 
 [project.urls]
@@ -50,7 +38,8 @@ packages = { find = { include = ["*"] } }
 package-data = { "quartz_solar_forecast" = ["*"] }
 
 [project.optional-dependencies]
-dev = []
+dev = ["streamlit", "plotly", "huggingface_hub==0.17.3", "gdown==5.1.0"]
+
 # additional vendor-specific dependencies for connecting to inverter APIs
 inverters = ["ocf_vrmapi"] # victron
 all = ["ocf_vrmapi"]
