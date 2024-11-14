@@ -18,9 +18,9 @@ Open Climate Fix also provides a commercial PV forecast, please get in touch at 
 
 Want to learn more about the project? We've presented Quartz Solar Forecast at two open source conferences:
 
-- FOSDEM 2024 (Free and Open source Software Developers' European Meeting): How we built an open-source AI solar forecast for everyone [Watch the talk](https://www.youtube.com/watch?v=NAZ2VeiN1N8)
+- **FOSDEM 2024** (Free and Open source Software Developers' European Meeting): How we built Open Quartz, our motivation behind it and its impact on aiding organizations in resource optimization [Watch the talk](https://www.youtube.com/watch?v=NAZ2VeiN1N8)
 
-- LF Energy 2024: Developments with Open Quartz and our Open Source Journey at Open Climate Fix [Watch the talk](https://www.youtube.com/watch?v=YTaq41ztEDg)
+- **LF Energy 2024**: Exploring Open Quartz's developments - new models, inverter APIs, and our Open Source journey at Open Climate Fix [Watch the talk](https://www.youtube.com/watch?v=YTaq41ztEDg)
 
 
 The current model uses GFS or ICON NWPs to predict the solar generation at a site
