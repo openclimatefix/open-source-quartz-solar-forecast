@@ -25,7 +25,6 @@ dependencies = [
     "typer",
     "async_timeout",
     "uvicorn",
-    "fastapi",
     "pydantic_settings",
     "httpx",
 ]
@@ -38,11 +37,24 @@ packages = { find = { include = ["*"] } }
 package-data = { "quartz_solar_forecast" = ["*"] }
 
 [project.optional-dependencies]
-dev = ["streamlit", "plotly", "huggingface_hub==0.17.3", "gdown==5.1.0"]
+dev = [
+    "streamlit",
+    "plotly",
+    "huggingface_hub==0.17.3",
+    "gdown==5.1.0",
+    "fastapi",
+]
 
 # additional vendor-specific dependencies for connecting to inverter APIs
 inverters = ["ocf_vrmapi"] # victron
-all = ["ocf_vrmapi"]
+all = [
+    "ocf_vrmapi",
+    "streamlit",
+    "plotly",
+    "huggingface_hub==0.17.3",
+    "gdown==5.1.0",
+    "fastapi",
+]
 
 [tool.mypy]
 
