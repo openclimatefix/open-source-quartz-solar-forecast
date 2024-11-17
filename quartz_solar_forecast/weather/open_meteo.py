@@ -149,7 +149,11 @@ class WeatherService:
             "terrestrial_radiation",
         ]
         url = self._build_url(latitude, longitude, start_date, end_date, variables)
-        response = requests.get(url)
+        try:
+            response = requests.get(url)
+        except requests.exceptions.Timeout:
+            
+            raise TimeoutError(f"Request to OpenMeteo API timed out. URl - {url}")
         data = response.json()["hourly"]
 
         df = pd.DataFrame(data)
