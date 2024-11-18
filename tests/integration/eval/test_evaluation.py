@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 
 
-@pytest.test.integration
+@pytest.mark.integration
 def test_run_eval():
 
     # create a fake dataframe

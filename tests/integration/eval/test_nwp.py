@@ -4,7 +4,7 @@ import pytest
 
 
 # can take ~ 1 minute to run
-@pytest.test.integration
+@pytest.mark.integration
 def test_get_nwp():
     # make test dataset file
     test_set_df = pd.DataFrame(
