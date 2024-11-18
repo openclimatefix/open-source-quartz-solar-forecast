@@ -21,7 +21,7 @@ jobs:
         if [ ${{ github.event.repository.name }} == 'openclimatefix/quartz-solar-forecast' ] || [ ${{ github.ref }} == 'refs/heads/main' ]; then
           export TEST_DIR=""
         fi
-        echo $TEST_DIR"
+        echo $TEST_DIR
         
   call-run-python-tests:
     needs: setup-test-dir
