@@ -33,4 +33,4 @@ jobs:
       python-version: "['3.11']"
       extra_commands: echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
       pytest_numcpus: '1'
-      test_dir: $TEST_DIR
+      test_dir: echo $TEST_DIR
