@@ -16,9 +16,8 @@ jobs:
     - name: Setup test dir
       run: |
         export TEST_DIR="tests/unit"
-        # if branch is 'main', or the repo is 'openclimatefix/quartz-solar-forecast'
-        # then run all tests, else run only unit tests
-        if [[ ${{ github.repository_owner }} == 'openclimatefix' ]] || [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
+        # if branch is 'main', or the repo owner is 'openclimatefix'
+        if [[ ${{ github.repository_owner }} == 'openclimatefix' ]]; then
           export TEST_DIR="tests"
         fi
         # print out so we can see
