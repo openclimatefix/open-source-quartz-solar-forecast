@@ -22,6 +22,7 @@ jobs:
         fi
         # print out so we can see
         echo $TEST_DIR
+        echo "test_dir=$TEST_DIR" >> $GITHUB_OUTPUT
         
   call-run-python-tests:
     needs: setup-test-dir
@@ -33,4 +34,4 @@ jobs:
       python-version: "['3.11']"
       extra_commands: echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
       pytest_numcpus: '1'
-      test_dir: echo $TEST_DIR
+      test_dir: ${{ needs.setup-test-dir.outputs.test_dir }}
