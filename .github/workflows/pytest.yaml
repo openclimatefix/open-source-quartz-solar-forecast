@@ -16,7 +16,7 @@ jobs:
     - name: Setup test dir
       run: |
         export TEST_DIR="tests/unit"
-        # if branch is 'main', or the repo owner is 'openclimatefix'
+        # if github action is not a pull request, then run all tests
         if [[ ${{ github.event_name }} != 'pull_request' ]]; then
           export TEST_DIR="tests"
         fi
