@@ -18,3 +18,5 @@ jobs:
       python-version: "['3.11']"
       extra_commands: echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
       pytest_numcpus: '1'
+      # if branch is 'main' then run all tests, if not only run unittests
+      test_dir: ${{ github.ref == 'refs/heads/main' && '' || 'tests/unit' }}

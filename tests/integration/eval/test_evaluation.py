@@ -1,8 +1,10 @@
 from quartz_solar_forecast.evaluation import run_eval
 import tempfile
 import pandas as pd
+import pytest
 
 
+@pytest.test.integration
 def test_run_eval():
 
     # create a fake dataframe
