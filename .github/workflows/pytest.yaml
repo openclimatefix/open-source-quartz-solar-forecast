@@ -21,15 +21,15 @@ jobs:
       pytest_numcpus: '1'
       test_dir: tests/unit
 
-    call-run-python-tests-all:
-      # only run on push, not external PR
-      uses: openclimatefix/.github/.github/workflows/python-test.yml@issue/pip-all
-      if: github.event_name == 'push'
-      with:
-        # pytest-cov looks at this folder
-        pytest_cov_dir: "quartz_solar_forecast"
-        os_list: '["ubuntu-latest"]'
-        python-version: "['3.11']"
-        extra_commands: echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
-        pytest_numcpus: '1'
-        test_dir: tests
+  call-run-python-tests-all:
+    # only run on push, not external PR
+    uses: openclimatefix/.github/.github/workflows/python-test.yml@issue/pip-all
+    if: github.event_name == 'push'
+    with:
+      # pytest-cov looks at this folder
+      pytest_cov_dir: "quartz_solar_forecast"
+      os_list: '["ubuntu-latest"]'
+      python-version: "['3.11']"
+      extra_commands: echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
+      pytest_numcpus: '1'
+      test_dir: tests
