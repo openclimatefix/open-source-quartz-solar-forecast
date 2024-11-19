@@ -6,32 +6,27 @@ build-backend = "setuptools.build_meta"
 name = "quartz_solar_forecast"
 version = "1.0.83"
 description = "Open Source Solar Forecasting for a Site"
-authors = [
-    { name = "Peter Dudfield", email = "info@openclimatefix.org" }
-]
+authors = [{ name = "Peter Dudfield", email = "info@openclimatefix.org" }]
 readme = "README.md"
 requires-python = ">=3.6"
 license = { text = "MIT" }
 
+[project]
 dependencies = [
+    # Keep core dependencies that are needed for the app to run
     "xarray==2022.12.0",
     "pv-site-prediction==0.1.19",
     "pydantic==2.6.2",
-    "huggingface_hub==0.17.3", # only for evaluation
     "python-dotenv==1.0.1",
     "openmeteo-requests==1.2.0",
     "requests-cache==1.2.0",
     "retry-requests==2.0.0",
-    "gdown==5.1.0",
     "xgboost==2.0.3",
-    "plotly",
     "typer",
-    "streamlit",
     "async_timeout",
     "uvicorn",
-    "fastapi",
     "pydantic_settings",
-    "httpx"
+    "httpx",
 ]
 
 [project.urls]
@@ -42,10 +37,24 @@ packages = { find = { include = ["*"] } }
 package-data = { "quartz_solar_forecast" = ["*"] }
 
 [project.optional-dependencies]
-dev = []
+dev = [
+    "streamlit",
+    "plotly",
+    "huggingface_hub==0.17.3",
+    "gdown==5.1.0",
+    "fastapi",
+]
+
 # additional vendor-specific dependencies for connecting to inverter APIs
 inverters = ["ocf_vrmapi"] # victron
-all = ["ocf_vrmapi"]
+all = [
+    "ocf_vrmapi",
+    "streamlit",
+    "plotly",
+    "huggingface_hub==0.17.3",
+    "gdown==5.1.0",
+    "fastapi",
+]
 
 [tool.mypy]
 
