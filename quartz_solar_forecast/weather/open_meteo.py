@@ -150,7 +150,7 @@ class WeatherService:
         ]
         url = self._build_url(latitude, longitude, start_date, end_date, variables)
         try:
-            response = requests.get(url)
+            response = requests.get(url, timeout=5)
         except requests.exceptions.Timeout:
             
             raise TimeoutError(f"Request to OpenMeteo API timed out. URl - {url}")

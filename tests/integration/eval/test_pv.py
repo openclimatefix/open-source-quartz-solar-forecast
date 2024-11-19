@@ -1,7 +1,8 @@
 from quartz_solar_forecast.eval.pv import get_pv_truth, get_pv_metadata
 import pandas as pd
+import pytest
 
-
+@pytest.mark.integration
 def test_get_pv_metadata():
     test_set_df = pd.DataFrame(
         [
@@ -16,6 +17,7 @@ def test_get_pv_metadata():
     assert "latitude" in metadata_df.columns
 
 
+@pytest.mark.integration
 def test_get_pv():
     # make test dataset file
     test_set_df = pd.DataFrame(
