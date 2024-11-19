@@ -11,7 +11,6 @@ readme = "README.md"
 requires-python = ">=3.6"
 license = { text = "MIT" }
 
-[project]
 dependencies = [
     # Keep core dependencies that are needed for the app to run
     "xarray==2022.12.0",
