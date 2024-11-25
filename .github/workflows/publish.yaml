@@ -1,6 +1,7 @@
 name: Run forecast
 
 on:
+  push: # remove this
   schedule:
     - cron: "0 9 * * *"
 
