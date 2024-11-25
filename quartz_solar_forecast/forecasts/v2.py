@@ -11,6 +11,7 @@ from quartz_solar_forecast.weather import WeatherService
 from xgboost.sklearn import XGBRegressor
 
 from . import constants
+import quartz_solar_forecast
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,7 @@ class TryolabsSolarPowerPredictor:
         Predicts solar power output for the given parameters.
     """
     DATE_COLUMN = "date"
+    download_dir = os.path.dirname(quartz_solar_forecast.__file__) + "/models"
 
     def _download_model(self, filename: str, repo_id: str, file_path: str) -> str:
         """
@@ -56,12 +58,11 @@ class TryolabsSolarPowerPredictor:
             The path to the locally saved model file.
         """
         # Use the project directory instead of the user's home directory
-        download_dir = "/home/runner/work/Open-Source-Quartz-Solar-Forecast/Open-Source-Quartz-Solar-Forecast"
-        os.makedirs(download_dir, exist_ok=True)
+        os.makedirs(self.download_dir, exist_ok=True)
         
-        downloaded_file = hf_hub_download(repo_id=repo_id, filename=file_path, cache_dir=download_dir)
+        downloaded_file = hf_hub_download(repo_id=repo_id, filename=file_path, cache_dir=self.download_dir)
         
-        target_path = os.path.join(download_dir, filename)
+        target_path = os.path.join(self.download_dir, filename)
 
         # copy file from downloaded_file to target_path
         shutil.copyfile(downloaded_file, target_path)
@@ -111,14 +112,13 @@ class TryolabsSolarPowerPredictor:
             The loaded XGBoost model ready for making predictions.
         """
         # Use the project directory
-        download_dir = "/home/runner/work/Open-Source-Quartz-Solar-Forecast/Open-Source-Quartz-Solar-Forecast"
-        zipfile_model = os.path.join(download_dir, model_file + ".zip")
+        zipfile_model = os.path.join(self.download_dir, model_file + ".zip")
     
         if not os.path.isfile(zipfile_model):
             logger.info("Downloading model...")
             zipfile_model = self._download_model(model_file + ".zip", repo_id, file_path)
         
-        model_path = os.path.join(download_dir, model_file)
+        model_path = os.path.join(self.download_dir, model_file)
         if not os.path.isfile(model_path):
             logger.info("Preparing model...")
             self._decompress_zipfile(zipfile_model)
