@@ -1,8 +1,11 @@
 from datetime import datetime
 from typing import List
 
+import openmeteo_requests
 import pandas as pd
 import requests
+import requests_cache
+from retry_requests import retry
 
 
 class WeatherService:
@@ -91,9 +94,7 @@ class WeatherService:
         try:
             start_datetime = datetime.strptime(start_date, "%Y-%m-%d")
             end_datetime = datetime.strptime(end_date, "%Y-%m-%d")
-            assert (
-                end_datetime > start_datetime
-            ), "End date must be greater than start date."
+            assert end_datetime > start_datetime, "End date must be greater than start date."
         except (ValueError, AssertionError) as e:
             raise ValueError(
                 f"Invalid date format or range. Please use YYYY-MM-DD and ensure end_date is greater than start_date. Error: {str(e)}"
@@ -149,12 +150,16 @@ class WeatherService:
             "terrestrial_radiation",
         ]
         url = self._build_url(latitude, longitude, start_date, end_date, variables)
+
+        cache_session = requests_cache.CachedSession(".cache", expire_after=-1)
+        retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
         try:
-            response = requests.get(url)
+            openmeteo = openmeteo_requests.Client(session=retry_session)
+            response = openmeteo.weather_api(url, params={})
         except requests.exceptions.Timeout:
-            
             raise TimeoutError(f"Request to OpenMeteo API timed out. URl - {url}")
-        data = response.json()["hourly"]
+
+        data = response[0].Hourly()
 
         df = pd.DataFrame(data)
         df["time"] = pd.to_datetime(df["time"])
@@ -165,5 +170,5 @@ class WeatherService:
                 "time": "date",
             }
         )
-        
+
         return df
