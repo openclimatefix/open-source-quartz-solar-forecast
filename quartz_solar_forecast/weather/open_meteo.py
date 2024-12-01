@@ -159,9 +159,18 @@ class WeatherService:
         except requests.exceptions.Timeout:
             raise TimeoutError(f"Request to OpenMeteo API timed out. URl - {url}")
 
-        data = response[0].Hourly()
+        hourly = response[0].Hourly()
+        hourly_data = {"time": pd.date_range(
+            start=pd.to_datetime(hourly.Time(), unit="s", utc=False),
+            end=pd.to_datetime(hourly.TimeEnd(), unit="s", utc=False),
+            freq=pd.Timedelta(seconds=hourly.Interval()),
+            inclusive="left"
+        )}
 
-        df = pd.DataFrame(data)
+        for i, variable in enumerate(variables):
+            hourly_data[variable] = hourly.Variables(i).ValuesAsNumpy()
+
+        df = pd.DataFrame(hourly_data)
         df["time"] = pd.to_datetime(df["time"])
 
         # rename time column to date
