@@ -81,7 +81,7 @@ This can solve the [bug: \_\_\_kmpc_for_static_fini](https://github.com/openclim
 
 The package logs when `run_forecast` is used. This is useful for OCF to determine how the package is being used 
 and how we can make improvements in the future.
-Note that any latitude and longitude is rounded to 2 decimals places for in order to anonymize the data.
+Note that any latitude and longitude is rounded to 2 decimals places in order to anonymize the data.
 If you would like to disable this logging, you can do so by setting the environment variable `QUARTZ_SOLAR_FORECAST_LOGGING` to `False`.
 
 
