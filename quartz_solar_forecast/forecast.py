@@ -128,7 +128,7 @@ def run_forecast(
     # log usage to sentry, if you dont want to log usage to sentry, you can
     # 1. set environmental variable QUARTZ_SOLAR_FORECAST_LOGGING='false', or
     # 2. comment out this line
-    write_sentry({"site": site, "model": model, "ts": ts, "nwp_source": nwp_source})
+    write_sentry({"site": site.copy(), "model": model, "ts": ts, "nwp_source": nwp_source})
 
     if model == "gb":
         return predict_ocf(site, None, ts, nwp_source)
