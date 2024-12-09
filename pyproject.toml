@@ -26,6 +26,7 @@ dependencies = [
     "uvicorn",
     "pydantic_settings",
     "httpx",
+    "sentry_sdk"
 ]
 
 [project.urls]

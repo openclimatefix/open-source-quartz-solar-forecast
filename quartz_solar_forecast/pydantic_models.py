@@ -33,6 +33,14 @@ class PVSite(BaseModel):
         json_schema_extra=["enphase", "solis", "givenergy", "solarman", None],
     )
 
+    def round_latitude_and_longitude(self):
+        """ Round the latitude and longitude to 2 decimal places
+
+        This is to ensure that the location of the site is not stored exactly.
+        """
+        self.latitude = round(self.latitude, 2)
+        self.longitude = round(self.longitude, 2)
+
     def get_inverter(self):
         if self.inverter_type == 'enphase':
             return EnphaseInverter(EnphaseSettings())
