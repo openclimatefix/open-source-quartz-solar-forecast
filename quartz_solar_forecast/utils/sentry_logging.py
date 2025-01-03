@@ -2,6 +2,9 @@
 
 import sentry_sdk
 from quartz_solar_forecast.pydantic_models import PVSite
+import importlib.metadata
+
+version = importlib.metadata.version('quartz_solar_forecast')
 
 import os
 
@@ -30,6 +33,8 @@ def write_sentry(params):
 
             # set sentry tag
             sentry_sdk.set_tag(key, value)
+
+        sentry_sdk.set_tag('version', version)
 
         message = "quartz_solar_forecast is being used"
 
