@@ -11,6 +11,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20  # Add timeout to prevent hanging
     steps:
       - uses: actions/checkout@v4
       
@@ -42,7 +43,7 @@ jobs:
           # Install the package with dev dependencies
           pip install -e ".[dev]"
           # Install test dependencies
-          pip install pytest pytest-cov pytest-profiling pytest-xdist
+          pip install pytest pytest-cov pytest-xdist pytest-timeout
           
       - name: Set up environment
         run: |
@@ -52,12 +53,12 @@ jobs:
         run: |
           pytest -vv \
             --durations=10 \
-            --profile \
-            --profile-svg \
-            -n auto \
+            -n 2 \
+            --timeout=300 \
             --cov=quartz_solar_forecast \
             --cov-report=xml \
-            --cov-report=term-missing
+            --cov-report=term-missing \
+            -p no:profiling  # Disable profiling temporarily
             
       - name: Upload coverage report
         uses: actions/upload-artifact@v3
@@ -66,12 +67,3 @@ jobs:
           path: |
             coverage.xml
             .coverage
-            prof/
-            
-      - name: Upload profiling results
-        uses: actions/upload-artifact@v3
-        with:
-          name: profiling-results
-          path: |
-            *.prof
-            *.svg
