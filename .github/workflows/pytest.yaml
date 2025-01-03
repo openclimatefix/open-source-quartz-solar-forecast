@@ -4,30 +4,73 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
   schedule:
-    - cron: "0 12 * *1"
+    - cron: "0 12 * * 1"
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  call-run-python-tests:
-    uses: openclimatefix/.github/.github/workflows/python-test.yml@issue/pip-all
-    with:
-      pytest_cov_dir: "quartz_solar_forecast"
-      os_list: '["ubuntu-latest"]'
-      python-version: "['3.11']"
-      extra_commands: |
-        echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
-        pip install --no-deps -e .
-        pip install pytest-profiling pytest-xdist
-      pytest_numcpus: '2'
-      pytest_args: >-
-        -vv 
-        --durations=10 
-        --profile
-        --profile-svg
-        -n auto
-      cache_deps: true
-      cache_key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
-      cache_path: |
-        ~/.cache/pip
-        .pytest_cache
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            
+      - name: Cache pytest
+        uses: actions/cache@v3
+        with:
+          path: .pytest_cache
+          key: ${{ runner.os }}-pytest-${{ hashFiles('**/pytest.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-pytest-
+            
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov pytest-profiling pytest-xdist
+          pip install --no-deps -e .
+          
+      - name: Set up environment
+        run: |
+          echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
+          
+      - name: Run tests
+        run: |
+          pytest -vv \
+            --durations=10 \
+            --profile \
+            --profile-svg \
+            -n auto \
+            --cov=quartz_solar_forecast \
+            --cov-report=xml \
+            --cov-report=term-missing
+            
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: |
+            coverage.xml
+            .coverage
+            prof/
+            
+      - name: Upload profiling results
+        uses: actions/upload-artifact@v3
+        with:
+          name: profiling-results
+          path: |
+            *.prof
+            *.svg
