@@ -8,13 +8,16 @@ on:
     - cron: "0 12 * * 1"
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
+
 jobs:
   call-run-python-tests:
     uses: openclimatefix/.github/.github/workflows/python-test.yml@issue/pip-all
     with:
-      # pytest-cov looks at this folder
       pytest_cov_dir: "quartz_solar_forecast"
       os_list: '["ubuntu-latest"]'
       python-version: "['3.11']"
-      extra_commands: echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
-      pytest_numcpus: '1'
+      extra_commands: |
+        echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
+        # Optionally install pytest-xdist if not already included
+        pip install pytest-xdist
+      pytest_numcpus: '4'  # Increased from 1 to utilize more CPU cores
