@@ -244,6 +244,15 @@
       "contributions": [
         "question"
       ]
+    },
+    {
+      "login": "JadeVexo",
+      "name": "Jaay",
+      "avatar_url": "https://avatars.githubusercontent.com/u/66781710?v=4",
+      "profile": "https://github.com/JadeVexo",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
