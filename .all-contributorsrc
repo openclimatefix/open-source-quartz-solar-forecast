@@ -244,6 +244,15 @@
       "contributions": [
         "question"
       ]
+    },
+    {
+      "login": "zealous-ideal-monk",
+      "name": "Harshil Srivastav",
+      "avatar_url": "https://avatars.githubusercontent.com/u/161273221?v=4",
+      "profile": "https://github.com/zealous-ideal-monk",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
