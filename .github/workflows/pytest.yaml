@@ -16,5 +16,7 @@ jobs:
       pytest_cov_dir: "quartz_solar_forecast"
       os_list: '["ubuntu-latest"]'
       python-version: "['3.11']"
-      extra_commands: echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
-      pytest_numcpus: '1'
+      extra_commands: |
+        echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
+        pip install pytest-xdist
+      pytest_numcpus: 'auto'
