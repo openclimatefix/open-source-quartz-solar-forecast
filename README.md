@@ -1,7 +1,7 @@
 # Quartz Solar Forecast
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-26-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-27-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ![image](https://github.com/user-attachments/assets/6563849b-b355-4842-93e4-61c15a9a9ebf)
@@ -76,6 +76,14 @@ conda install -c conda-forge pyresample
 ```
 
 This can solve the [bug: \_\_\_kmpc_for_static_fini](https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/issues/32).
+
+### Logging
+
+The package logs when `run_forecast` is used. This is useful for OCF to determine how the package is being used 
+and how we can make improvements in the future.
+Note that any latitudes and longitudes are rounded to 2 decimals places in order to anonymize the data.
+If you would like to disable this logging, you can do so by setting the environment variable `QUARTZ_SOLAR_FORECAST_LOGGING` to `False`.
+
 
 ## Model
 
@@ -221,6 +229,12 @@ Start the frontend (port 5137):
 
 There is also a steamlit dashboard in `dashboards/dashboard_2` that can be used. 
 
+## Global Model
+
+Although this model is trained on UK data, this tool has been used in the following countries, (please let us know if you want your country to be added)
+
+🇬🇧🇺🇸🇦🇺🇧🇦🇪🇸🇯🇵
+
 ## Contribution
 
 We welcome other models.
@@ -267,6 +281,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sumana-2705"><img src="https://avatars.githubusercontent.com/u/110307215?v=4?s=100" width="100px;" alt="Sumana Sree Angajala"/><br /><sub><b>Sumana Sree Angajala</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=sumana-2705" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/EmilyIsCoding"><img src="https://avatars.githubusercontent.com/u/98443131?v=4?s=100" width="100px;" alt="Emily"/><br /><sub><b>Emily</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=EmilyIsCoding" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sergejlazuk"><img src="https://avatars.githubusercontent.com/u/33606741?v=4?s=100" width="100px;" alt="sergejla"/><br /><sub><b>sergejla</b></sub></a><br /><a href="#question-sergejlazuk" title="Answering Questions">💬</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/JadeVexo"><img src="https://avatars.githubusercontent.com/u/66781710?v=4?s=100" width="100px;" alt="Jaay"/><br /><sub><b>Jaay</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=JadeVexo" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

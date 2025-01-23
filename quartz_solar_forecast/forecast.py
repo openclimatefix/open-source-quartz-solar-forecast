@@ -6,6 +6,7 @@ import pandas as pd
 from quartz_solar_forecast.data import get_nwp, make_pv_data
 from quartz_solar_forecast.forecasts import forecast_v1_tilt_orientation, TryolabsSolarPowerPredictor
 from quartz_solar_forecast.pydantic_models import PVSite
+from quartz_solar_forecast.utils.sentry_logging import write_sentry
 
 log = logging.getLogger(__name__)
 
@@ -123,6 +124,11 @@ def run_forecast(
                        (only relevant if model=="gb")
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
+
+    # log usage to sentry, if you dont want to log usage to sentry, you can
+    # 1. set environmental variable QUARTZ_SOLAR_FORECAST_LOGGING='false', or
+    # 2. comment out this line
+    write_sentry({"site": site.copy(), "model": model, "ts": ts, "nwp_source": nwp_source})
 
     if model == "gb":
         return predict_ocf(site, None, ts, nwp_source)

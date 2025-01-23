@@ -11,7 +11,7 @@ def test_run_forecast_no_ts():
     current_hr = pd.Timestamp.now().round(freq='h')
 
     # run gradient boosting model with no ts
-    predications_df = run_forecast(site=site, model="gb")
+    predications_df = run_forecast(site=site, model="gb", ts=current_ts)
     # check current ts agrees with dataset
     assert predications_df.index.min() == current_ts
 
@@ -20,7 +20,7 @@ def test_run_forecast_no_ts():
     print(f"Max: {predications_df['power_kw'].max()}")
 
     # run xgb model with no ts
-    predications_df = run_forecast(site=site, model="xgb")
+    predications_df = run_forecast(site=site, model="xgb", ts=current_ts)
     # check current ts agrees with dataset
     assert predications_df.index.min() == current_hr
 
