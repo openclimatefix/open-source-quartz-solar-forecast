@@ -10,19 +10,19 @@ def test_run_forecast_no_ts():
     current_ts = pd.Timestamp.now()
 
     # run gradient boosting model with no ts
-    predications_df = run_forecast(site=site, model="gb")
+    predictions_df = run_forecast(site=site, model="gb")
     # check current ts agrees with dataset
-    assert predications_df.index.min() >= current_ts - pd.Timedelta(hours=1)
+    assert predictions_df.index.min() >= current_ts - pd.Timedelta(hours=1)
 
-    print(predications_df)
+    print(predictions_df)
     print(f"Current time: {current_ts}")
-    print(f"Max: {predications_df['power_kw'].max()}")
+    print(f"Max: {predictions_df['power_kw'].max()}")
 
     # run xgb model with no ts
-    predications_df = run_forecast(site=site, model="xgb")
+    predictions_df = run_forecast(site=site, model="xgb")
     # check current ts agrees with dataset
-    assert predications_df.index.min() >= current_ts - pd.Timedelta(hours=1)
+    assert predictions_df.index.min() >= current_ts - pd.Timedelta(hours=1)
 
-    print(predications_df)
+    print(predictions_df)
     print(f"Current time: {current_ts}")
-    print(f"Max: {predications_df['power_kw'].max()}")
+    print(f"Max: {predictions_df['power_kw'].max()}")
