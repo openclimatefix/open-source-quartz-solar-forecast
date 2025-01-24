@@ -35,7 +35,7 @@ def metrics(results_df: pd.DataFrame, pv_metadata: pd.DataFrame, include_night: 
         .mean(),
         4,
     )
-    print(f"MAE: {mae} kw, normalized {mae_normalized} %")
+    print(f"MAE: {mae} kw, normalized {100*mae_normalized} %")
 
     # calculate metrics over the different horizons hours
     # find all unique horizon_hours
