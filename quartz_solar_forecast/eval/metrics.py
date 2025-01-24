@@ -74,7 +74,7 @@ def metrics(results_df: pd.DataFrame, pv_metadata: pd.DataFrame, include_night: 
         )
 
         print(
-            f"MAE for horizon {horizon_group}: {mae} +- {1.96*sem}. mae_normalized: {100*mae_normalized} %"
+            f"MAE for horizon {horizon_group}: {mae} +- {1.96*sem:.3g}. mae_normalized: {100*mae_normalized:.3g} %"
         )
 
         # TODO add more metrics using ocf_ml_metrics
