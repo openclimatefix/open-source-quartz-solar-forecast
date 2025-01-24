@@ -155,7 +155,7 @@ class WeatherService:
         retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
         try:
             openmeteo = openmeteo_requests.Client(session=retry_session)
-            response = openmeteo.weather_api(url, params={}, timeout=5)
+            response = openmeteo.weather_api(url, params={})
         except requests.exceptions.Timeout:
             raise TimeoutError(f"Request to OpenMeteo API timed out. URl - {url}")
 
