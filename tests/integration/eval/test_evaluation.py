@@ -17,7 +17,7 @@ def test_run_eval():
                 "pv_id",
                 "timestamp",
             ],
-            data=[[8215, "2021-01-26 01:15:00"], [8215, "2021-01-30 16:30:00"]],
+            data=[[7593, "2021-08-21 12:00:00"], [7593, "2021-10-04 20:00:00"]],
         )
 
         testset_filename = tmpdirname + "/test_dataset.csv"
