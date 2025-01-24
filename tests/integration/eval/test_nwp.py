@@ -1,8 +1,10 @@
 from quartz_solar_forecast.eval.nwp import get_nwp
 import pandas as pd
+import pytest
 
 
 # can take ~ 1 minute to run
+@pytest.mark.integration
 def test_get_nwp():
     # make test dataset file
     test_set_df = pd.DataFrame(
