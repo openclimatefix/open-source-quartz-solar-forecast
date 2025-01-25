@@ -1,15 +1,18 @@
 # Quartz Solar Forecast
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-27-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ![image](https://github.com/user-attachments/assets/6563849b-b355-4842-93e4-61c15a9a9ebf)
 [![tags badge](https://img.shields.io/github/v/tag/openclimatefix/open-source-quartz-solar-forecast?include_prereleases&sort=semver&color=FFAC5F)](https://github.com/openclimatefix/open-source-quartz-solar-forecast/tags)
 [![pypi badge](https://img.shields.io/pypi/v/quartz-solar-forecast?&color=07BCDF)](https://pypi.org/project/quartz-solar-forecast/)
-[![ease of contribution: easy](https://img.shields.io/badge/ease%20of%20contribution:%20easy-32bd50)](https://github.com/openclimatefix/ocf-meta-repo?tab=readme-ov-file#overview-of-ocfs-nowcasting-repositories) 
+[![ease of contribution: easy](https://img.shields.io/badge/ease%20of%20contribution:%20easy-32bd50)](https://github.com/openclimatefix/ocf-meta-repo?tab=readme-ov-file#overview-of-ocfs-nowcasting-repositories)
 [![Python package tests](https://github.com/openclimatefix/open-source-quartz-solar-forecast/actions/workflows/pytest.yaml/badge.svg)](https://github.com/openclimatefix/open-source-quartz-solar-forecast/actions/workflows/pytest.yaml)
 
+test
 
 The aim of the project is to build an open source PV forecast that is free and easy to use.
 The forecast provides the expected generation in `kw` for 0 to 48 hours for a single PV site.
@@ -21,7 +24,6 @@ Want to learn more about the project? We've presented Quartz Solar Forecast at t
 - **FOSDEM 2024** (Free and Open source Software Developers' European Meeting): How we built Open Quartz, our motivation behind it and its impact on aiding organizations in resource optimization [Watch the talk](https://www.youtube.com/watch?v=NAZ2VeiN1N8)
 
 - **LF Energy 2024**: Exploring Open Quartz's developments - new models, inverter APIs, and our Open Source journey at Open Climate Fix [Watch the talk](https://www.youtube.com/watch?v=YTaq41ztEDg)
-
 
 The current model uses GFS or ICON NWPs to predict the solar generation at a site
 
@@ -79,11 +81,10 @@ This can solve the [bug: \_\_\_kmpc_for_static_fini](https://github.com/openclim
 
 ### Logging
 
-The package logs when `run_forecast` is used. This is useful for OCF to determine how the package is being used 
+The package logs when `run_forecast` is used. This is useful for OCF to determine how the package is being used
 and how we can make improvements in the future.
 Note that any latitudes and longitudes are rounded to 2 decimals places in order to anonymize the data.
 If you would like to disable this logging, you can do so by setting the environment variable `QUARTZ_SOLAR_FORECAST_LOGGING` to `False`.
-
 
 ## Model
 
@@ -227,7 +228,7 @@ Start the frontend (port 5137):
 `npm install`
 `npm run dev`
 
-There is also a steamlit dashboard in `dashboards/dashboard_2` that can be used. 
+There is also a steamlit dashboard in `dashboards/dashboard_2` that can be used.
 
 ## Global Model
 
