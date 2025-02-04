@@ -28,6 +28,37 @@ jobs:
           python -m pip install --upgrade pip
           pip install huggingface_hub
 
+      - name: Download model
+        env:
+          HF_TOKEN: ${{ vars.HF_TOKEN }}
+        run: |
+          mkdir -p quartz_solar_forecast/models
+          python -c "
+          from huggingface_hub import hf_hub_download
+          import os
+          import zipfile
+          
+          model_dir = 'quartz_solar_forecast/models'
+          os.makedirs(model_dir, exist_ok=True)
+          
+          zip_path = hf_hub_download(
+              repo_id='openclimatefix/open-source-quartz-solar-forecast',
+              filename='models/v2/model_10_202405.ubj.zip',
+              cache_dir=model_dir
+          )
+          
+          # Copy to expected location
+          target_zip = os.path.join(model_dir, 'model_10_202405.ubj.zip')
+          if not os.path.exists(target_zip):
+              os.system(f'cp {zip_path} {target_zip}')
+          
+          # Extract if needed
+          target_model = os.path.join(model_dir, 'model_10_202405.ubj')
+          if not os.path.exists(target_model):
+              with zipfile.ZipFile(target_zip, 'r') as zip_ref:
+                  zip_ref.extractall(model_dir)
+          "
+
       - name: Cache model files
         id: cache-data
         uses: actions/cache@v4
@@ -38,26 +69,6 @@ jobs:
           key: ${{ runner.os }}-model-${{ hashFiles('quartz_solar_forecast/forecasts/constants.py', 'quartz_solar_forecast/forecasts/v2.py') }}
           restore-keys: |
             ${{ runner.os }}-model-
-
-      - name: Download model if cache miss
-        if: steps.cache-data.outputs.cache-hit != 'true'
-        env:
-          HF_TOKEN: ${{ vars.HF_TOKEN }}
-        run: |
-          mkdir -p quartz_solar_forecast/models
-          python -c "
-          from huggingface_hub import hf_hub_download
-          import os
-          
-          model_dir = 'quartz_solar_forecast/models'
-          os.makedirs(model_dir, exist_ok=True)
-          
-          hf_hub_download(
-              repo_id='openclimatefix/open-source-quartz-solar-forecast',
-              filename='models/v2/model_10_202405.ubj.zip',
-              cache_dir=model_dir
-          )
-          "
 
   call-run-python-tests-unit:
     needs: check-data-cache
