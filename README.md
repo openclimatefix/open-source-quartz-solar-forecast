@@ -1,7 +1,7 @@
 # Quartz Solar Forecast
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-27-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-28-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ![image](https://github.com/user-attachments/assets/6563849b-b355-4842-93e4-61c15a9a9ebf)
@@ -282,6 +282,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/EmilyIsCoding"><img src="https://avatars.githubusercontent.com/u/98443131?v=4?s=100" width="100px;" alt="Emily"/><br /><sub><b>Emily</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=EmilyIsCoding" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sergejlazuk"><img src="https://avatars.githubusercontent.com/u/33606741?v=4?s=100" width="100px;" alt="sergejla"/><br /><sub><b>sergejla</b></sub></a><br /><a href="#question-sergejlazuk" title="Answering Questions">💬</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/JadeVexo"><img src="https://avatars.githubusercontent.com/u/66781710?v=4?s=100" width="100px;" alt="Jaay"/><br /><sub><b>Jaay</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=JadeVexo" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://rachitex.me"><img src="https://avatars.githubusercontent.com/u/18143615?v=4?s=100" width="100px;" alt="Rachit Mishra"/><br /><sub><b>Rachit Mishra</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=rachitex" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
