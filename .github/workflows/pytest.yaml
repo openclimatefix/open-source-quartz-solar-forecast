@@ -30,7 +30,7 @@ jobs:
       python-version: "['3.11']"
       extra_commands: 
         echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
-        export PYTEST_ADDOPTS="-v --durations=0"
+        echo "PYTEST_ADDOPTS=-v --durations=0" >> $GITHUB_ENV
       pytest_numcpus: '2'
       test_dir: tests/unit
 
@@ -44,6 +44,6 @@ jobs:
       python-version: "['3.11']"
       extra_commands: 
         echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
-        export PYTEST_ADDOPTS="-v --durations=0"
+        echo "PYTEST_ADDOPTS=-v --durations=0" >> $GITHUB_ENV
       pytest_numcpus: '2'
       test_dir: tests
