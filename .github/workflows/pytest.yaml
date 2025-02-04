@@ -31,6 +31,7 @@ jobs:
       extra_commands: echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
       pytest_numcpus: '2'
       test_dir: tests/unit
+      pytest_args: "-v --durations=0"
 
   call-run-python-tests-all:
     needs: check-data-cache
@@ -43,3 +44,4 @@ jobs:
       extra_commands: echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
       pytest_numcpus: '2'
       test_dir: tests
+      pytest_args: "-v --durations=0"
