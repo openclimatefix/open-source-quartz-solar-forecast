@@ -78,8 +78,14 @@ jobs:
       os_list: '["ubuntu-latest"]'
       python-version: "['3.11']"
       extra_commands: |
-        echo "HF_TOKEN=${{ vars.HF_TOKEN }}" > .env
+        echo "HF_TOKEN=${{ secrets.HF_TOKEN }}" > .env
         echo "PYTEST_ADDOPTS=-v --durations=0" >> $GITHUB_ENV
+        # Restore cache if available
+        if [ -d "quartz_solar_forecast/models" ]; then
+          echo "Using cached model files"
+        else
+          echo "Cache not found, model will be downloaded during tests"
+        fi
       pytest_numcpus: '2'
       test_dir: tests/unit
 

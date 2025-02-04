@@ -37,51 +37,50 @@ class TryolabsSolarPowerPredictor:
         Predicts solar power output for the given parameters.
     """
     DATE_COLUMN = "date"
-    download_dir = os.path.dirname(quartz_solar_forecast.__file__) + "/models"
+    download_dir = os.path.join(os.path.dirname(quartz_solar_forecast.__file__), "models")
+
+    def _check_model_exists(self, model_file: str) -> bool:
+        """Check if model file already exists in the download directory."""
+        model_path = os.path.join(self.download_dir, model_file)
+        if os.path.exists(model_path):
+            logger.info(f"Model found at {model_path}")
+            return True
+        return False
 
     def _download_model(self, filename: str, repo_id: str, file_path: str) -> str:
-        """
-        Downloads a model file from a Hugging Face repository and saves it locally.
-    
-        Parameters:
-        -----------
-        filename : str
-            The name to give the downloaded file when saving it locally.
-        repo_id : str
-            The ID of the Hugging Face repository containing the model.
-        file_path : str
-            The path to the model file within the repository.
-    
-        Returns:
-        --------
-        str
-            The path to the locally saved model file.
-        """
-        # Use the project directory instead of the user's home directory
+        """Downloads a model file from a Hugging Face repository and saves it locally."""
         os.makedirs(self.download_dir, exist_ok=True)
         
-        downloaded_file = hf_hub_download(repo_id=repo_id, filename=file_path, cache_dir=self.download_dir)
+        if self._check_model_exists(filename):
+            logger.info(f"Using cached model: {filename}")
+            return os.path.join(self.download_dir, filename)
+
+        logger.info(f"Downloading model from {repo_id}/{file_path}")
+        downloaded_file = hf_hub_download(
+            repo_id=repo_id,
+            filename=file_path,
+            cache_dir=self.download_dir,
+            force_download=False  # Use cached version if available
+        )
         
         target_path = os.path.join(self.download_dir, filename)
-
-        # copy file from downloaded_file to target_path
-        shutil.copyfile(downloaded_file, target_path)
+        if not os.path.exists(target_path):
+            shutil.copyfile(downloaded_file, target_path)
+            logger.info(f"Model downloaded to {target_path}")
         
         return target_path
 
     def _decompress_zipfile(self, filename: str) -> None:
-        """
-        Extract all files contained in a .zip file to the current directory.
-        filename must contain .zip extension
-
-        Parameters
-        ----------
-        filename : str
-            The name of the .zip file to be decompressed
-        """
-        # get the directory of the file
+        """Extract all files contained in a .zip file to the current directory."""
         directory = os.path.dirname(filename)
+        model_name = os.path.splitext(os.path.basename(filename))[0]
+        
+        # Check if already extracted
+        if os.path.exists(os.path.join(directory, model_name)):
+            logger.info(f"Model already extracted: {model_name}")
+            return
 
+        logger.info(f"Extracting {filename}")
         with zipfile.ZipFile(filename, "r") as zip_file:
             zip_file.extractall(path=directory)
 
@@ -91,43 +90,20 @@ class TryolabsSolarPowerPredictor:
         repo_id: str = "openclimatefix/open-source-quartz-solar-forecast",
         file_path: str = "models/v2/model_10_202405.ubj.zip"
     ) -> XGBRegressor:
-        """
-        Downloads, prepares, and loads the XGBoost model for solar power prediction.
-    
-        Parameters:
-        -----------
-        model_file : str, optional
-            The name of the model file (without .zip extension).
-            Default is set by constants.MODEL_FILE.
-        repo_id : str, optional
-            The ID of the Hugging Face repository containing the model.
-            Default is "openclimatefix/open-source-quartz-solar-forecast".
-        file_path : str, optional
-            The path to the model file within the repository.
-            Default is "models/v2/model_10_202405.ubj.zip".
-    
-        Returns:
-        --------
-        XGBRegressor
-            The loaded XGBoost model ready for making predictions.
-        """
-        # Use the project directory
-        zipfile_model = os.path.join(self.download_dir, model_file + ".zip")
-    
-        if not os.path.isfile(zipfile_model):
-            logger.info("Downloading model...")
-            zipfile_model = self._download_model(model_file + ".zip", repo_id, file_path)
-        
+        """Downloads, prepares, and loads the XGBoost model for solar power prediction."""
         model_path = os.path.join(self.download_dir, model_file)
-        if not os.path.isfile(model_path):
-            logger.info("Preparing model...")
+        
+        # Check if model already exists
+        if not self._check_model_exists(model_file):
+            zipfile_model = self._download_model(model_file + ".zip", repo_id, file_path)
             self._decompress_zipfile(zipfile_model)
-
-        logger.info("Loading model...")
-        loaded_model = XGBRegressor()
-        loaded_model.load_model(model_path)
-        self.model = loaded_model
-        return loaded_model
+        
+        # Load the model
+        model = XGBRegressor()
+        model.load_model(model_path)
+        logger.info(f"Model loaded from {model_path}")
+        self.model = model
+        return model
         
     def get_data(
         self,
