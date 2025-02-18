@@ -233,7 +233,7 @@ There is also a steamlit dashboard in `dashboards/dashboard_2` that can be used.
 
 Although this model is trained on UK data, this tool has been used in the following countries, (please let us know if you want your country to be added)
 
-🇬🇧🇺🇸🇦🇺🇧🇦🇪🇸🇯🇵🇨🇳🇧🇪🇩🇪🇫🇷🇵🇹
+🇬🇧🇺🇸🇦🇺🇧🇦🇪🇸🇯🇵🇨🇳🇧🇪🇩🇪🇫🇷🇵🇹🇳🇱
 
 ## Contribution
 
