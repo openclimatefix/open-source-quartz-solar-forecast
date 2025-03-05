@@ -1,7 +1,7 @@
 # Quartz Solar Forecast
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-30-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-31-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ![image](https://github.com/user-attachments/assets/6563849b-b355-4842-93e4-61c15a9a9ebf)
@@ -287,6 +287,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/vashisthrahul13"><img src="https://avatars.githubusercontent.com/u/182660137?v=4?s=100" width="100px;" alt="Rahul Vashisth"/><br /><sub><b>Rahul Vashisth</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=vashisthrahul13" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/LynnLawren"><img src="https://avatars.githubusercontent.com/u/107563516?v=4?s=100" width="100px;" alt="Lynn Mary Lawrence"/><br /><sub><b>Lynn Mary Lawrence</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=LynnLawren" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/j4ckieee"><img src="https://avatars.githubusercontent.com/u/146953876?v=4?s=100" width="100px;" alt="Jackie Truong"/><br /><sub><b>Jackie Truong</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=j4ckieee" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
