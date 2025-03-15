@@ -1,9 +1,7 @@
 import pytest
 import os
 from unittest.mock import patch
-from quartz_solar_forecast.eval.test_pv import (  # Split long line
-    get_pv_data
-)
+from tests.utils.hf_data_utils import get_pv_data
 
 @pytest.mark.skipif(
     not os.getenv('HF_TOKEN'),
@@ -16,7 +14,7 @@ def test_get_pv_data_integration():
     assert result is not None
     # Add more specific assertions
 
-@patch('quartz_solar_forecast.eval.test_pv.download_file_from_hf')
+@patch('tests.utils.hf_data_utils.download_file_from_hf')
 def test_get_pv_data_unit(mock_download, mock_metadata, mock_pv_data):
     """Unit test with mocked HuggingFace data"""
     # Configure mock to return our test data

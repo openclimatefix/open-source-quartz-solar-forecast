@@ -1,6 +1,6 @@
 import pytest
 import os
-from quartz_solar_forecast.eval.test_pv import get_pv_data
+from tests.utils.hf_data_utils import get_pv_data
 
 @pytest.mark.skipif(
     not os.getenv('HF_TOKEN'),

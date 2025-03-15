@@ -1,0 +1,99 @@
+Metadata-Version: 2.1
+Name: pvlib
+Version: 0.9.5
+Summary: A set of functions and classes for simulating the performance of photovoltaic energy systems.
+Home-page: https://github.com/pvlib/pvlib-python
+Author: pvlib python Developers
+Maintainer-email: pvlib-admin@googlegroups.com
+License: BSD 3-Clause
+Project-URL: Bug Tracker, https://github.com/pvlib/pvlib-python/issues
+Project-URL: Documentation, https://pvlib-python.readthedocs.io/
+Project-URL: Source Code, https://github.com/pvlib/pvlib-python
+Classifier: Development Status :: 4 - Beta
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Intended Audience :: Science/Research
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Topic :: Scientific/Engineering
+Requires-Python: >=3.7
+License-File: LICENSE
+License-File: AUTHORS.md
+Requires-Dist: numpy (>=1.16.0)
+Requires-Dist: pandas (>=0.25.0)
+Requires-Dist: pytz
+Requires-Dist: requests
+Requires-Dist: scipy (>=1.4.0)
+Requires-Dist: h5py
+Requires-Dist: importlib-metadata ; python_version < "3.8"
+Provides-Extra: all
+Requires-Dist: cftime (>=1.1.1) ; extra == 'all'
+Requires-Dist: cython ; extra == 'all'
+Requires-Dist: docutils (==0.15.2) ; extra == 'all'
+Requires-Dist: ephem ; extra == 'all'
+Requires-Dist: ipython ; extra == 'all'
+Requires-Dist: matplotlib ; extra == 'all'
+Requires-Dist: netcdf4 ; extra == 'all'
+Requires-Dist: nrel-pysam ; extra == 'all'
+Requires-Dist: numba ; extra == 'all'
+Requires-Dist: pillow ; extra == 'all'
+Requires-Dist: pvfactors ; extra == 'all'
+Requires-Dist: pydata-sphinx-theme (==0.8.1) ; extra == 'all'
+Requires-Dist: pytest ; extra == 'all'
+Requires-Dist: pytest-cov ; extra == 'all'
+Requires-Dist: pytest-mock ; extra == 'all'
+Requires-Dist: pytest-remotedata ; extra == 'all'
+Requires-Dist: pytest-rerunfailures ; extra == 'all'
+Requires-Dist: pytest-timeout ; extra == 'all'
+Requires-Dist: requests-mock ; extra == 'all'
+Requires-Dist: siphon ; extra == 'all'
+Requires-Dist: sphinx (==4.5.0) ; extra == 'all'
+Requires-Dist: sphinx-gallery ; extra == 'all'
+Requires-Dist: sphinx-toggleprompt (>=0.0.5) ; extra == 'all'
+Requires-Dist: statsmodels ; extra == 'all'
+Provides-Extra: doc
+Requires-Dist: ipython ; extra == 'doc'
+Requires-Dist: matplotlib ; extra == 'doc'
+Requires-Dist: sphinx (==4.5.0) ; extra == 'doc'
+Requires-Dist: pydata-sphinx-theme (==0.8.1) ; extra == 'doc'
+Requires-Dist: sphinx-gallery ; extra == 'doc'
+Requires-Dist: docutils (==0.15.2) ; extra == 'doc'
+Requires-Dist: pillow ; extra == 'doc'
+Requires-Dist: netcdf4 ; extra == 'doc'
+Requires-Dist: siphon ; extra == 'doc'
+Requires-Dist: sphinx-toggleprompt (>=0.0.5) ; extra == 'doc'
+Requires-Dist: pvfactors ; extra == 'doc'
+Provides-Extra: optional
+Requires-Dist: cython ; extra == 'optional'
+Requires-Dist: ephem ; extra == 'optional'
+Requires-Dist: netcdf4 ; extra == 'optional'
+Requires-Dist: nrel-pysam ; extra == 'optional'
+Requires-Dist: numba ; extra == 'optional'
+Requires-Dist: pvfactors ; extra == 'optional'
+Requires-Dist: siphon ; extra == 'optional'
+Requires-Dist: statsmodels ; extra == 'optional'
+Requires-Dist: cftime (>=1.1.1) ; extra == 'optional'
+Provides-Extra: test
+Requires-Dist: pytest ; extra == 'test'
+Requires-Dist: pytest-cov ; extra == 'test'
+Requires-Dist: pytest-mock ; extra == 'test'
+Requires-Dist: requests-mock ; extra == 'test'
+Requires-Dist: pytest-timeout ; extra == 'test'
+Requires-Dist: pytest-rerunfailures ; extra == 'test'
+Requires-Dist: pytest-remotedata ; extra == 'test'
+
+
+PVLIB Python is a community supported tool that provides a set of
+functions and classes for simulating the performance of photovoltaic
+energy systems. PVLIB Python was originally ported from the PVLIB MATLAB
+toolbox developed at Sandia National Laboratories and it implements many
+of the models and methods developed at the Labs. More information on
+Sandia Labs PV performance modeling programs can be found at
+https://pvpmc.sandia.gov/. We collaborate with the PVLIB MATLAB project,
+but operate independently of it.
+
+We need your help to make pvlib-python a great tool!
+
+Documentation: http://pvlib-python.readthedocs.io
+
+Source code: https://github.com/pvlib/pvlib-python
