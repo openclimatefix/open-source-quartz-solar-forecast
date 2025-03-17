@@ -102,7 +102,7 @@ def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source = "ICON")
     Run the forecast from NWP data
 
     :param pv_df: the PV site data. This should have columns timestamp, id, latitude, longitude, and capacity
-    :param nwp_df: all the nwp data for the site and location. This shoulw have the following rows
+    :param nwp_df: all the nwp data for the site and location. This should have the following rows
         - timestamp: the timestamp of the site
         - temperature_2m
         - precipitation
