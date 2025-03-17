@@ -9,7 +9,7 @@ from psp.serialization import load_model
 from quartz_solar_forecast.data import get_nwp, make_pv_data
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.forecasts.v1 import forecast_v1
-#from quartz_solar_forecast.data import format_nwp_data
+from quartz_solar_forecast.data import format_nwp_data 
 
 from datetime import datetime
 
@@ -81,17 +81,16 @@ class Forecaster:
         for i in range(len(pv_df)):
             print(f"Running forecast for {i + 1} of {len(pv_df)}")
             pv_row = pv_df.iloc[i]
-            
-            # Filtering NWP data for current site and timestamp
+            # Filtering NWP data
             nwp_site_df = nwp_df[
                 (nwp_df["pv_id"] == pv_row.pv_id) & (nwp_df["timestamp"] == pv_row.timestamp)
             ]
-            
-            # Run forecast for single site
+            # Check nwp_site_df has data before proceeding
+            if nwp_site_df.empty:
+                print(f"Warning: No NWP data found for pv_id {pv_row.pv_id} at timestamp {pv_row.timestamp}")
+                continue
             pred_df = self.forecast_single(pv_row, nwp_site_df, nwp_source)
             all_predictions.append(pred_df)
-        
-        # Combine all predictions
         if all_predictions:
             return pd.concat(all_predictions)
         else:
@@ -99,5 +98,20 @@ class Forecaster:
 
 
 def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source = "ICON") -> pd.DataFrame:
+    """
+    Run the forecast from NWP data
+
+    :param pv_df: the PV site data. This should have columns timestamp, id, latitude, longitude, and capacity
+    :param nwp_df: all the nwp data for the site and location. This shoulw have the following rows
+        - timestamp: the timestamp of the site
+        - temperature_2m
+        - precipitation
+        - shortwave_radiation
+        - direct_radiation",
+        - cloudcover_low",
+        - cloudcover_mid",
+        - cloudcover_high",
+        maybe more
+    """
     forecaster = Forecaster()
     return forecaster.forecast_batch(pv_df, nwp_df, nwp_source)
