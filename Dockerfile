@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . /app
 
 # Install the quartz_solar_forecast package in editable mode
-RUN pip install -e .
+RUN pip install -e .[all]
 
 # Expose port 8000 to the outside world
 EXPOSE 8000
