@@ -1,0 +1,14 @@
+Metadata-Version: 2.1
+Name: ocf-blosc2
+Version: 0.0.2
+Summary: OCF Blosc2 is a codec for numcodecs for compressing image data in Zarr/Xarray
+Author: Jacob Bieker
+Author-email: info@openclimatefix.org
+License: MIT
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy
+Requires-Dist: blosc2
+
+# ocf_blosc2
+Blosc2 codec used for OCF's Zarr compression

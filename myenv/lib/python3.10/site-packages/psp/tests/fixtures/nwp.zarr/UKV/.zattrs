@@ -1,0 +1,9 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "variable",
+        "init_time",
+        "step",
+        "y",
+        "x"
+    ]
+}
