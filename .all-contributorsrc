@@ -298,6 +298,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "hrsvrn",
+      "name": "Harshvardhan Vatsa",
+      "avatar_url": "https://avatars.githubusercontent.com/u/76729417?v=4",
+      "profile": "http://hrsvrn.com",
+      "contributions": [
+        "infra"
+      ]
     }
   ],
   "contributorsPerLine": 7,
