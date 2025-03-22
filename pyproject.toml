@@ -43,6 +43,7 @@ dev = [
     "huggingface_hub==0.17.3",
     "gdown==5.1.0",
     "fastapi",
+    "matplotlib",
 ]
 
 # additional vendor-specific dependencies for connecting to inverter APIs
