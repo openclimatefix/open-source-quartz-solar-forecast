@@ -44,6 +44,7 @@ dev = [
     "gdown==5.1.0",
     "fastapi",
     "matplotlib",
+    "zipfile36"
 ]
 
 # additional vendor-specific dependencies for connecting to inverter APIs
