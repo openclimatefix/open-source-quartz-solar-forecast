@@ -4,9 +4,9 @@ import zipfile
 import shutil
 from urllib.parse import urlparse
 
-def download_and_process_zip(url, download_dir='../quartz_solar_forecast/dataset/TZ-SAM/data'):
+def download_and_process_zip(url, download_dir='../quartz_solar_forecast/dataset/TZ-SAM'):
     # Create download directory if it doesn't exist
-    os.makedirs('data', exist_ok=True)
+    os.makedirs(download_dir, exist_ok=True)
     
     # Extract filename from URL
     parsed_url = urlparse(url)
