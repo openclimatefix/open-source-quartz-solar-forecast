@@ -77,37 +77,6 @@ conda install -c conda-forge pyresample
 
 This can solve the [bug: \_\_\_kmpc_for_static_fini](https://github.com/openclimatefix/Open-Source-Quartz-Solar-Forecast/issues/32).
 
-## Development Environment Setup
-
-To set up the development environment for this project, follow these steps:
-
-1. **Clone the repository:**
-  ```bash
-  git clone https://github.com/openclimatefix/open-source-quartz-solar-forecast.git
-  cd open-source-quartz-solar-forecast
-  ```
-
-2. **Create a virtual environment:**
-  ```bash
-  python3 -m venv venv
-  source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-  ```
-
-3. **Install the required dependencies:**
-  ```bash
-  pip install -r requirements.txt
-  ```
-
-4. **Run the Jupyter Notebook server:**
-  ```bash
-  jupyter notebook
-  ```
-
-5. **Open your browser and navigate to:**
-  ```bash
-  http://localhost:8888
-  ```
-
 ### Logging
 
 The package logs when `run_forecast` is used. This is useful for OCF to determine how the package is being used 
@@ -231,6 +200,37 @@ _Mean absolute error for the panels in the test set._
 Notes:
 
 - The evaluation per horizon is not available for this model, as it is not provided by the open-meteo data.
+
+## Development Environment Setup
+
+To set up the development environment for this project, follow these steps:
+
+1. **Clone the repository:**
+  ```bash
+  git clone https://github.com/openclimatefix/open-source-quartz-solar-forecast.git
+  cd open-source-quartz-solar-forecast
+  ```
+
+2. **Create a virtual environment:**
+  ```bash
+  python3 -m venv venv
+  source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+  ```
+
+3. **Install the required dependencies:**
+  ```bash
+  pip install -r requirements.txt
+  ```
+
+4. **Run the Jupyter Notebook server:**
+  ```bash
+  jupyter notebook
+  ```
+
+5. **Open your browser and navigate to:**
+  ```bash
+  http://localhost:8888
+  ```
 
 ## Abbreviations
 
