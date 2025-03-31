@@ -1,7 +1,7 @@
 # Quartz Solar Forecast
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-33-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-34-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ![image](https://github.com/user-attachments/assets/6563849b-b355-4842-93e4-61c15a9a9ebf)
@@ -321,6 +321,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/j4ckieee"><img src="https://avatars.githubusercontent.com/u/146953876?v=4?s=100" width="100px;" alt="Jackie Truong"/><br /><sub><b>Jackie Truong</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=j4ckieee" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/binaryecheos"><img src="https://avatars.githubusercontent.com/u/130131792?v=4?s=100" width="100px;" alt="Gourav Sahu "/><br /><sub><b>Gourav Sahu </b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=binaryecheos" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://hrsvrn.com"><img src="https://avatars.githubusercontent.com/u/76729417?v=4?s=100" width="100px;" alt="Harshvardhan Vatsa"/><br /><sub><b>Harshvardhan Vatsa</b></sub></a><br /><a href="#infra-hrsvrn" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Krishnadubey1008"><img src="https://avatars.githubusercontent.com/u/121748506?v=4?s=100" width="100px;" alt="Krishna Dubey"/><br /><sub><b>Krishna Dubey</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=Krishnadubey1008" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
