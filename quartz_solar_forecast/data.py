@@ -24,6 +24,7 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     :param nwp_source: the nwp data source. Either "gfs", "icon" or "ukmo". Defaults to "icon"
     :return: nwp forecast in xarray
     """
+    now = datetime.now()
 
     # Setup the Open-Meteo API client with cache and retry on error
     cache_session = requests_cache.CachedSession('.cache', expire_after = -1)
@@ -48,7 +49,7 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     url = ""
 
     # check whether the time stamp is more than 3 months in the past
-    if (datetime.now() - ts).days > 90:
+    if (now - ts).days > 90:
         print("Warning: The requested timestamp is more than 3 months in the past. The weather data are provided by a reanalyse model and not ICON or GFS.")
 
         # load data from open-meteo Historical Weather API
@@ -56,16 +57,14 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
 
     else:
         # Getting NWP from open meteo weather forecast API by ICON, GFS, or UKMO within the last 3 months
-        if nwp_source == "icon":
-            url_nwp_source = "dwd-icon"
-            url = f"https://api.open-meteo.com/v1/{url_nwp_source}"
-        elif nwp_source == "gfs":
-            url_nwp_source = "gfs"
-            url = f"https://api.open-meteo.com/v1/{url_nwp_source}"
-        elif nwp_source == "ukmo":
-            url = "https://api.open-meteo.com/v1/forecast"
-        else:
+        url_nwp_source = {
+            "icon": "dwd-icon",
+            "gfs": "gfs",
+            "ukmo": "ukmo_seamless"
+        }.get(nwp_source)
+        if not url_nwp_source:
             raise Exception(f'Source ({nwp_source}) must be either "icon", "gfs", or "ukmo"')
+        url = f"https://api.open-meteo.com/v1/{url_nwp_source if nwp_source != 'ukmo' else 'forecast'}"
 
     params = {
         "latitude": site.latitude,
@@ -92,17 +91,11 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
 
 
     # variables index as in the variables array of the request
-    hourly_data["t"] = hourly.Variables(0).ValuesAsNumpy()
-    hourly_data["prate"] = hourly.Variables(1).ValuesAsNumpy()
-    hourly_data["lcc"] = hourly.Variables(2).ValuesAsNumpy()
-    hourly_data["mcc"] = hourly.Variables(3).ValuesAsNumpy()
-    hourly_data["hcc"] = hourly.Variables(4).ValuesAsNumpy()
-    hourly_data["si10"] = hourly.Variables(5).ValuesAsNumpy()
-    hourly_data["dswrf"] = hourly.Variables(6).ValuesAsNumpy()
-    hourly_data["dlwrf"] = hourly.Variables(7).ValuesAsNumpy()
+    for idx, var in enumerate(["t", "prate", "lcc", "mcc", "hcc", "si10", "dswrf", "dlwrf"]):
+        hourly_data[var] = hourly.Variables(idx).ValuesAsNumpy()
 
     # handle visibility
-    if (datetime.now() - ts).days <= 90:
+    if (now - ts).days <= 90:
         # load data from open-meteo gfs model
         params = {
         	"latitude": site.latitude,
@@ -117,9 +110,8 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
         # set to maximum visibility possible
         hourly_data["vis"] = 24000.0
 
-    df = pd.DataFrame(data = hourly_data)
-    df = df.set_index("time")
-    df = df.astype('float64')
+    df = pd.DataFrame(data=hourly_data).set_index("time").astype('float64')
+
 
     # convert data into xarray
     data_xr = format_nwp_data(df, nwp_source, site)
