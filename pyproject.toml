@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "quartz_solar_forecast"
-version = "1.1.15"
+version = "1.1.16"
 description = "Open Source Solar Forecasting for a Site"
 authors = [{ name = "Peter Dudfield", email = "info@openclimatefix.org" }]
 readme = "README.md"
