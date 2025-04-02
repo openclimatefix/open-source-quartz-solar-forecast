@@ -1,0 +1,7 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "y_geostationary"
+    ],
+    "coordinate_reference_system": "geostationary",
+    "units": "meter"
+}

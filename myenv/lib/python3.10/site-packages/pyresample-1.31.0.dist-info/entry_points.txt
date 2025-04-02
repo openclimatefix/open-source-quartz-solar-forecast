@@ -1,0 +1,2 @@
+[pyresample.resamplers]
+nearest = pyresample.future.resamplers.nearest:KDTreeNearestXarrayResampler

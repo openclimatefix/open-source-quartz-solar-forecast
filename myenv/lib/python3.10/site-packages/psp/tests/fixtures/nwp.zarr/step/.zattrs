@@ -1,0 +1,8 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "step"
+    ],
+    "long_name": "time since forecast_reference_time",
+    "standard_name": "forecast_period",
+    "units": "hours"
+}

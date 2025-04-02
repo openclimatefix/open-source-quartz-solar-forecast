@@ -1,0 +1,112 @@
+Metadata-Version: 2.1
+Name: pyresample
+Version: 1.31.0
+Summary: Geospatial image resampling in Python
+Home-page: https://github.com/pytroll/pyresample
+Author: Thomas Lavergne
+Author-email: t.lavergne@met.no
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Cython
+Classifier: Operating System :: OS Independent
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+Requires-Dist: pyproj>=3.0
+Requires-Dist: configobj
+Requires-Dist: pykdtree>=1.3.1
+Requires-Dist: pyyaml
+Requires-Dist: numpy>=1.21.0
+Requires-Dist: shapely
+Requires-Dist: donfig
+Requires-Dist: platformdirs
+Provides-Extra: all
+Requires-Dist: xarray; extra == "all"
+Requires-Dist: dask>=0.16.1; extra == "all"
+Requires-Dist: numexpr; extra == "all"
+Requires-Dist: pytest-lazy-fixtures; extra == "all"
+Requires-Dist: zarr; extra == "all"
+Requires-Dist: scipy; extra == "all"
+Requires-Dist: matplotlib; extra == "all"
+Requires-Dist: dask; extra == "all"
+Requires-Dist: cartopy>=0.20.0; extra == "all"
+Requires-Dist: odc-geo; extra == "all"
+Requires-Dist: rasterio; extra == "all"
+Requires-Dist: pillow; extra == "all"
+Requires-Dist: shapely; extra == "all"
+Provides-Extra: cf
+Requires-Dist: xarray; extra == "cf"
+Provides-Extra: dask
+Requires-Dist: dask>=0.16.1; extra == "dask"
+Provides-Extra: gradient_search
+Requires-Dist: shapely; extra == "gradient-search"
+Provides-Extra: numexpr
+Requires-Dist: numexpr; extra == "numexpr"
+Provides-Extra: odc-geo
+Requires-Dist: odc-geo; extra == "odc-geo"
+Provides-Extra: quicklook
+Requires-Dist: matplotlib; extra == "quicklook"
+Requires-Dist: cartopy>=0.20.0; extra == "quicklook"
+Requires-Dist: pillow; extra == "quicklook"
+Provides-Extra: rasterio
+Requires-Dist: rasterio; extra == "rasterio"
+Provides-Extra: tests
+Requires-Dist: rasterio; extra == "tests"
+Requires-Dist: dask; extra == "tests"
+Requires-Dist: xarray; extra == "tests"
+Requires-Dist: cartopy>=0.20.0; extra == "tests"
+Requires-Dist: pillow; extra == "tests"
+Requires-Dist: matplotlib; extra == "tests"
+Requires-Dist: scipy; extra == "tests"
+Requires-Dist: zarr; extra == "tests"
+Requires-Dist: pytest-lazy-fixtures; extra == "tests"
+Requires-Dist: shapely; extra == "tests"
+Requires-Dist: odc-geo; extra == "tests"
+Provides-Extra: xarray_bilinear
+Requires-Dist: xarray; extra == "xarray-bilinear"
+Requires-Dist: dask; extra == "xarray-bilinear"
+Requires-Dist: zarr; extra == "xarray-bilinear"
+
+[![Build Status](https://github.com/pytroll/pyresample/workflows/CI/badge.svg?branch=main)](https://github.com/pytroll/pyresample/actions?query=workflow%3A%22CI%22)
+[![Coverage Status](https://coveralls.io/repos/github/pytroll/pyresample/badge.svg?branch=main)](https://coveralls.io/github/pytroll/pyresample?branch=main)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3372769.svg)](https://doi.org/10.5281/zenodo.3372769)
+
+
+Pyresample
+----------
+
+Pyresample is a python package for resampling geospatial image data. It is the
+primary method for resampling in the [Satpy](https://github.com/pytroll/satpy)
+library, but can also be used as a standalone library. Resampling or
+reprojection is the process of mapping input geolocated data points to a
+new target geographic projection and area.
+
+Pyresample can operate on both fixed grids of data and geolocated swath data.
+To describe these data Pyresample uses various "geometry" objects including
+the `AreaDefinition` and `SwathDefinition` classes.
+
+Pyresample offers multiple resampling algorithms including:
+
+- Nearest Neighbor
+- Elliptical Weighted Average (EWA)
+- Bilinear
+
+For nearest neighbor and bilinear interpolation pyresample uses a kd-tree
+approach by using the fast KDTree implementation provided by the
+[pykdtree](https://github.com/storpipfugl/pykdtree) library.
+Pyresample works with numpy arrays and numpy masked arrays. Interfaces to
+XArray objects (including dask array support) are provided in separate
+Resampler class interfaces and are in active development.
+Utility functions are available to easily plot data using Cartopy.
+
+[Documentation](https://pyresample.readthedocs.org/en/latest/)
+
+See [pytroll.github.io](http://pytroll.github.io/) for more information on the
+PyTroll group and related packages.
+
+Citation
+----------
+Hoese, D., Raspaud, M., Lahtinen, P., Roberts, W., Lavergne, et al. (2020). pytroll/pyresample: Version 1.16.0. Zenodo. [https://doi.org/10.5281/zenodo.3372769](https://doi.org/10.5281/zenodo.3372769)

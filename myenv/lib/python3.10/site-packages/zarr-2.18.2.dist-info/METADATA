@@ -1,0 +1,163 @@
+Metadata-Version: 2.1
+Name: zarr
+Version: 2.18.2
+Summary: An implementation of chunked, compressed, N-dimensional arrays for Python
+Maintainer-email: Alistair Miles <alimanfoo@googlemail.com>
+License: MIT
+Project-URL: Bug Tracker, https://github.com/zarr-developers/zarr-python/issues
+Project-URL: Changelog, https://zarr.readthedocs.io/en/stable/release.html
+Project-URL: Discussions, https://github.com/zarr-developers/zarr-python/discussions
+Project-URL: Documentation, https://zarr.readthedocs.io/
+Project-URL: Homepage, https://github.com/zarr-developers/zarr-python
+Classifier: Development Status :: 6 - Mature
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Information Technology
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Operating System :: Unix
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+Requires-Dist: asciitree
+Requires-Dist: numpy >=1.23
+Requires-Dist: numcodecs >=0.10.0
+Requires-Dist: fasteners ; sys_platform != "emscripten"
+Provides-Extra: docs
+Requires-Dist: sphinx ; extra == 'docs'
+Requires-Dist: sphinx-automodapi ; extra == 'docs'
+Requires-Dist: sphinx-design ; extra == 'docs'
+Requires-Dist: sphinx-issues ; extra == 'docs'
+Requires-Dist: sphinx-copybutton ; extra == 'docs'
+Requires-Dist: pydata-sphinx-theme ; extra == 'docs'
+Requires-Dist: numpydoc ; extra == 'docs'
+Requires-Dist: numcodecs[msgpack] ; extra == 'docs'
+Provides-Extra: jupyter
+Requires-Dist: notebook ; extra == 'jupyter'
+Requires-Dist: ipytree >=0.2.2 ; extra == 'jupyter'
+Requires-Dist: ipywidgets >=8.0.0 ; extra == 'jupyter'
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/zarr-developers/community/main/logos/logo2.png"><br>
+</div>
+
+# Zarr
+
+<table>
+<tr>
+  <td>Latest Release</td>
+  <td>
+    <a href="https://pypi.org/project/zarr/">
+    <img src="https://badge.fury.io/py/zarr.svg" alt="latest release" />
+    </a>
+  </td>
+</tr>
+  <td></td>
+  <td>
+    <a href="https://anaconda.org/anaconda/zarr/">
+    <img src="https://anaconda.org/conda-forge/zarr/badges/version.svg" alt="latest release" />
+    </a>
+</td>
+</tr>
+<tr>
+  <td>Package Status</td>
+  <td>
+		<a href="https://pypi.org/project/zarr/">
+		<img src="https://img.shields.io/pypi/status/zarr.svg" alt="status" />
+		</a>
+  </td>
+</tr>
+<tr>
+  <td>License</td>
+  <td>
+    <a href="https://github.com/zarr-developers/zarr-python/blob/main/LICENSE.txt">
+    <img src="https://img.shields.io/pypi/l/zarr.svg" alt="license" />
+    </a>
+</td>
+</tr>
+<tr>
+  <td>Build Status</td>
+  <td>
+    <a href="https://github.com/zarr-developers/zarr-python/blob/main/.github/workflows/python-package.yml">
+    <img src="https://github.com/zarr-developers/zarr-python/actions/workflows/python-package.yml/badge.svg" alt="build status" />
+    </a>
+  </td>
+</tr>
+<tr>
+  <td>Pre-commit Status</td>
+  <td>
+    <a href=""https://github.com/zarr-developers/zarr-python/blob/main/.pre-commit-config.yaml">
+    <img src="https://results.pre-commit.ci/badge/github/zarr-developers/zarr-python/main.svg" alt="pre-commit status" />
+    </a>
+  </td>
+</tr>
+
+<tr>
+  <td>Coverage</td>
+  <td>
+    <a href="https://codecov.io/gh/zarr-developers/zarr-python">
+    <img src="https://codecov.io/gh/zarr-developers/zarr-python/branch/main/graph/badge.svg"/ alt="coverage">
+    </a>
+  </td>
+</tr>
+<tr>
+  <td>Downloads</td>
+  <td>
+    <a href="https://zarr.readthedocs.io">
+    <img src="https://pepy.tech/badge/zarr" alt="pypi downloads" />
+    </a>
+  </td>
+</tr>
+<tr>
+	<td>Zulip</td>
+	<td>
+		<a href="https://ossci.zulipchat.com/">
+		<img src="https://img.shields.io/badge/zulip-join_chat-brightgreen.svg" />
+		</a>
+	</td>
+</tr>
+<tr>
+	<td>Citation</td>
+	<td>
+		<a href="https://doi.org/10.5281/zenodo.3773450">
+			<img src="https://zenodo.org/badge/DOI/10.5281/zenodo.3773450.svg" alt="DOI">
+		</a>
+	</td>
+</tr>
+
+</table>
+
+## What is it?
+
+Zarr is a Python package providing an implementation of compressed, chunked, N-dimensional arrays, designed for use in parallel computing. See the [documentation](https://zarr.readthedocs.io) for more information.
+
+## Main Features
+
+- [**Create**](https://zarr.readthedocs.io/en/stable/tutorial.html#creating-an-array) N-dimensional arrays with any NumPy `dtype`.
+- [**Chunk arrays**](https://zarr.readthedocs.io/en/stable/tutorial.html#chunk-optimizations) along any dimension.
+- [**Compress**](https://zarr.readthedocs.io/en/stable/tutorial.html#compressors) and/or filter chunks using any NumCodecs codec.
+- [**Store arrays**](https://zarr.readthedocs.io/en/stable/tutorial.html#tutorial-storage) in memory, on disk, inside a zip file, on S3, etc...
+- [**Read**](https://zarr.readthedocs.io/en/stable/tutorial.html#reading-and-writing-data) an array [**concurrently**](https://zarr.readthedocs.io/en/stable/tutorial.html#parallel-computing-and-synchronization) from multiple threads or processes.
+- Write to an array concurrently from multiple threads or processes.
+- Organize arrays into hierarchies via [**groups**](https://zarr.readthedocs.io/en/stable/tutorial.html#groups).
+
+## Where to get it
+
+Zarr can be installed from PyPI using `pip`:
+
+```bash
+pip install zarr
+```
+
+or via `conda`:
+
+```bash
+conda install -c conda-forge zarr
+```
+
+For more details, including how to install from source, see the [installation documentation](https://zarr.readthedocs.io/en/stable/index.html#installation).
