@@ -1,0 +1,78 @@
+Metadata-Version: 2.1
+Name: retry-requests
+Version: 2.0.0
+Summary: Make requests's sessions auto-retry on failure.
+Home-page: https://github.com/bustawin/retry-requests
+Author: Xavier Bustamante Talavera
+Author-email: xavier@bustawin.com
+License: GPLv3+
+Project-URL: Documentation, https://github.com/bustawin/retry-requests
+Project-URL: Code, https://github.com/bustawin/retry-requests
+Project-URL: Issue tracker, https://github.com/bustawin/retry-requests/issues
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: Operating System :: OS Independent
+Classifier: License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Requires-Python: >=3.6
+License-File: LICENSE
+Requires-Dist: requests
+Requires-Dist: urllib3 (>=1.26)
+Provides-Extra: test
+Requires-Dist: pytest ; extra == 'test'
+
+Retry-requests
+##############
+Configures the passed-in `requests' <http://python-requests.org>`_ ``Session``
+to retry on failed requests due to connection errors, timeouts,
+specific HTTP response codes (5XX by default) and 30X redirections
+—anything that could fail.
+
+Python 3.6+.
+
+Basic usage:
+
+.. code-block:: python
+
+  from retry_requests import retry
+  my_session = retry()
+  my_session.get("http://foo.bar")
+
+This ``get`` will retry three times in case of error waiting some time between retries.
+Errors could be:
+
+- Waiting for the server to start answering for 5 seconds.
+- No access to the server or a dropped connection.
+- An HTTP answer of 500, 502, or 504.
+
+You can change these defaults:
+
+.. code-block:: python
+
+  from retry_requests import retry
+  from requests import Session
+  my_session = retry(Session(), retries=5, backoff_factor=0.2)
+  my_session.get('https://foo.bar')
+
+Check the function ``retry`` to know more about this configuration.
+
+Note that you have a ``TSession``, a ``Session`` with a default timeout,
+and ``RSession``, a ``Session`` with a timeout that always ``raise_for_status()``,
+for your convenience.
+
+
+Heavily inspired from `Peterbe.com <https://www.peterbe.com/plog/
+best-practice-with-retries-with-requests>`_. Thank you!
+
+Installing
+**********
+Just ``pip install retry-requests``.
+
+Testing
+*******
+Clone this project and then, at its root directory, run ``python setup.py test``.
+Note that you need an active Internet connection to run the tests.
