@@ -1,9 +1,10 @@
 import pandas as pd
+
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
+from tests.unit.mocks import mock_weather_api
 
-
-def test_run_forecast_no_ts():
+def test_run_forecast_no_ts(mock_weather_api):
     # make input data
     site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
 
