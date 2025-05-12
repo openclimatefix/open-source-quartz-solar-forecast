@@ -17,44 +17,6 @@ class WeatherService:
         """
         pass
 
-    def _build_url(
-        self,
-        latitude: float,
-        longitude: float,
-        start_date: str,
-        end_date: str,
-        variables: List[str],
-    ) -> str:
-        """
-        Build the URL for the OpenMeteo API.
-
-        Parameters
-        ----------
-        latitude : float
-            The latitude of the location for which to get weather data.
-        longitude : float
-            The longitude of the location for which to get weather data.
-        start_date : str
-            The start date for the weather data, in the format YYYY-MM-DD.
-        end_date : str
-            The end date for the weather data, in the format YYYY-MM-DD.
-        variables : list
-            A list of weather variables to include in the API response.
-
-        Returns
-        -------
-        str
-            The URL for the OpenMeteo API.
-        """
-        url = "https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&hourly={variables}&start_date={start_date}&end_date={end_date}&timezone=GMT".format(
-            latitude=latitude,
-            longitude=longitude,
-            variables=",".join(variables),
-            start_date=start_date,
-            end_date=end_date,
-        )
-        return url
-
     def _validate_coordinates(self, latitude: float, longitude: float) -> None:
         """
         Validate latitude and longitude coordinates.
@@ -101,7 +63,7 @@ class WeatherService:
             )
 
     def get_hourly_weather(
-        self, latitude: float, longitude: float, start_date: str, end_date: str
+        self, latitude: float, longitude: float, start_date: str, end_date: str, variables: List[str] = [], api_type: str = "forecast", model: str = None
     ) -> pd.DataFrame:
         """
         Get hourly weather data ranging from 3 months ago up to 15 days ahead (forecast).
@@ -116,6 +78,12 @@ class WeatherService:
             The start date for the weather data, in the format YYYY-MM-DD.
         end_date : str
             The end date for the weather data, in the format YYYY-MM-DD.
+        variables : list
+            A list of weather variables to include in the API response.
+        api_type : str
+            Type of Open-Meteo API to be used, forecast by default.
+        model : str
+            Weather model, may be undefined
 
         Returns
         -------
@@ -130,37 +98,28 @@ class WeatherService:
         self._validate_coordinates(latitude, longitude)
         self._validate_date_format(start_date, end_date)
 
-        variables = [
-            "temperature_2m",
-            "relative_humidity_2m",
-            "dew_point_2m",
-            "precipitation",
-            "surface_pressure",
-            "cloud_cover",
-            "cloud_cover_low",
-            "cloud_cover_mid",
-            "cloud_cover_high",
-            "wind_speed_10m",
-            "wind_direction_10m",
-            "is_day",
-            "shortwave_radiation",
-            "direct_radiation",
-            "diffuse_radiation",
-            "direct_normal_irradiance",
-            "terrestrial_radiation",
-        ]
-        url = self._build_url(latitude, longitude, start_date, end_date, variables)
-
+        main_api = "archive-api" if api_type == "archive" else "api"
+        url = f"https://{main_api}.open-meteo.com/v1/{api_type}"
+        params = {
+            "latitude": latitude,
+            "longitude": longitude,
+            "start_date": start_date,
+            "end_date": end_date,
+            "hourly": variables,
+        }
+        if model is not None:
+            params["models"] = model
+        
         cache_session = requests_cache.CachedSession(".cache", expire_after=-1)
         retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
         try:
             openmeteo = openmeteo_requests.Client(session=retry_session)
-            response = openmeteo.weather_api(url, params={})
-        except requests.exceptions.Timeout:
-            raise TimeoutError(f"Request to OpenMeteo API timed out. URl - {url}")
+            response = openmeteo.weather_api(url, params=params)
+        except requests.exceptions.Timeout as e:
+            raise TimeoutError(f"Request to OpenMeteo API timed out. URl - {e.request.url}")
 
         hourly = response[0].Hourly()
-        hourly_data = {"time": pd.date_range(
+        hourly_data = {"date": pd.date_range(
             start=pd.to_datetime(hourly.Time(), unit="s", utc=False),
             end=pd.to_datetime(hourly.TimeEnd(), unit="s", utc=False),
             freq=pd.Timedelta(seconds=hourly.Interval()),
@@ -171,13 +130,4 @@ class WeatherService:
             hourly_data[variable] = hourly.Variables(i).ValuesAsNumpy()
 
         df = pd.DataFrame(hourly_data)
-        df["time"] = pd.to_datetime(df["time"])
-
-        # rename time column to date
-        df = df.rename(
-            columns={
-                "time": "date",
-            }
-        )
-
         return df

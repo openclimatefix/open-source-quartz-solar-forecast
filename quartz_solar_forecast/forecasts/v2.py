@@ -164,11 +164,30 @@ class TryolabsSolarPowerPredictor:
         start_date_datetime = datetime.datetime.strptime(start_date, "%Y-%m-%d")
         end_date_datetime = start_date_datetime + datetime.timedelta(days=2)
         end_date = end_date_datetime.strftime("%Y-%m-%d")
+        variables = [
+            "temperature_2m",
+            "relative_humidity_2m",
+            "dew_point_2m",
+            "precipitation",
+            "surface_pressure",
+            "cloud_cover",
+            "cloud_cover_low",
+            "cloud_cover_mid",
+            "cloud_cover_high",
+            "wind_speed_10m",
+            "wind_direction_10m",
+            "is_day",
+            "shortwave_radiation",
+            "direct_radiation",
+            "diffuse_radiation",
+            "direct_normal_irradiance",
+            "terrestrial_radiation",
+        ]
 
         weather_service = WeatherService()
 
         weather_data = weather_service.get_hourly_weather(
-            latitude, longitude, start_date, end_date
+            latitude, longitude, start_date, end_date, variables
         )
 
         PANEL_COLUMNS = [
