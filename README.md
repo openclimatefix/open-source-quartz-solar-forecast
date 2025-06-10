@@ -4,7 +4,7 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-34-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-![image](https://github.com/user-attachments/assets/6563849b-b355-4842-93e4-61c15a9a9ebf)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15322532.svg)](https://doi.org/10.5281/zenodo.15322532)
 [![tags badge](https://img.shields.io/github/v/tag/openclimatefix/open-source-quartz-solar-forecast?include_prereleases&sort=semver&color=FFAC5F)](https://github.com/openclimatefix/open-source-quartz-solar-forecast/tags)
 [![pypi badge](https://img.shields.io/pypi/v/quartz-solar-forecast?&color=07BCDF)](https://pypi.org/project/quartz-solar-forecast/)
 [![ease of contribution: easy](https://img.shields.io/badge/ease%20of%20contribution:%20easy-32bd50)](https://github.com/openclimatefix/ocf-meta-repo?tab=readme-ov-file#overview-of-ocfs-nowcasting-repositories) 
