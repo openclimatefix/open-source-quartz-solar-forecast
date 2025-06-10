@@ -37,12 +37,5 @@ def write_sentry(params):
 
         sentry_sdk.set_tag('version', version)
 
-        message = "quartz_solar_forecast is being used"
-
-        if os.getenv("PYTEST_CURRENT_TEST") is not None:
-            message += ": in CI tests"
-
-        sentry_sdk.capture_message(message)
-
     except Exception as _: # noqa
         pass
