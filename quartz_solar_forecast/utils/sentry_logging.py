@@ -35,6 +35,9 @@ def write_sentry(params):
             # set sentry tag
             sentry_sdk.set_tag(key, value)
 
+        if os.getenv("PYTEST_CURRENT_TEST") is not None:
+            sentry_sdk.set_tag("CI Test", "True")
+
         sentry_sdk.set_tag('version', version)
 
     except Exception as _: # noqa
