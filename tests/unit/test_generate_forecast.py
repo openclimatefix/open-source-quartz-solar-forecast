@@ -4,8 +4,9 @@ from datetime import datetime, timedelta
 import quartz_solar_forecast.forecast as forecast
 from quartz_solar_forecast.utils.forecast_csv import write_out_forecasts
 from quartz_solar_forecast.pydantic_models import PVSite
+from tests.unit.mocks import mock_weather_api
 
-def test_generate_forecast(monkeypatch):
+def test_generate_forecast(monkeypatch, mock_weather_api):
     site_name = "TestCase"
     latitude = 51.75
     longitude = -1.25
