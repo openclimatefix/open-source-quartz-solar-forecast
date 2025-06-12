@@ -1,0 +1,2 @@
+[numcodecs.codecs]
+test = package_with_entrypoint:TestCodec

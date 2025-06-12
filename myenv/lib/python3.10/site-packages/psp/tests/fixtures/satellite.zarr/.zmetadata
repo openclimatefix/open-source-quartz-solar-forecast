@@ -1,0 +1,408 @@
+{
+    "metadata": {
+        ".zattrs": {},
+        ".zgroup": {
+            "zarr_format": 2
+        },
+        "data/.zarray": {
+            "chunks": [
+                1549,
+                45,
+                30,
+                4
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f2",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                1549,
+                45,
+                30,
+                4
+            ],
+            "zarr_format": 2
+        },
+        "data/.zattrs": {
+            "IR_016__satpy_id": "!!python/object/apply:satpy.dataset.dataid._unpickle\n- calibration:\n    enum:\n    - reflectance\n    - brightness_temperature\n    - radiance\n    - counts\n    transitive: true\n  modifiers:\n    default: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n    - !!python/tuple []\n    type: !!python/name:satpy.dataset.dataid.ModifierTuple ''\n  name:\n    required: true\n  resolution:\n    transitive: false\n  wavelength:\n    type: !!python/name:satpy.dataset.dataid.WavelengthRange ''\n- calibration: reflectance\n  modifiers: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n  - !!python/tuple []\n  name: IR_016\n  resolution: 3000.403165817\n  wavelength: !!python/object/new:satpy.dataset.dataid.WavelengthRange\n  - 1.5\n  - 1.64\n  - 1.78\n  - \"\\xB5m\"\n",
+            "IR_016_ancillary_variables": [],
+            "IR_016_area": "msg_seviri_rss_3km:\n  description: MSG SEVIRI Rapid Scanning Service area definition with 3 km resolution\n  projection:\n    proj: geos\n    lon_0: 9.5\n    h: 35785831\n    x_0: 0\n    y_0: 0\n    a: 6378169\n    rf: 295.488065897014\n    no_defs: null\n    type: crs\n  shape:\n    height: 1392\n    width: 3712\n  area_extent:\n    lower_left_xy: [5567248.074173927, 5570248.477339745]\n    upper_right_xy: [-5570248.477339745, 1393687.2705221176]\n    units: m\n",
+            "IR_016_calibration": "reflectance",
+            "IR_016_end_time": "2020-01-01T00:00:07.676580",
+            "IR_016_georef_offset_corrected": "True",
+            "IR_016_modifiers": [],
+            "IR_016_name": "IR_016",
+            "IR_016_orbital_parameters": "projection_altitude: 35785831.0\nprojection_latitude: 0.0\nprojection_longitude: 9.5\nsatellite_actual_altitude: 35785194.01716657\nsatellite_actual_latitude: 0.9667690739053058\nsatellite_actual_longitude: 9.345990336803867\nsatellite_nominal_latitude: 0.0\nsatellite_nominal_longitude: 9.5\n",
+            "IR_016_platform_name": "Meteosat-10",
+            "IR_016_reader": "seviri_l1b_native",
+            "IR_016_resolution": 3000.403165817,
+            "IR_016_sensor": "seviri",
+            "IR_016_standard_name": "toa_bidirectional_reflectance",
+            "IR_016_start_time": "2019-12-31T23:55:07.772388",
+            "IR_016_sun_earth_distance_correction_applied": "True",
+            "IR_016_sun_earth_distance_correction_factor": 0.9666341924425861,
+            "IR_016_units": "%",
+            "IR_016_wavelength": [
+                1.5,
+                1.64,
+                1.78,
+                "\u00b5m"
+            ],
+            "IR_039__satpy_id": "!!python/object/apply:satpy.dataset.dataid._unpickle\n- calibration:\n    enum:\n    - reflectance\n    - brightness_temperature\n    - radiance\n    - counts\n    transitive: true\n  modifiers:\n    default: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n    - !!python/tuple []\n    type: !!python/name:satpy.dataset.dataid.ModifierTuple ''\n  name:\n    required: true\n  resolution:\n    transitive: false\n  wavelength:\n    type: !!python/name:satpy.dataset.dataid.WavelengthRange ''\n- calibration: brightness_temperature\n  modifiers: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n  - !!python/tuple []\n  name: IR_039\n  resolution: 3000.403165817\n  wavelength: !!python/object/new:satpy.dataset.dataid.WavelengthRange\n  - 3.48\n  - 3.92\n  - 4.36\n  - \"\\xB5m\"\n",
+            "IR_039_ancillary_variables": [],
+            "IR_039_area": "msg_seviri_rss_3km:\n  description: MSG SEVIRI Rapid Scanning Service area definition with 3 km resolution\n  projection:\n    proj: geos\n    lon_0: 9.5\n    h: 35785831\n    x_0: 0\n    y_0: 0\n    a: 6378169\n    rf: 295.488065897014\n    no_defs: null\n    type: crs\n  shape:\n    height: 1392\n    width: 3712\n  area_extent:\n    lower_left_xy: [5567248.074173927, 5570248.477339745]\n    upper_right_xy: [-5570248.477339745, 1393687.2705221176]\n    units: m\n",
+            "IR_039_calibration": "brightness_temperature",
+            "IR_039_end_time": "2020-01-01T00:00:07.676580",
+            "IR_039_georef_offset_corrected": "True",
+            "IR_039_modifiers": [],
+            "IR_039_name": "IR_039",
+            "IR_039_orbital_parameters": "projection_altitude: 35785831.0\nprojection_latitude: 0.0\nprojection_longitude: 9.5\nsatellite_actual_altitude: 35785194.01716657\nsatellite_actual_latitude: 0.9667690739053058\nsatellite_actual_longitude: 9.345990336803867\nsatellite_nominal_latitude: 0.0\nsatellite_nominal_longitude: 9.5\n",
+            "IR_039_platform_name": "Meteosat-10",
+            "IR_039_reader": "seviri_l1b_native",
+            "IR_039_resolution": 3000.403165817,
+            "IR_039_sensor": "seviri",
+            "IR_039_standard_name": "toa_brightness_temperature",
+            "IR_039_start_time": "2019-12-31T23:55:07.772388",
+            "IR_039_units": "K",
+            "IR_039_wavelength": [
+                3.48,
+                3.92,
+                4.36,
+                "\u00b5m"
+            ],
+            "IR_087__satpy_id": "!!python/object/apply:satpy.dataset.dataid._unpickle\n- calibration:\n    enum:\n    - reflectance\n    - brightness_temperature\n    - radiance\n    - counts\n    transitive: true\n  modifiers:\n    default: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n    - !!python/tuple []\n    type: !!python/name:satpy.dataset.dataid.ModifierTuple ''\n  name:\n    required: true\n  resolution:\n    transitive: false\n  wavelength:\n    type: !!python/name:satpy.dataset.dataid.WavelengthRange ''\n- calibration: brightness_temperature\n  modifiers: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n  - !!python/tuple []\n  name: IR_087\n  resolution: 3000.403165817\n  wavelength: !!python/object/new:satpy.dataset.dataid.WavelengthRange\n  - 8.3\n  - 8.7\n  - 9.1\n  - \"\\xB5m\"\n",
+            "IR_087_ancillary_variables": [],
+            "IR_087_area": "msg_seviri_rss_3km:\n  description: MSG SEVIRI Rapid Scanning Service area definition with 3 km resolution\n  projection:\n    proj: geos\n    lon_0: 9.5\n    h: 35785831\n    x_0: 0\n    y_0: 0\n    a: 6378169\n    rf: 295.488065897014\n    no_defs: null\n    type: crs\n  shape:\n    height: 1392\n    width: 3712\n  area_extent:\n    lower_left_xy: [5567248.074173927, 5570248.477339745]\n    upper_right_xy: [-5570248.477339745, 1393687.2705221176]\n    units: m\n",
+            "IR_087_calibration": "brightness_temperature",
+            "IR_087_end_time": "2020-01-01T00:00:07.676580",
+            "IR_087_georef_offset_corrected": "True",
+            "IR_087_modifiers": [],
+            "IR_087_name": "IR_087",
+            "IR_087_orbital_parameters": "projection_altitude: 35785831.0\nprojection_latitude: 0.0\nprojection_longitude: 9.5\nsatellite_actual_altitude: 35785194.01716657\nsatellite_actual_latitude: 0.9667690739053058\nsatellite_actual_longitude: 9.345990336803867\nsatellite_nominal_latitude: 0.0\nsatellite_nominal_longitude: 9.5\n",
+            "IR_087_platform_name": "Meteosat-10",
+            "IR_087_reader": "seviri_l1b_native",
+            "IR_087_resolution": 3000.403165817,
+            "IR_087_sensor": "seviri",
+            "IR_087_standard_name": "toa_brightness_temperature",
+            "IR_087_start_time": "2019-12-31T23:55:07.772388",
+            "IR_087_units": "K",
+            "IR_087_wavelength": [
+                8.3,
+                8.7,
+                9.1,
+                "\u00b5m"
+            ],
+            "IR_097__satpy_id": "!!python/object/apply:satpy.dataset.dataid._unpickle\n- calibration:\n    enum:\n    - reflectance\n    - brightness_temperature\n    - radiance\n    - counts\n    transitive: true\n  modifiers:\n    default: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n    - !!python/tuple []\n    type: !!python/name:satpy.dataset.dataid.ModifierTuple ''\n  name:\n    required: true\n  resolution:\n    transitive: false\n  wavelength:\n    type: !!python/name:satpy.dataset.dataid.WavelengthRange ''\n- calibration: brightness_temperature\n  modifiers: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n  - !!python/tuple []\n  name: IR_097\n  resolution: 3000.403165817\n  wavelength: !!python/object/new:satpy.dataset.dataid.WavelengthRange\n  - 9.38\n  - 9.66\n  - 9.94\n  - \"\\xB5m\"\n",
+            "IR_097_ancillary_variables": [],
+            "IR_097_area": "msg_seviri_rss_3km:\n  description: MSG SEVIRI Rapid Scanning Service area definition with 3 km resolution\n  projection:\n    proj: geos\n    lon_0: 9.5\n    h: 35785831\n    x_0: 0\n    y_0: 0\n    a: 6378169\n    rf: 295.488065897014\n    no_defs: null\n    type: crs\n  shape:\n    height: 1392\n    width: 3712\n  area_extent:\n    lower_left_xy: [5567248.074173927, 5570248.477339745]\n    upper_right_xy: [-5570248.477339745, 1393687.2705221176]\n    units: m\n",
+            "IR_097_calibration": "brightness_temperature",
+            "IR_097_end_time": "2020-01-01T00:00:07.676580",
+            "IR_097_georef_offset_corrected": "True",
+            "IR_097_modifiers": [],
+            "IR_097_name": "IR_097",
+            "IR_097_orbital_parameters": "projection_altitude: 35785831.0\nprojection_latitude: 0.0\nprojection_longitude: 9.5\nsatellite_actual_altitude: 35785194.01716657\nsatellite_actual_latitude: 0.9667690739053058\nsatellite_actual_longitude: 9.345990336803867\nsatellite_nominal_latitude: 0.0\nsatellite_nominal_longitude: 9.5\n",
+            "IR_097_platform_name": "Meteosat-10",
+            "IR_097_reader": "seviri_l1b_native",
+            "IR_097_resolution": 3000.403165817,
+            "IR_097_sensor": "seviri",
+            "IR_097_standard_name": "toa_brightness_temperature",
+            "IR_097_start_time": "2019-12-31T23:55:07.772388",
+            "IR_097_units": "K",
+            "IR_097_wavelength": [
+                9.38,
+                9.66,
+                9.94,
+                "\u00b5m"
+            ],
+            "IR_108__satpy_id": "!!python/object/apply:satpy.dataset.dataid._unpickle\n- calibration:\n    enum:\n    - reflectance\n    - brightness_temperature\n    - radiance\n    - counts\n    transitive: true\n  modifiers:\n    default: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n    - !!python/tuple []\n    type: !!python/name:satpy.dataset.dataid.ModifierTuple ''\n  name:\n    required: true\n  resolution:\n    transitive: false\n  wavelength:\n    type: !!python/name:satpy.dataset.dataid.WavelengthRange ''\n- calibration: brightness_temperature\n  modifiers: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n  - !!python/tuple []\n  name: IR_108\n  resolution: 3000.403165817\n  wavelength: !!python/object/new:satpy.dataset.dataid.WavelengthRange\n  - 9.8\n  - 10.8\n  - 11.8\n  - \"\\xB5m\"\n",
+            "IR_108_ancillary_variables": [],
+            "IR_108_area": "msg_seviri_rss_3km:\n  description: MSG SEVIRI Rapid Scanning Service area definition with 3 km resolution\n  projection:\n    proj: geos\n    lon_0: 9.5\n    h: 35785831\n    x_0: 0\n    y_0: 0\n    a: 6378169\n    rf: 295.488065897014\n    no_defs: null\n    type: crs\n  shape:\n    height: 1392\n    width: 3712\n  area_extent:\n    lower_left_xy: [5567248.074173927, 5570248.477339745]\n    upper_right_xy: [-5570248.477339745, 1393687.2705221176]\n    units: m\n",
+            "IR_108_calibration": "brightness_temperature",
+            "IR_108_end_time": "2020-01-01T00:00:07.676580",
+            "IR_108_georef_offset_corrected": "True",
+            "IR_108_modifiers": [],
+            "IR_108_name": "IR_108",
+            "IR_108_orbital_parameters": "projection_altitude: 35785831.0\nprojection_latitude: 0.0\nprojection_longitude: 9.5\nsatellite_actual_altitude: 35785194.01716657\nsatellite_actual_latitude: 0.9667690739053058\nsatellite_actual_longitude: 9.345990336803867\nsatellite_nominal_latitude: 0.0\nsatellite_nominal_longitude: 9.5\n",
+            "IR_108_platform_name": "Meteosat-10",
+            "IR_108_reader": "seviri_l1b_native",
+            "IR_108_resolution": 3000.403165817,
+            "IR_108_sensor": "seviri",
+            "IR_108_standard_name": "toa_brightness_temperature",
+            "IR_108_start_time": "2019-12-31T23:55:07.772388",
+            "IR_108_units": "K",
+            "IR_108_wavelength": [
+                9.8,
+                10.8,
+                11.8,
+                "\u00b5m"
+            ],
+            "IR_120__satpy_id": "!!python/object/apply:satpy.dataset.dataid._unpickle\n- calibration:\n    enum:\n    - reflectance\n    - brightness_temperature\n    - radiance\n    - counts\n    transitive: true\n  modifiers:\n    default: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n    - !!python/tuple []\n    type: !!python/name:satpy.dataset.dataid.ModifierTuple ''\n  name:\n    required: true\n  resolution:\n    transitive: false\n  wavelength:\n    type: !!python/name:satpy.dataset.dataid.WavelengthRange ''\n- calibration: brightness_temperature\n  modifiers: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n  - !!python/tuple []\n  name: IR_120\n  resolution: 3000.403165817\n  wavelength: !!python/object/new:satpy.dataset.dataid.WavelengthRange\n  - 11.0\n  - 12.0\n  - 13.0\n  - \"\\xB5m\"\n",
+            "IR_120_ancillary_variables": [],
+            "IR_120_area": "msg_seviri_rss_3km:\n  description: MSG SEVIRI Rapid Scanning Service area definition with 3 km resolution\n  projection:\n    proj: geos\n    lon_0: 9.5\n    h: 35785831\n    x_0: 0\n    y_0: 0\n    a: 6378169\n    rf: 295.488065897014\n    no_defs: null\n    type: crs\n  shape:\n    height: 1392\n    width: 3712\n  area_extent:\n    lower_left_xy: [5567248.074173927, 5570248.477339745]\n    upper_right_xy: [-5570248.477339745, 1393687.2705221176]\n    units: m\n",
+            "IR_120_calibration": "brightness_temperature",
+            "IR_120_end_time": "2020-01-01T00:00:07.676580",
+            "IR_120_georef_offset_corrected": "True",
+            "IR_120_modifiers": [],
+            "IR_120_name": "IR_120",
+            "IR_120_orbital_parameters": "projection_altitude: 35785831.0\nprojection_latitude: 0.0\nprojection_longitude: 9.5\nsatellite_actual_altitude: 35785194.01716657\nsatellite_actual_latitude: 0.9667690739053058\nsatellite_actual_longitude: 9.345990336803867\nsatellite_nominal_latitude: 0.0\nsatellite_nominal_longitude: 9.5\n",
+            "IR_120_platform_name": "Meteosat-10",
+            "IR_120_reader": "seviri_l1b_native",
+            "IR_120_resolution": 3000.403165817,
+            "IR_120_sensor": "seviri",
+            "IR_120_standard_name": "toa_brightness_temperature",
+            "IR_120_start_time": "2019-12-31T23:55:07.772388",
+            "IR_120_units": "K",
+            "IR_120_wavelength": [
+                11.0,
+                12.0,
+                13.0,
+                "\u00b5m"
+            ],
+            "IR_134__satpy_id": "!!python/object/apply:satpy.dataset.dataid._unpickle\n- calibration:\n    enum:\n    - reflectance\n    - brightness_temperature\n    - radiance\n    - counts\n    transitive: true\n  modifiers:\n    default: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n    - !!python/tuple []\n    type: !!python/name:satpy.dataset.dataid.ModifierTuple ''\n  name:\n    required: true\n  resolution:\n    transitive: false\n  wavelength:\n    type: !!python/name:satpy.dataset.dataid.WavelengthRange ''\n- calibration: brightness_temperature\n  modifiers: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n  - !!python/tuple []\n  name: IR_134\n  resolution: 3000.403165817\n  wavelength: !!python/object/new:satpy.dataset.dataid.WavelengthRange\n  - 12.4\n  - 13.4\n  - 14.4\n  - \"\\xB5m\"\n",
+            "IR_134_ancillary_variables": [],
+            "IR_134_area": "msg_seviri_rss_3km:\n  description: MSG SEVIRI Rapid Scanning Service area definition with 3 km resolution\n  projection:\n    proj: geos\n    lon_0: 9.5\n    h: 35785831\n    x_0: 0\n    y_0: 0\n    a: 6378169\n    rf: 295.488065897014\n    no_defs: null\n    type: crs\n  shape:\n    height: 1392\n    width: 3712\n  area_extent:\n    lower_left_xy: [5567248.074173927, 5570248.477339745]\n    upper_right_xy: [-5570248.477339745, 1393687.2705221176]\n    units: m\n",
+            "IR_134_calibration": "brightness_temperature",
+            "IR_134_end_time": "2020-01-01T00:00:07.676580",
+            "IR_134_georef_offset_corrected": "True",
+            "IR_134_modifiers": [],
+            "IR_134_name": "IR_134",
+            "IR_134_orbital_parameters": "projection_altitude: 35785831.0\nprojection_latitude: 0.0\nprojection_longitude: 9.5\nsatellite_actual_altitude: 35785194.01716657\nsatellite_actual_latitude: 0.9667690739053058\nsatellite_actual_longitude: 9.345990336803867\nsatellite_nominal_latitude: 0.0\nsatellite_nominal_longitude: 9.5\n",
+            "IR_134_platform_name": "Meteosat-10",
+            "IR_134_reader": "seviri_l1b_native",
+            "IR_134_resolution": 3000.403165817,
+            "IR_134_sensor": "seviri",
+            "IR_134_standard_name": "toa_brightness_temperature",
+            "IR_134_start_time": "2019-12-31T23:55:07.772388",
+            "IR_134_units": "K",
+            "IR_134_wavelength": [
+                12.4,
+                13.4,
+                14.4,
+                "\u00b5m"
+            ],
+            "VIS006__satpy_id": "!!python/object/apply:satpy.dataset.dataid._unpickle\n- calibration:\n    enum:\n    - reflectance\n    - brightness_temperature\n    - radiance\n    - counts\n    transitive: true\n  modifiers:\n    default: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n    - !!python/tuple []\n    type: !!python/name:satpy.dataset.dataid.ModifierTuple ''\n  name:\n    required: true\n  resolution:\n    transitive: false\n  wavelength:\n    type: !!python/name:satpy.dataset.dataid.WavelengthRange ''\n- calibration: reflectance\n  modifiers: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n  - !!python/tuple []\n  name: VIS006\n  resolution: 3000.403165817\n  wavelength: !!python/object/new:satpy.dataset.dataid.WavelengthRange\n  - 0.56\n  - 0.635\n  - 0.71\n  - \"\\xB5m\"\n",
+            "VIS006_ancillary_variables": [],
+            "VIS006_area": "msg_seviri_rss_3km:\n  description: MSG SEVIRI Rapid Scanning Service area definition with 3 km resolution\n  projection:\n    proj: geos\n    lon_0: 9.5\n    h: 35785831\n    x_0: 0\n    y_0: 0\n    a: 6378169\n    rf: 295.488065897014\n    no_defs: null\n    type: crs\n  shape:\n    height: 1392\n    width: 3712\n  area_extent:\n    lower_left_xy: [5567248.074173927, 5570248.477339745]\n    upper_right_xy: [-5570248.477339745, 1393687.2705221176]\n    units: m\n",
+            "VIS006_calibration": "reflectance",
+            "VIS006_end_time": "2020-01-01T00:00:07.676580",
+            "VIS006_georef_offset_corrected": "True",
+            "VIS006_modifiers": [],
+            "VIS006_name": "VIS006",
+            "VIS006_orbital_parameters": "projection_altitude: 35785831.0\nprojection_latitude: 0.0\nprojection_longitude: 9.5\nsatellite_actual_altitude: 35785194.01716657\nsatellite_actual_latitude: 0.9667690739053058\nsatellite_actual_longitude: 9.345990336803867\nsatellite_nominal_latitude: 0.0\nsatellite_nominal_longitude: 9.5\n",
+            "VIS006_platform_name": "Meteosat-10",
+            "VIS006_reader": "seviri_l1b_native",
+            "VIS006_resolution": 3000.403165817,
+            "VIS006_sensor": "seviri",
+            "VIS006_standard_name": "toa_bidirectional_reflectance",
+            "VIS006_start_time": "2019-12-31T23:55:07.772388",
+            "VIS006_sun_earth_distance_correction_applied": "True",
+            "VIS006_sun_earth_distance_correction_factor": 0.9666341924425861,
+            "VIS006_units": "%",
+            "VIS006_wavelength": [
+                0.56,
+                0.635,
+                0.71,
+                "\u00b5m"
+            ],
+            "VIS008__satpy_id": "!!python/object/apply:satpy.dataset.dataid._unpickle\n- calibration:\n    enum:\n    - reflectance\n    - brightness_temperature\n    - radiance\n    - counts\n    transitive: true\n  modifiers:\n    default: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n    - !!python/tuple []\n    type: !!python/name:satpy.dataset.dataid.ModifierTuple ''\n  name:\n    required: true\n  resolution:\n    transitive: false\n  wavelength:\n    type: !!python/name:satpy.dataset.dataid.WavelengthRange ''\n- calibration: reflectance\n  modifiers: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n  - !!python/tuple []\n  name: VIS008\n  resolution: 3000.403165817\n  wavelength: !!python/object/new:satpy.dataset.dataid.WavelengthRange\n  - 0.74\n  - 0.81\n  - 0.88\n  - \"\\xB5m\"\n",
+            "VIS008_ancillary_variables": [],
+            "VIS008_area": "msg_seviri_rss_3km:\n  description: MSG SEVIRI Rapid Scanning Service area definition with 3 km resolution\n  projection:\n    proj: geos\n    lon_0: 9.5\n    h: 35785831\n    x_0: 0\n    y_0: 0\n    a: 6378169\n    rf: 295.488065897014\n    no_defs: null\n    type: crs\n  shape:\n    height: 1392\n    width: 3712\n  area_extent:\n    lower_left_xy: [5567248.074173927, 5570248.477339745]\n    upper_right_xy: [-5570248.477339745, 1393687.2705221176]\n    units: m\n",
+            "VIS008_calibration": "reflectance",
+            "VIS008_end_time": "2020-01-01T00:00:07.676580",
+            "VIS008_georef_offset_corrected": "True",
+            "VIS008_modifiers": [],
+            "VIS008_name": "VIS008",
+            "VIS008_orbital_parameters": "projection_altitude: 35785831.0\nprojection_latitude: 0.0\nprojection_longitude: 9.5\nsatellite_actual_altitude: 35785194.01716657\nsatellite_actual_latitude: 0.9667690739053058\nsatellite_actual_longitude: 9.345990336803867\nsatellite_nominal_latitude: 0.0\nsatellite_nominal_longitude: 9.5\n",
+            "VIS008_platform_name": "Meteosat-10",
+            "VIS008_reader": "seviri_l1b_native",
+            "VIS008_resolution": 3000.403165817,
+            "VIS008_sensor": "seviri",
+            "VIS008_standard_name": "toa_bidirectional_reflectance",
+            "VIS008_start_time": "2019-12-31T23:55:07.772388",
+            "VIS008_sun_earth_distance_correction_applied": "True",
+            "VIS008_sun_earth_distance_correction_factor": 0.9666341924425861,
+            "VIS008_units": "%",
+            "VIS008_wavelength": [
+                0.74,
+                0.81,
+                0.88,
+                "\u00b5m"
+            ],
+            "WV_062__satpy_id": "!!python/object/apply:satpy.dataset.dataid._unpickle\n- calibration:\n    enum:\n    - reflectance\n    - brightness_temperature\n    - radiance\n    - counts\n    transitive: true\n  modifiers:\n    default: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n    - !!python/tuple []\n    type: !!python/name:satpy.dataset.dataid.ModifierTuple ''\n  name:\n    required: true\n  resolution:\n    transitive: false\n  wavelength:\n    type: !!python/name:satpy.dataset.dataid.WavelengthRange ''\n- calibration: brightness_temperature\n  modifiers: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n  - !!python/tuple []\n  name: WV_062\n  resolution: 3000.403165817\n  wavelength: !!python/object/new:satpy.dataset.dataid.WavelengthRange\n  - 5.35\n  - 6.25\n  - 7.15\n  - \"\\xB5m\"\n",
+            "WV_062_ancillary_variables": [],
+            "WV_062_area": "msg_seviri_rss_3km:\n  description: MSG SEVIRI Rapid Scanning Service area definition with 3 km resolution\n  projection:\n    proj: geos\n    lon_0: 9.5\n    h: 35785831\n    x_0: 0\n    y_0: 0\n    a: 6378169\n    rf: 295.488065897014\n    no_defs: null\n    type: crs\n  shape:\n    height: 1392\n    width: 3712\n  area_extent:\n    lower_left_xy: [5567248.074173927, 5570248.477339745]\n    upper_right_xy: [-5570248.477339745, 1393687.2705221176]\n    units: m\n",
+            "WV_062_calibration": "brightness_temperature",
+            "WV_062_end_time": "2020-01-01T00:00:07.676580",
+            "WV_062_georef_offset_corrected": "True",
+            "WV_062_modifiers": [],
+            "WV_062_name": "WV_062",
+            "WV_062_orbital_parameters": "projection_altitude: 35785831.0\nprojection_latitude: 0.0\nprojection_longitude: 9.5\nsatellite_actual_altitude: 35785194.01716657\nsatellite_actual_latitude: 0.9667690739053058\nsatellite_actual_longitude: 9.345990336803867\nsatellite_nominal_latitude: 0.0\nsatellite_nominal_longitude: 9.5\n",
+            "WV_062_platform_name": "Meteosat-10",
+            "WV_062_reader": "seviri_l1b_native",
+            "WV_062_resolution": 3000.403165817,
+            "WV_062_sensor": "seviri",
+            "WV_062_standard_name": "toa_brightness_temperature",
+            "WV_062_start_time": "2019-12-31T23:55:07.772388",
+            "WV_062_units": "K",
+            "WV_062_wavelength": [
+                5.35,
+                6.25,
+                7.15,
+                "\u00b5m"
+            ],
+            "WV_073__satpy_id": "!!python/object/apply:satpy.dataset.dataid._unpickle\n- calibration:\n    enum:\n    - reflectance\n    - brightness_temperature\n    - radiance\n    - counts\n    transitive: true\n  modifiers:\n    default: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n    - !!python/tuple []\n    type: !!python/name:satpy.dataset.dataid.ModifierTuple ''\n  name:\n    required: true\n  resolution:\n    transitive: false\n  wavelength:\n    type: !!python/name:satpy.dataset.dataid.WavelengthRange ''\n- calibration: brightness_temperature\n  modifiers: !!python/object/new:satpy.dataset.dataid.ModifierTuple\n  - !!python/tuple []\n  name: WV_073\n  resolution: 3000.403165817\n  wavelength: !!python/object/new:satpy.dataset.dataid.WavelengthRange\n  - 6.85\n  - 7.35\n  - 7.85\n  - \"\\xB5m\"\n",
+            "WV_073_ancillary_variables": [],
+            "WV_073_area": "msg_seviri_rss_3km:\n  description: MSG SEVIRI Rapid Scanning Service area definition with 3 km resolution\n  projection:\n    proj: geos\n    lon_0: 9.5\n    h: 35785831\n    x_0: 0\n    y_0: 0\n    a: 6378169\n    rf: 295.488065897014\n    no_defs: null\n    type: crs\n  shape:\n    height: 1392\n    width: 3712\n  area_extent:\n    lower_left_xy: [5567248.074173927, 5570248.477339745]\n    upper_right_xy: [-5570248.477339745, 1393687.2705221176]\n    units: m\n",
+            "WV_073_calibration": "brightness_temperature",
+            "WV_073_end_time": "2020-01-01T00:00:07.676580",
+            "WV_073_georef_offset_corrected": "True",
+            "WV_073_modifiers": [],
+            "WV_073_name": "WV_073",
+            "WV_073_orbital_parameters": "projection_altitude: 35785831.0\nprojection_latitude: 0.0\nprojection_longitude: 9.5\nsatellite_actual_altitude: 35785194.01716657\nsatellite_actual_latitude: 0.9667690739053058\nsatellite_actual_longitude: 9.345990336803867\nsatellite_nominal_latitude: 0.0\nsatellite_nominal_longitude: 9.5\n",
+            "WV_073_platform_name": "Meteosat-10",
+            "WV_073_reader": "seviri_l1b_native",
+            "WV_073_resolution": 3000.403165817,
+            "WV_073_sensor": "seviri",
+            "WV_073_standard_name": "toa_brightness_temperature",
+            "WV_073_start_time": "2019-12-31T23:55:07.772388",
+            "WV_073_units": "K",
+            "WV_073_wavelength": [
+                6.85,
+                7.35,
+                7.85,
+                "\u00b5m"
+            ],
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y_geostationary",
+                "x_geostationary",
+                "variable"
+            ],
+            "ancillary_variables": [],
+            "area": "msg_seviri_rss_3km:\n  description: MSG SEVIRI Rapid Scanning Service area definition with 3 km resolution\n  projection:\n    proj: geos\n    lon_0: 9.5\n    h: 35785831\n    x_0: 0\n    y_0: 0\n    a: 6378169\n    rf: 295.488065897014\n    no_defs: null\n    type: crs\n  shape:\n    height: 1392\n    width: 3712\n  area_extent:\n    lower_left_xy: [5567248.074173927, 5570248.477339745]\n    upper_right_xy: [-5570248.477339745, 1393687.2705221176]\n    units: m\n",
+            "end_time": "2020-01-01T00:00:00",
+            "georef_offset_corrected": "True",
+            "modifiers": [],
+            "orbital_parameters": "projection_altitude: 35785831.0\nprojection_latitude: 0.0\nprojection_longitude: 9.5\nsatellite_actual_altitude: 35785194.01716657\nsatellite_actual_latitude: 0.9667690739053058\nsatellite_actual_longitude: 9.345990336803867\nsatellite_nominal_latitude: 0.0\nsatellite_nominal_longitude: 9.5\n",
+            "platform_name": "Meteosat-10",
+            "reader": "seviri_l1b_native",
+            "resolution": 3000.403165817,
+            "sensor": "seviri",
+            "start_time": "2019-12-31T23:55:07.772388"
+        },
+        "time/.zarray": {
+            "chunks": [
+                24320
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<i8",
+            "fill_value": null,
+            "filters": null,
+            "order": "C",
+            "shape": [
+                1549
+            ],
+            "zarr_format": 2
+        },
+        "time/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time"
+            ],
+            "calendar": "proleptic_gregorian",
+            "units": "nanoseconds since 1970-01-01"
+        },
+        "variable/.zarray": {
+            "chunks": [
+                11
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<U6",
+            "fill_value": null,
+            "filters": null,
+            "order": "C",
+            "shape": [
+                4
+            ],
+            "zarr_format": 2
+        },
+        "variable/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "variable"
+            ]
+        },
+        "x_geostationary/.zarray": {
+            "chunks": [
+                3712
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                30
+            ],
+            "zarr_format": 2
+        },
+        "x_geostationary/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "x_geostationary"
+            ],
+            "coordinate_reference_system": "geostationary",
+            "units": "meter"
+        },
+        "y_geostationary/.zarray": {
+            "chunks": [
+                1392
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                45
+            ],
+            "zarr_format": 2
+        },
+        "y_geostationary/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "y_geostationary"
+            ],
+            "coordinate_reference_system": "geostationary",
+            "units": "meter"
+        }
+    },
+    "zarr_consolidated_format": 1
+}
