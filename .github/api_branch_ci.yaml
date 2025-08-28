@@ -1,0 +1,19 @@
+name: Branch CI (Python)
+run-name: 'Test branch commit "${{ github.event.head_commit.message }}"'
+
+on:  
+  push:
+    branches-ignore: [ "main" ]
+    paths-ignore: ['README.md']
+
+jobs:
+  branch-ci:
+    uses: openclimatefix/.github/.github/workflows/branch_ci.yml@main
+    secrets: inherit
+    with:
+      enable_linting: true
+      enable_typechecking: false
+      containerfile: api/v1/Dockerfile
+      tests_folder: 'api/v1/tests'
+      tests_matrix: true
+      test_python_versions: '["3.11"]'
