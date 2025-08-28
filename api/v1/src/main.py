@@ -11,11 +11,20 @@ from quartz_solar_forecast.pydantic_models import ForecastRequest, PVSite
 description = """
 API for [Open Source Quartz Solar Forecast](https://github.com/openclimatefix/open-source-quartz-solar-forecast).
 
-The aim of the project is to build an open source PV forecast that is free and easy to use.
-The forecast provides the expected generation in `kw` for 0 to 48 hours for a single PV site.
+This project aims to provide a free, open-source photovoltaic (PV) forecasting tool that is simple to use and works anywhere in the world.
 
-Open Climate Fix also provides a commercial PV forecast,
- please get in touch at quartz.support@openclimatefix.org
+The forecast outputs the expected PV generation (in kW) for up to 48 hours ahead at a single site.
+
+## How it works
+
+- A machine learning model is trained on historical weather and solar generation data from the UK.
+- The model has been trained using data from ~25,000 PV sites.
+- Forecasts are generated using weather data from open-meteo.com
+
+## Commercial forecasts
+
+Open Climate Fix also provides a commercial PV forecast service.
+For more information, please contact: quartz.support@openclimatefix.org
 
 ## Example
 
