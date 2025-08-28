@@ -3,7 +3,7 @@ import os
 import pytest
 from fastapi.testclient import TestClient
 
-from api.app.api import app
+from api.v0.app.api import app
 
 expected_prediction_key = "power_kw"
 expected_dict_keys = ["timestamp", "predictions"]
