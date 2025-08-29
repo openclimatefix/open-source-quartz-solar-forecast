@@ -70,7 +70,7 @@ And you can always head over to our [Github page](https://github.com/openclimate
 """
 
 
-app = FastAPI(description=description, version="0.0.1")
+app = FastAPI(description=description, version="0.0.1", title="Open Quartz Solar Forecast API")
 
 # CORS middleware setup
 origins = [
