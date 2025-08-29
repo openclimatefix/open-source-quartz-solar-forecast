@@ -54,7 +54,7 @@ curl -X POST "https://open.quartz.solar/forecast/" -H "Content-Type: application
   }
 }
 ```
-## Whan to learn more
+## Want to learn more
 
 We've presented Quartz Solar Forecast at two open source conferences:
 
