@@ -8,7 +8,7 @@ on:
 
 jobs:
   branch-ci:
-    uses: openclimatefix/.github/.github/workflows/branch_ci.yml@main
+    uses: openclimatefix/.github/.github/workflows/branch_ci.yml@work-dir
     secrets: inherit
     with:
       enable_linting: true
@@ -17,3 +17,4 @@ jobs:
       tests_folder: 'api/v1/tests'
       tests_matrix: true
       test_python_versions: '["3.11"]'
+      working_directory: "api/v1"
