@@ -65,7 +65,7 @@ How we built Open Quartz, our motivation behind it and its impact on aiding orga
 - **LF Energy 2024**: Exploring Open Quartz's developments - new models, inverter APIs
  and our Open Source journey at Open Climate Fix [Watch the talk](https://www.youtube.com/watch?v=YTaq41ztEDg)
 
-And you can always head over to our (Github page)[https://github.com/openclimatefix/open-source-quartz-solar-forecast]
+And you can always head over to our [Github page](https://github.com/openclimatefix/open-source-quartz-solar-forecast)
 
 """
 
