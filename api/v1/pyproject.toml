@@ -18,7 +18,8 @@ dependencies = [
     "fastapi",
     "gdown==5.1.0",
     "quartz_solar_forecast",
-    "ruff"
+    "ruff",
+    "pytest",
 ]
 
 [project.urls]
