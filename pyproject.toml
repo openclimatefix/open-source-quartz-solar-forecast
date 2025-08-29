@@ -26,7 +26,8 @@ dependencies = [
     "uvicorn",
     "pydantic_settings",
     "httpx",
-    "sentry_sdk"
+    "sentry_sdk",
+    "huggingface_hub==0.17.3"
 ]
 
 [project.urls]
@@ -40,7 +41,6 @@ package-data = { "quartz_solar_forecast" = ["*"] }
 dev = [
     "streamlit",
     "plotly",
-    "huggingface_hub==0.17.3",
     "gdown==5.1.0",
     "fastapi",
     "matplotlib",
@@ -52,7 +52,6 @@ all = [
     "ocf_vrmapi",
     "streamlit",
     "plotly",
-    "huggingface_hub==0.17.3",
     "gdown==5.1.0",
     "fastapi",
     "pytest",
