@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from quartz_solar_forecast.forecast import run_forecast
-from quartz_solar_forecast.pydantic_models import ForecastRequest, PVSite
+from quartz_solar_forecast.pydantic_models import PVSite
 
 description = """
 API for [Open Source Quartz Solar Forecast](https://github.com/openclimatefix/open-source-quartz-solar-forecast).
@@ -93,6 +93,10 @@ class ForecastResponse(BaseModel):
     """Response model for forecast predictions."""
     timestamp: datetime
     predictions: ForecastValues
+
+class ForecastRequest(BaseModel):
+  site: PVSite
+  timestamp: datetime | None = None
 
 # TODO change from default subheading
 @app.post("/forecast/")

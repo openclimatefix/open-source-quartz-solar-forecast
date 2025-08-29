@@ -4,8 +4,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 from dotenv import load_dotenv
+from pydantic import BaseModel
 from quartz_solar_forecast.forecast import run_forecast
-from quartz_solar_forecast.pydantic_models import PVSite, ForecastRequest, TokenRequest
+from quartz_solar_forecast.pydantic_models import PVSiteWithInverter, TokenRequest
 from quartz_solar_forecast.inverters.enphase import get_enphase_auth_url, get_enphase_access_token
 
 load_dotenv()
@@ -28,6 +29,10 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+class ForecastRequest(BaseModel):
+    site: PVSiteWithInverter
+    timestamp: datetime | None = None
+
 @app.post("/forecast/")
 def forecast(forecast_request: ForecastRequest):
     site = forecast_request.site
@@ -36,7 +41,7 @@ def forecast(forecast_request: ForecastRequest):
     timestamp = pd.Timestamp(ts).tz_localize(None)
     formatted_timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
-    site_no_live = PVSite(latitude=site.latitude, longitude=site.longitude, capacity_kwp=site.capacity_kwp)
+    site_no_live = PVSiteWithInverter(latitude=site.latitude, longitude=site.longitude, capacity_kwp=site.capacity_kwp)
     predictions_no_live = run_forecast(site=site_no_live, ts=timestamp)
 
     if not site.inverter_type:
