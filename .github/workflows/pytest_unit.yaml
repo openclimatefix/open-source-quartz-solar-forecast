@@ -1,10 +1,9 @@
-name: API Tests + Docker build (branch)
+name: Unit Tests(branch)
 run-name: 'Test branch commit "${{ github.event.head_commit.message }}"'
 
 on:  
   push:
     branches-ignore: [ "main" ]
-
     paths-ignore: ['README.md']
 
 jobs:
@@ -14,7 +13,6 @@ jobs:
     with:
       enable_linting: false
       enable_typechecking: false
-      containerfile: Dockerfile
       tests_folder: 'tests/unit'
       tests_matrix: true
       test_python_versions: '["3.11"]'
