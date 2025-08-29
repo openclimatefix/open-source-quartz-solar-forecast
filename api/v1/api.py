@@ -112,7 +112,10 @@ def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
 
     site_no_live = PVSite(latitude=site.latitude,
                           longitude=site.longitude,
-                          capacity_kwp=site.capacity_kwp)
+                          capacity_kwp=site.capacity_kwp, 
+                          tilt=site.tilt,
+                          orientation=site.orientation)
+
     predictions = run_forecast(site=site_no_live, ts=timestamp)
 
     response = {
