@@ -10,3 +10,4 @@ frontend/node_modules
 frontend/.vite
 __pycache__/
 .cache.sqlite
+*.egg-info

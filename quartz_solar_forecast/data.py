@@ -10,7 +10,7 @@ import requests_cache
 import xarray as xr
 from retry_requests import retry
 
-from quartz_solar_forecast.pydantic_models import PVSite
+from quartz_solar_forecast.pydantic_models import PVSite, PVSiteWithInverter
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -170,7 +170,7 @@ def process_pv_data(live_generation_kw: Optional[pd.DataFrame], ts: pd.Timestamp
 
     return da
 
-def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
+def make_pv_data(site: PVSite | PVSiteWithInverter, ts: pd.Timestamp) -> xr.Dataset:
     """
     Make PV data by combining live data from various inverters.
     
@@ -178,7 +178,11 @@ def make_pv_data(site: PVSite, ts: pd.Timestamp) -> xr.Dataset:
     :param ts: the timestamp of the site
     :return: The combined PV dataset in xarray form
     """
-    live_generation_kw = site.get_inverter().get_data(ts)
+    if isinstance(site, PVSiteWithInverter):
+        live_generation_kw = site.get_inverter().get_data(ts)
+    else:
+        live_generation_kw = None
+
     # Process the PV data
     da = process_pv_data(live_generation_kw, ts, site)
 
