@@ -36,7 +36,7 @@ dependencies = [
 packages = { find = { include = ["*"] } }
 package-data = { "quartz_solar_forecast" = ["*"] }
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "streamlit",
     "plotly",
@@ -73,7 +73,3 @@ warn-unused-ignores = true
 show-error-codes = true
 warn-unreachable = true
 
-[dependency-groups]
-all = [
-    "pytest>=8.4.1",
-]
