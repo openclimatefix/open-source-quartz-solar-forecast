@@ -44,10 +44,9 @@ dev = [
     "gdown==5.1.0",
     "fastapi",
     "matplotlib",
-    "zipfile36"
+    "zipfile36",
+    "pytest",
 ]
-
-# additional vendor-specific dependencies for connecting to inverter APIs
 inverters = ["ocf_vrmapi"] # victron
 all = [
     "ocf_vrmapi",

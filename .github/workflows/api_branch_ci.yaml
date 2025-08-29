@@ -1,9 +1,10 @@
-name: Branch CI (Python)
+name: API Tests + Docker build (branch)
 run-name: 'Test branch commit "${{ github.event.head_commit.message }}"'
 
 on:  
   push:
     branches-ignore: [ "main" ]
+
     paths-ignore: ['README.md']
 
 jobs:
