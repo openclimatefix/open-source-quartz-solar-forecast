@@ -23,5 +23,5 @@ EXPOSE 8000
 
 # Run the application using python main.py
 # Note you can override this if you want to load v0
-CMD ["python", "api/v1/main.py"]
+CMD ["uvicorn", "api/v1/api:app", "--host", "0.0.0.0", "--port", "8000"]
 
