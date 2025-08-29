@@ -10,5 +10,4 @@ frontend/node_modules
 frontend/.vite
 __pycache__/
 .cache.sqlite
-api/v1/quartz_solar_forecast_api.egg-info/*
-api/v1/src/quartz_solar_forecast_api.egg-info/*
+*.egg-info
