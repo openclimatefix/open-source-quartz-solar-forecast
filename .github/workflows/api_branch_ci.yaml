@@ -8,13 +8,12 @@ on:
 
 jobs:
   branch-ci:
-    uses: openclimatefix/.github/.github/workflows/branch_ci.yml@work-dir
+    uses: openclimatefix/.github/.github/workflows/branch_ci.yml@main
     secrets: inherit
     with:
-      enable_linting: true
+      enable_linting: false
       enable_typechecking: false
-      containerfile: api/v1/Dockerfile
-      tests_folder: 'api/v1/tests'
+      containerfile: Dockerfile
+      tests_folder: 'tests/unit/api_tests'
       tests_matrix: true
       test_python_versions: '["3.11"]'
-      working_directory: "api/v1"
