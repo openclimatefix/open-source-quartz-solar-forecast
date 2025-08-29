@@ -71,3 +71,6 @@ warn-unused-ignores = true
 show-error-codes = true
 warn-unreachable = true
 
+[tool.uv]
+default-groups = ["dev"]
+

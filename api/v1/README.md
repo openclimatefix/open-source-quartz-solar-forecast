@@ -90,11 +90,11 @@ curl -X POST "http://localhost:8000/forecast/" -H "Content-Type: application/jso
 Install the repo with
 ```uv sync```
 and then run the fastapi container with
-```uv run uvicorn src:main --reload ```
+```uv run uvicorn api.v1.api:app --reload ```
 
 ### Docker
 
 You can build the docker file using
 ```docker build . -t open```
 And then run it using
-```docker run -d --name open -p 80:80 open```
+```docker run -it -p 8000:8000 open```
