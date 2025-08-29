@@ -32,14 +32,14 @@ For more information, please contact: quartz.support@openclimatefix.org
 **Request:**
 
 ```bash
-curl -X POST "http://update:8000/forecast/" -H "Content-Type: application/json" -d '{
-  "site": {
-    "latitude": 37.7749,
-    "longitude": -122.4194,
-    "capacity_kwp": 5.0,
-    "tilt": 30,
-    "orientation": 180,
-  },
+curl -X POST "https://open.quartz.solar/forecast/" -H "Content-Type: application/json" -d '{
+"site": {
+    "latitude": "37.7749", 
+    "longitude": "-122.4194", 
+    "capacity_kwp": "5.0", 
+    "tilt": "30", 
+    "orientation": "180"
+  }, 
   "timestamp": "2023-08-14T10:00:00Z"
 }'
 ```
@@ -98,7 +98,6 @@ class ForecastRequest(BaseModel):
   site: PVSite
   timestamp: datetime | None = None
 
-# TODO change from default subheading
 @app.post("/forecast/")
 def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
     """Get a PV Forecast for a site."""
