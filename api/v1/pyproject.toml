@@ -17,7 +17,8 @@ dependencies = [
     "huggingface_hub==0.17.3",
     "fastapi",
     "gdown==5.1.0",
-    "quartz_solar_forecast"
+    "quartz_solar_forecast",
+    "ruff"
 ]
 
 [project.urls]
