@@ -89,6 +89,11 @@ class ForecastValues(BaseModel):
     """Dictionary mapping timestamps to power predictions in kW."""
     power_kw: dict[datetime, float]
 
+class GenerationValue(BaseModel):
+    """Generation Value"""
+    timestamp: datetime
+    generation: float
+
 class ForecastResponse(BaseModel):
     """Response model for forecast predictions."""
     timestamp: datetime
@@ -97,17 +102,26 @@ class ForecastResponse(BaseModel):
 class ForecastRequest(BaseModel):
   site: PVSite
   timestamp: datetime | None = None
+  live_generation: list[GenerationValue] = []
 
 @app.post("/forecast/")
 def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
     """Get a PV Forecast for a site."""
     site = forecast_request.site
     ts = forecast_request.timestamp if forecast_request.timestamp else datetime.now(UTC).isoformat()
+    live_generation = forecast_request.live_generation
 
     timestamp = pd.Timestamp(ts).tz_localize(None)
     formatted_timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
-    # TODO add live generation
+    # convert live generation to dataframe
+    if live_generation is not None and len(live_generation) > 0:
+      live_generation_df = pd.DataFrame([g.model_dump() for g in live_generation])
+      live_generation_df["timestamp"] = pd.to_datetime(live_generation_df["timestamp"])
+      live_generation_df.rename(columns={"generation": "power_kw"}, inplace=True)
+    else:
+       live_generation_df = None
+
 
     site_no_live = PVSite(latitude=site.latitude,
                           longitude=site.longitude,
@@ -115,7 +129,7 @@ def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
                           tilt=site.tilt,
                           orientation=site.orientation)
 
-    predictions = run_forecast(site=site_no_live, ts=timestamp)
+    predictions = run_forecast(site=site_no_live, ts=timestamp, live_generation=live_generation_df)
 
     response = {
         "timestamp": formatted_timestamp,

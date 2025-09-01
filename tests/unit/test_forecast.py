@@ -3,6 +3,7 @@ from quartz_solar_forecast.pydantic_models import PVSite
 from datetime import datetime, timedelta
 
 import numpy as np
+import pandas as pd
 
 
 def test_run_forecast():
@@ -77,3 +78,16 @@ def test_large_capacity():
     assert np.round(predications_df["power_kw"].sum() * 1000, 8) == np.round(
         predications_df_large["power_kw"].sum(), 8
     )
+
+
+def test_run_forecast_live_generation():
+    # make input data
+    site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
+    ts = datetime.today() - timedelta(weeks=2)
+    live = pd.DataFrame({
+        "timestamp": [ts - timedelta(minutes=15), ts],
+        "power_kw": [0.0, 0.1]
+    })
+
+    # run model with icon, gfs and ukmo nwp
+    predications_df_gfs = run_forecast(site=site, model="gb", ts=ts, nwp_source="gfs", live_generation=live)
