@@ -1,12 +1,17 @@
 """Main API."""
 from datetime import UTC, datetime
 
+from importlib.metadata import PackageNotFoundError, version
+
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
+
+
+__version__ = version("quartz_solar_forecast")
 
 description = """
 API for [Open Source Quartz Solar Forecast](https://github.com/openclimatefix/open-source-quartz-solar-forecast).
@@ -70,7 +75,7 @@ And you can always head over to our [Github page](https://github.com/openclimate
 """
 
 
-app = FastAPI(description=description, version="0.0.1", title="Open Quartz Solar Forecast API")
+app = FastAPI(description=description, version=__version__, title="Open Quartz Solar Forecast API")
 
 # CORS middleware setup
 origins = [
