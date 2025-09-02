@@ -184,6 +184,7 @@ def make_pv_data(site: PVSite | PVSiteWithInverter, ts: pd.Timestamp, live_gener
     else:
         live_generation_kw = live_generation
 
+
     # Process the PV data
     da = process_pv_data(live_generation_kw, ts, site)
 

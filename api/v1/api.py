@@ -89,10 +89,12 @@ class ForecastValues(BaseModel):
     """Dictionary mapping timestamps to power predictions in kW."""
     power_kw: dict[datetime, float]
 
+
 class GenerationValue(BaseModel):
     """Generation Value"""
     timestamp: datetime
     generation: float
+
 
 class ForecastResponse(BaseModel):
     """Response model for forecast predictions."""
@@ -100,15 +102,18 @@ class ForecastResponse(BaseModel):
     predictions: ForecastValues
 
 class ForecastRequest(BaseModel):
-  site: PVSite
-  timestamp: datetime | None = None
-  live_generation: list[GenerationValue] = []
+    """Request model for forecast predictions."""
+    site: PVSite
+    timestamp: datetime | None = None
+    live_generation: list[GenerationValue] = []
+
 
 @app.post("/forecast/")
 def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
     """Get a PV Forecast for a site."""
     site = forecast_request.site
     ts = forecast_request.timestamp if forecast_request.timestamp else datetime.now(UTC).isoformat()
+
     live_generation = forecast_request.live_generation
 
     timestamp = pd.Timestamp(ts).tz_localize(None)
@@ -123,6 +128,7 @@ def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
        live_generation_df = None
 
 
+
     site_no_live = PVSite(latitude=site.latitude,
                           longitude=site.longitude,
                           capacity_kwp=site.capacity_kwp, 
@@ -130,6 +136,7 @@ def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
                           orientation=site.orientation)
 
     predictions = run_forecast(site=site_no_live, ts=timestamp, live_generation=live_generation_df)
+
 
     response = {
         "timestamp": formatted_timestamp,

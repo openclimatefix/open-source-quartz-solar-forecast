@@ -16,3 +16,4 @@ jobs:
       tests_folder: 'tests/unit'
       tests_matrix: true
       test_python_versions: '["3.11"]'
+      containerfile: 'None'
