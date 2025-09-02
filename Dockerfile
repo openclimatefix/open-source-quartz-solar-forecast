@@ -18,6 +18,7 @@ RUN uv sync
 
 # Copy the entire project directory (including quartz_solar_forecast)
 COPY . /app
+COPY .git /app/.git
 
 # Expose port 8000 to the outside world
 EXPOSE 8000
