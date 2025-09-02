@@ -2,7 +2,7 @@
 
 ## Overview
 
-This API provides solar power forecast data based on the given site information and handles authorization with Enphase solar inverters. It has been developed using FastAPI and includes the following key endpoints:
+This API provides solar power forecast data based on the given site information. It has been developed using FastAPI and includes the following key endpoints:
 
 1. `/forecast/`: Generate solar power forecasts.
 
@@ -12,13 +12,13 @@ This API provides solar power forecast data based on the given site information 
 
 - **Endpoint:** `/forecast/`
 - **Method:** `POST`
-- **Description:** This endpoint generates a solar power forecast for a specified site and timestamp. It optionally includes real-time data from inverters if available.
+- **Description:** This endpoint generates a solar power forecast for a specified site and timestamp. It optionally includes real-time data if available.
 
 #### Request Body:
 
 - **ForecastRequest:**
   - `site` (PVSite, required): The site details for which the forecast is to be generated.
-  - `timestamp` (string, optional): The timestamp for the forecast in ISO 8601 format. If not provided, the current time will be used.
+  - `timestamp` (string, optional): The initialization timestamp for the forecast in ISO 8601 format. If not provided, the current time will be used.
 
 - **PVSite:**
   - `latitude` (float, required): The latitude of the site. Must be between -90 and 90.
@@ -26,7 +26,6 @@ This API provides solar power forecast data based on the given site information 
   - `capacity_kwp` (float, required): The capacity of the site in kilowatts peak (kWp). Must be a positive value.
   - `tilt` (float, optional, default=35): The tilt angle of the solar panels in degrees. Must be between 0 and 90.
   - `orientation` (float, optional, default=180): The orientation angle of the solar panels in degrees, measured from north. Must be between 0 and 360.
-  - `inverter_type` (string, optional): The type of inverter used. Accepted values: `"enphase"`, `"solis"`, `"givenergy"`, `"solarman"`, or `None`.
 
 #### Response:
 
@@ -36,12 +35,13 @@ This API provides solar power forecast data based on the given site information 
     {
       "timestamp": "2023-08-14 10:00:00",
       "predictions": {
-        "power_kw": [values],
+        "power_kw": {"2023-08-14 10:00:00": 3.4,
+                     "2023-08-14 10:15:00"": 3.5, ... }
       }
     }
     ```
-  - `timestamp` (string): The formatted timestamp of the forecast.
-  - `predictions` (dictionary): The forecasted power data. If inverter data is available, it will also include `power_kw_no_live_pv` without inverter data.
+  - `timestamp` (string): The initialization timestamp of the forecast.
+  - `predictions` (dictionary): The forecasted power data. 
 
 ## Error Handling
 
@@ -65,7 +65,6 @@ curl -X POST "http://localhost:8000/forecast/" -H "Content-Type: application/jso
     "capacity_kwp": 5.0,
     "tilt": 30,
     "orientation": 180,
-    "inverter_type": "enphase"
   },
   "timestamp": "2023-08-14T10:00:00Z"
 }'
