@@ -45,9 +45,21 @@ curl -X POST "https://open.quartz.solar/forecast/" -H "Content-Type: application
     "tilt": "30", 
     "orientation": "180"
   }, 
-  "timestamp": "2023-08-14T10:00:00Z"
+  "timestamp": "2023-08-14T10:00:00Z",
+  "live_generation": [
+    {
+      "timestamp": "2023-08-14T09:45:00Z",
+      "generation": 2.5
+    },
+    {
+      "timestamp": "2023-08-14T09:30:00Z",
+      "generation": 2.2
+    }
+  ]
 }'
 ```
+
+Please use UTC timestamps throughout
 
 **Response:**
 
@@ -126,11 +138,19 @@ def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
 
     # convert live generation to dataframe
     if live_generation is not None and len(live_generation) > 0:
-      live_generation_df = pd.DataFrame([g.model_dump() for g in live_generation])
-      live_generation_df["timestamp"] = pd.to_datetime(live_generation_df["timestamp"])
-      live_generation_df.rename(columns={"generation": "power_kw"}, inplace=True)
+        live_generation_df = pd.DataFrame([g.model_dump() for g in live_generation])
+        live_generation_df["timestamp"] = pd.to_datetime(live_generation_df["timestamp"])
+        # if timezone, set to UTC and drop it
+        if live_generation_df["timestamp"].dt.tz is not None:
+            live_generation_df["timestamp"] = live_generation_df["timestamp"].dt.tz_convert("UTC")
+            live_generation_df["timestamp"] = live_generation_df["timestamp"].dt.tz_localize(None)
+
+        # make sure timestamps are ordered from earliest to latest
+        live_generation_df = live_generation_df.sort_values(by="timestamp")
+
+        live_generation_df.rename(columns={"generation": "power_kw"}, inplace=True)
     else:
-       live_generation_df = None
+        live_generation_df = None
 
 
 

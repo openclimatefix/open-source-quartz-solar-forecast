@@ -23,6 +23,7 @@ def predict_ocf(
     :param live_generation: a dataframe containing live generation data for the site
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
+
     if ts is None:
         ts = pd.Timestamp.now().round("15min")
 
@@ -36,6 +37,8 @@ def predict_ocf(
                     "and we'll scale the results afterwards.")
         capacity_kwp_original = site.capacity_kwp
         site.capacity_kwp = 4
+        if live_generation is not None:
+            live_generation['power_kw'] = live_generation['power_kw']/capacity_kwp_original * 4
     else:
         capacity_kwp_original = site.capacity_kwp
 
@@ -128,6 +131,9 @@ def run_forecast(
         This should have the columns "power_kw" and "timestamp"
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
+
+    log.info(f"Running forecast for site at lat {site.latitude}, lon {site.longitude} "
+              f"at time {ts} with model {model} and nwp source {nwp_source}")
 
     # log usage to sentry, if you dont want to log usage to sentry, you can
     # 1. set environmental variable QUARTZ_SOLAR_FORECAST_LOGGING='false', or
