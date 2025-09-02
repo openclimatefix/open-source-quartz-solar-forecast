@@ -5,6 +5,10 @@ FROM python:3.11-slim
 RUN apt-get clean
 RUN apt-get update -y
 RUN apt-get install gcc g++ -y 
+RUN apt-get install git -y
+
+# set version as environment variable
+ENV VERSION="$(git describe --tags)"
 
 # Set the working directory in the container
 WORKDIR /app
