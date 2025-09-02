@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List
 
 import openmeteo_requests
 import pandas as pd
@@ -23,7 +22,7 @@ class WeatherService:
         longitude: float,
         start_date: str,
         end_date: str,
-        variables: List[str],
+        variables: list[str],
     ) -> str:
         """
         Build the URL for the OpenMeteo API.
@@ -71,9 +70,10 @@ class WeatherService:
         ValueError
             If coordinates are not within valid ranges.
         """
-        assert (
-            -90 <= latitude <= 90 and -180 <= longitude <= 180
-        ), "Invalid coordinates. Latitude must be between -90 and 90, and longitude must be between -180 and 180."
+        assert -90 <= latitude <= 90 and -180 <= longitude <= 180, (
+            "Invalid coordinates. Latitude must be between -90 and 90, "
+            "and longitude must be between -180 and 180."
+        )
 
     def _validate_date_format(self, start_date: str, end_date: str) -> None:
         """
@@ -97,8 +97,9 @@ class WeatherService:
             assert end_datetime > start_datetime, "End date must be greater than start date."
         except (ValueError, AssertionError) as e:
             raise ValueError(
-                f"Invalid date format or range. Please use YYYY-MM-DD and ensure end_date is greater than start_date. Error: {str(e)}"
-            )
+                f"Invalid date format or range. Please use YYYY-MM-DD and ensure "
+                f"end_date is greater than start_date. Error: {str(e)}"
+            ) from e
 
     def get_hourly_weather(
         self, latitude: float, longitude: float, start_date: str, end_date: str
@@ -120,7 +121,8 @@ class WeatherService:
         Returns
         -------
         pd.DataFrame
-            A DataFrame containing the hourly weather data for the specified location and date range.
+            A DataFrame containing the hourly weather data for the specified
+            location and date range.
 
         Raises
         ------
@@ -156,16 +158,18 @@ class WeatherService:
         try:
             openmeteo = openmeteo_requests.Client(session=retry_session)
             response = openmeteo.weather_api(url, params={})
-        except requests.exceptions.Timeout:
-            raise TimeoutError(f"Request to OpenMeteo API timed out. URl - {url}")
+        except requests.exceptions.Timeout as e:
+            raise TimeoutError(f"Request to OpenMeteo API timed out. URl - {url}") from e
 
         hourly = response[0].Hourly()
-        hourly_data = {"time": pd.date_range(
-            start=pd.to_datetime(hourly.Time(), unit="s", utc=False),
-            end=pd.to_datetime(hourly.TimeEnd(), unit="s", utc=False),
-            freq=pd.Timedelta(seconds=hourly.Interval()),
-            inclusive="left"
-        )}
+        hourly_data = {
+            "time": pd.date_range(
+                start=pd.to_datetime(hourly.Time(), unit="s", utc=False),
+                end=pd.to_datetime(hourly.TimeEnd(), unit="s", utc=False),
+                freq=pd.Timedelta(seconds=hourly.Interval()),
+                inclusive="left",
+            )
+        }
 
         for i, variable in enumerate(variables):
             hourly_data[variable] = hourly.Variables(i).ValuesAsNumpy()

@@ -62,10 +62,6 @@ all = [
 ]
 
 [tool.mypy]
-
-[tool.ruff]
-line-length = 100
-exclude = ["tests", "data", "scripts", "^tests/"]
 disallow-untyped-defs = true
 disallow-any-unimported = true
 no-implicit-optional = true
@@ -74,6 +70,26 @@ warn-return-any = true
 warn-unused-ignores = true
 show-error-codes = true
 warn-unreachable = true
+
+[tool.ruff]
+line-length = 100
+exclude = ["tests", "data", "scripts", "**/*.ipynb"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
 
 [tool.uv]
 default-groups = ["dev"]

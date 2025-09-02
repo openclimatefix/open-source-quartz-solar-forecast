@@ -1,13 +1,13 @@
-""" Get nwp data from HF"""
-import os
-import sys
-import pandas as pd
-import numpy as np
-
-import ocf_blosc2  # noqa
-import xarray as xr
+"""Get nwp data from HF"""
 
 import multiprocessing
+import os
+import sys
+
+import numpy as np
+import ocf_blosc2  # noqa
+import pandas as pd
+import xarray as xr
 
 from quartz_solar_forecast.eval.utils import make_hf_filename
 
@@ -69,8 +69,8 @@ def get_nwp_for_one_timestamp_one_location(
     :param latitude: the latitude of the location
     :param longitude: the longitude of the location
     :param pv_id: the pv_id of the location, if known
-    :param progress: Float of how far through the process we are. This is becasue we use multiprocessing
-        to pull lots of NWP data. This should be a float between 0 and 1
+    :param progress: Float of how far through the process we are. This is becasue
+        we use multiprocessing to pull lots of NWP data. This should be a float between 0 and 1
 
 
     :return: nwp forecast in xarray
@@ -171,6 +171,6 @@ def get_nwp_for_one_timestamp_one_location(
         df["pv_id"] = pv_id
 
     if progress:
-        print(f"Getting NWP for {timestamp} {pv_id}. Progress: {100*progress}%")
+        print(f"Getting NWP for {timestamp} {pv_id}. Progress: {100 * progress}%")
 
     return df

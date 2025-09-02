@@ -1,10 +1,12 @@
 """Main API."""
+
 from datetime import UTC, datetime
 
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
 
@@ -34,12 +36,12 @@ For more information, please contact: quartz.support@openclimatefix.org
 ```bash
 curl -X POST "https://open.quartz.solar/forecast/" -H "Content-Type: application/json" -d '{
 "site": {
-    "latitude": "37.7749", 
-    "longitude": "-122.4194", 
-    "capacity_kwp": "5.0", 
-    "tilt": "30", 
+    "latitude": "37.7749",
+    "longitude": "-122.4194",
+    "capacity_kwp": "5.0",
+    "tilt": "30",
     "orientation": "180"
-  }, 
+  },
   "timestamp": "2023-08-14T10:00:00Z"
 }'
 ```
@@ -85,18 +87,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class ForecastValues(BaseModel):
     """Dictionary mapping timestamps to power predictions in kW."""
+
     power_kw: dict[datetime, float]
+
 
 class ForecastResponse(BaseModel):
     """Response model for forecast predictions."""
+
     timestamp: datetime
     predictions: ForecastValues
 
+
 class ForecastRequest(BaseModel):
-  site: PVSite
-  timestamp: datetime | None = None
+    site: PVSite
+    timestamp: datetime | None = None
+
 
 @app.post("/forecast/")
 def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
@@ -109,11 +117,13 @@ def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
 
     # TODO add live generation
 
-    site_no_live = PVSite(latitude=site.latitude,
-                          longitude=site.longitude,
-                          capacity_kwp=site.capacity_kwp, 
-                          tilt=site.tilt,
-                          orientation=site.orientation)
+    site_no_live = PVSite(
+        latitude=site.latitude,
+        longitude=site.longitude,
+        capacity_kwp=site.capacity_kwp,
+        tilt=site.tilt,
+        orientation=site.orientation,
+    )
 
     predictions = run_forecast(site=site_no_live, ts=timestamp)
 

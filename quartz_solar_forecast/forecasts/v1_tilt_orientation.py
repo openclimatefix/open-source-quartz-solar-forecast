@@ -1,6 +1,7 @@
+import os
+
 import pandas as pd
 import xarray as xr
-import os
 from psp.data_sources.nwp import NwpDataSource
 from psp.data_sources.pv import NetcdfPvDataSource
 from psp.serialization import load_model
@@ -9,7 +10,9 @@ from psp.typings import X
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
-def forecast_v1_tilt_orientation(nwp_source:str, nwp_xr:xr.Dataset, pv_xr:xr.Dataset, ts:pd.Timestamp, model=None):
+def forecast_v1_tilt_orientation(
+    nwp_source: str, nwp_xr: xr.Dataset, pv_xr: xr.Dataset, ts: pd.Timestamp, model=None
+):
     """
     Run the forecast
 

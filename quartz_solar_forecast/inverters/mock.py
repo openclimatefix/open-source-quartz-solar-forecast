@@ -9,4 +9,4 @@ class MockInverter(AbstractInverter):
     """
 
     def get_data(self, ts: pd.Timestamp) -> pd.DataFrame:
-        return pd.DataFrame(columns=['timestamp', 'power_kw'])
+        return pd.DataFrame(columns=["timestamp", "power_kw"])
