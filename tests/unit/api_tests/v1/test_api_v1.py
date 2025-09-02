@@ -3,7 +3,7 @@ import os
 import pytest
 from fastapi.testclient import TestClient
 
-from api.app.api import app
+from api.v1.api import app
 
 expected_prediction_key = "power_kw"
 expected_dict_keys = ["timestamp", "predictions"]
@@ -47,13 +47,6 @@ expected_response_on_wrong_types = {
             "ctx": {"le": 360.0},
         },
     ]
-}
-
-envs = {
-    "ENPHASE_CLIENT_ID": "1",
-    "ENPHASE_SYSTEM_ID": "1",
-    "ENPHASE_API_KEY": "test_key",
-    "ENPHASE_CLIENT_SECRET": "secret_secret",
 }
 
 
@@ -148,37 +141,3 @@ def test_api_wrong_body(client, body_wrong):
     assert response_body == expected_response_on_wrong_types
 
 
-def test_getenphse_authorization_url(client, monkeypatch):
-
-    monkeypatch.setattr(os, "environ", envs)
-
-    response = client.get("/solar_inverters/enphase/auth_url")
-    assert response.status_code == 200
-    assert isinstance(response.json()["auth_url"], str)
-
-
-def test_getenphse_token_and_system_id_bad_redirect_url(client, bad_redirect_url, monkeypatch):
-
-    monkeypatch.setattr(os, "environ", envs)
-
-    response = client.post(
-        "/solar_inverters/enphase/token_and_id", json={"redirect_url": bad_redirect_url}
-    )
-    response_body = response.json()
-    assert response.status_code == 400
-    assert response_body["detail"] == "Invalid redirect URL"
-
-
-def test_getenphse_token_and_system_id_bad_redirect_url(
-    client, bad_redirect_url_correct_param, monkeypatch
-):
-
-    monkeypatch.setattr(os, "environ", envs)
-
-    response = client.post(
-        "/solar_inverters/enphase/token_and_id",
-        json={"redirect_url": bad_redirect_url_correct_param},
-    )
-    response_body = response.json()
-    assert response.status_code == 400
-    assert "Error getting access token and system ID: " in response_body["detail"]

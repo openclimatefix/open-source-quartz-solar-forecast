@@ -8,7 +8,7 @@ version = "1.1.21"
 description = "Open Source Solar Forecasting for a Site"
 authors = [{ name = "Peter Dudfield", email = "info@openclimatefix.org" }]
 readme = "README.md"
-requires-python = ">=3.6"
+requires-python = ">=3.11"
 license = { text = "MIT" }
 
 dependencies = [
@@ -26,7 +26,8 @@ dependencies = [
     "uvicorn",
     "pydantic_settings",
     "httpx",
-    "sentry_sdk"
+    "sentry_sdk",
+    "huggingface_hub==0.17.3"
 ]
 
 [project.urls]
@@ -36,26 +37,24 @@ dependencies = [
 packages = { find = { include = ["*"] } }
 package-data = { "quartz_solar_forecast" = ["*"] }
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "streamlit",
     "plotly",
-    "huggingface_hub==0.17.3",
     "gdown==5.1.0",
     "fastapi",
     "matplotlib",
-    "zipfile36"
+    "zipfile36",
+    "pytest",
 ]
-
-# additional vendor-specific dependencies for connecting to inverter APIs
 inverters = ["ocf_vrmapi"] # victron
 all = [
     "ocf_vrmapi",
     "streamlit",
     "plotly",
-    "huggingface_hub==0.17.3",
     "gdown==5.1.0",
     "fastapi",
+    "pytest",
 ]
 
 [tool.mypy]
@@ -71,3 +70,7 @@ warn-return-any = true
 warn-unused-ignores = true
 show-error-codes = true
 warn-unreachable = true
+
+[tool.uv]
+default-groups = ["dev"]
+

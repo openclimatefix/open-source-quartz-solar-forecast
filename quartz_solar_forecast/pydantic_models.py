@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional
+from datetime import datetime
 
 from quartz_solar_forecast.inverters.enphase import EnphaseInverter, EnphaseSettings
 from quartz_solar_forecast.inverters.givenergy import GivEnergySettings, GivEnergyInverter
@@ -27,11 +28,6 @@ class PVSite(BaseModel):
         ge=0,
         le=360,
     )
-    inverter_type: str = Field(
-        default=None,
-        description="The type of inverter used",
-        json_schema_extra=["enphase", "solis", "givenergy", "solarman", None],
-    )
 
     def round_latitude_and_longitude(self):
         """ Round the latitude and longitude to 2 decimal places
@@ -40,6 +36,15 @@ class PVSite(BaseModel):
         """
         self.latitude = round(self.latitude, 2)
         self.longitude = round(self.longitude, 2)
+
+
+class PVSiteWithInverter(PVSite):
+
+    inverter_type: str = Field(
+        default=None,
+        description="The type of inverter used",
+        json_schema_extra=["enphase", "solis", "givenergy", "solarman", None],
+    )
 
     def get_inverter(self):
         if self.inverter_type == 'enphase':
@@ -57,7 +62,7 @@ class PVSite(BaseModel):
 
 class ForecastRequest(BaseModel):
     site: PVSite
-    timestamp: Optional[str] = None
+    timestamp: Optional[datetime] = None
 
 class TokenRequest(BaseModel):
     redirect_url: str
