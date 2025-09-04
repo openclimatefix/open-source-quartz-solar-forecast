@@ -4,7 +4,7 @@ from datetime import UTC, datetime
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
 
@@ -86,17 +86,15 @@ app.add_middleware(
 )
 
 class ForecastValues(BaseModel):
-    """Dictionary mapping timestamps to power predictions in kW."""
-    power_kw: dict[datetime, float]
+  power_kw: dict[datetime, float] = Field(..., description="Dictionary mapping timestamps to power predictions in kW.")
 
 class ForecastResponse(BaseModel):
-    """Response model for forecast predictions."""
-    timestamp: datetime
-    predictions: ForecastValues
+  timestamp: datetime = Field(..., description="Timestamp for the forecast.")
+  predictions: ForecastValues = Field(..., description="Forecasted power values.")
 
 class ForecastRequest(BaseModel):
-  site: PVSite
-  timestamp: datetime | None = None
+  site: PVSite = Field(..., description="PV site information.")
+  timestamp: datetime | None = Field(None, description="Optional timestamp for the forecast request.")
 
 @app.post("/forecast/")
 def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
