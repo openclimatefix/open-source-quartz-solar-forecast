@@ -1,17 +1,12 @@
 import os
-import pandas as pd
-import xarray as xr
-from psp.data_sources.nwp import NwpDataSource
-from psp.data_sources.pv import NetcdfPvDataSource
-from psp.serialization import load_model
-from psp.typings import X
-
-from quartz_solar_forecast.data import get_nwp, make_pv_data
-from quartz_solar_forecast.pydantic_models import PVSite
-from quartz_solar_forecast.forecasts.v1 import forecast_v1
-from quartz_solar_forecast.data import format_nwp_data
-
 from datetime import datetime
+
+import pandas as pd
+from psp.serialization import load_model
+
+from quartz_solar_forecast.data import format_nwp_data, make_pv_data
+from quartz_solar_forecast.forecasts.v1 import forecast_v1
+from quartz_solar_forecast.pydantic_models import PVSite
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -20,7 +15,8 @@ def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="ICON") -
     """
     Run the forecast from NWP data
 
-    :param pv_df: the PV site data. This should have columns timestamp, id, latitude, longitude, and capacity
+    :param pv_df: the PV site data. This should have columns timestamp, id,
+        latitude, longitude, and capacity
     :param nwp_df: all the nwp data for the site and location. This shoulw have the following rows
         - timestamp: the timestamp of the site
         - temperature_2m
@@ -38,7 +34,6 @@ def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="ICON") -
 
     all_predictions = []
     for i in range(len(pv_df)):
-
         print(f"Running forecast for {i} of {len(pv_df)}")
 
         pv_row = pv_df.iloc[i]
@@ -73,7 +68,7 @@ def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="ICON") -
         pv_xr = make_pv_data(site=site, ts=ts)
 
         # run model
-        print('Running model')
+        print("Running model")
         pred_df = forecast_v1(nwp_source, nwp_xr, pv_xr, ts, model=model)
 
         # only select hourly predictions
@@ -84,6 +79,6 @@ def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="ICON") -
         all_predictions.append(pred_df)
 
     all_predictions = pd.concat(all_predictions)
-    all_predictions['timestamp'] = all_predictions.index
+    all_predictions["timestamp"] = all_predictions.index
 
     return all_predictions

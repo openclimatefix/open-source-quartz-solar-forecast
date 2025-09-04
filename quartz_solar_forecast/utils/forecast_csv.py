@@ -1,6 +1,8 @@
 import os
-import pandas as pd
 from datetime import datetime, timedelta
+
+import pandas as pd
+
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
 
@@ -13,15 +15,12 @@ def generate_all_forecasts(
     longitude: float,
     capacity_kwp: float,
 ) -> pd.DataFrame:
-
     all_forecasts = pd.DataFrame()
 
     init_time = start
     while init_time <= end:
         print(f"Running forecast for initialization time: {init_time}")
-        predictions_df = forecast_for_site(
-            latitude, longitude, capacity_kwp, init_time=init_time
-        )
+        predictions_df = forecast_for_site(latitude, longitude, capacity_kwp, init_time=init_time)
         predictions_df["forecast_init_time"] = init_time
         all_forecasts = pd.concat([all_forecasts, predictions_df])
         init_time += timedelta(hours=init_time_freq)
@@ -36,7 +35,6 @@ def forecast_for_site(
     model: str = "gb",
     init_time: datetime = None,
 ) -> pd.DataFrame:
-
     site = PVSite(latitude=latitude, longitude=longitude, capacity_kwp=capacity_kwp)
     predictions_df = run_forecast(site=site, model=model, ts=init_time)
     predictions_df.reset_index(inplace=True)
@@ -80,4 +78,3 @@ def write_out_forecasts(
     output_file_path = os.path.join(output_dir, output_file_name)
     all_forecasts.to_csv(output_file_path, index=False)
     print(f"Forecasts saved to {output_file_path}")
-
