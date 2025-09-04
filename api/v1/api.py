@@ -7,13 +7,16 @@ import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
 
 __version__ = version("quartz_solar_forecast")
 
 description = """
-API for [Open Source Quartz Solar Forecast](https://github.com/openclimatefix/open-source-quartz-solar-forecast).
+API for [Open Source Quartz Solar Forecast](
+    https://github.com/openclimatefix/open-source-quartz-solar-forecast
+).
 
 This project aims to provide a free, open-source photovoltaic (PV) forecasting tool
  that is simple to use and works anywhere in the world.
@@ -79,9 +82,11 @@ How we built Open Quartz, our motivation behind it and its impact on aiding orga
  in resource optimization [Watch the talk](https://www.youtube.com/watch?v=NAZ2VeiN1N8)
 
 - **LF Energy 2024**: Exploring Open Quartz's developments - new models, inverter APIs
- and our Open Source journey at Open Climate Fix [Watch the talk](https://www.youtube.com/watch?v=YTaq41ztEDg)
+ and our Open Source journey at Open Climate Fix 
+[Watch the talk](https://www.youtube.com/watch?v=YTaq41ztEDg)
 
-And you can always head over to our [Github page](https://github.com/openclimatefix/open-source-quartz-solar-forecast)
+And you can always head over to our 
+[Github page](https://github.com/openclimatefix/open-source-quartz-solar-forecast)
 
 """
 
@@ -103,7 +108,9 @@ app.add_middleware(
 
 
 class ForecastValues(BaseModel):
-  power_kw: dict[datetime, float] = Field(..., description="Dictionary mapping timestamps to power predictions in kW.")
+    power_kw: dict[datetime, float] = Field(
+        ..., description="Dictionary mapping timestamps to power predictions in kW."
+    )
 
 
 
@@ -115,13 +122,18 @@ class GenerationValue(BaseModel):
 
 
 class ForecastResponse(BaseModel):
-  timestamp: datetime = Field(..., description="Timestamp for the forecast.")
-  predictions: ForecastValues = Field(..., description="Forecasted power values.")
+    timestamp: datetime = Field(..., description="Timestamp for the forecast.")
+    predictions: ForecastValues = Field(..., description="Forecasted power values.")
 
 
 class ForecastRequest(BaseModel):
-  site: PVSite = Field(..., description="PV site information.")
-  timestamp: datetime | None = Field(None, description="Optional timestamp for the forecast request.")
+    site: PVSite = Field(..., description="PV site information.")
+    timestamp: datetime | None = Field(
+        None, description="Optional timestamp for the forecast request."
+    )
+    live_generation: list[GenerationValue] | None = Field(
+        None, description="Optional list of live generation values."
+    )
 
 @app.post("/forecast/")
 def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
