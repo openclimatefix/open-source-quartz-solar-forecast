@@ -1,27 +1,36 @@
-from datetime import datetime, timedelta
 import logging
+from datetime import datetime, timedelta
 
 import pandas as pd
 
 from quartz_solar_forecast.data import get_nwp, make_pv_data
-from quartz_solar_forecast.forecasts import forecast_v1_tilt_orientation, TryolabsSolarPowerPredictor
+from quartz_solar_forecast.forecasts import (
+    TryolabsSolarPowerPredictor,
+    forecast_v1_tilt_orientation,
+)
 from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.utils.sentry_logging import write_sentry
 
 log = logging.getLogger(__name__)
 
 def predict_ocf(
-    site: PVSite, model=None, ts: datetime | str = None, nwp_source: str = "icon"
+    site: PVSite,
+    model=None, ts: datetime | str = None,
+    nwp_source: str = "icon",
+    live_generation: pd.DataFrame | None = None
 ):
     """
     Run the forecast with the gb model, which can take tilt and orientation as inputs
-    
+
     :param site: the PV site
     :param model: the model to use for prediction
-    :param ts: the timestamp of the site. If None, defaults to the current timestamp rounded down to 15 minutes.
-    :param nwp_source: the nwp data source. Either "gfs", "icon" or "ukmo". Defaults to "icon" 
+    :param ts: the timestamp of the site. If None, defaults to the current
+        timestamp rounded down to 15 minutes.
+    :param nwp_source: the nwp data source. Either "gfs", "icon" or "ukmo". Defaults to "icon"
+    :param live_generation: a dataframe containing live generation data for the site
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
+
     if ts is None:
         ts = pd.Timestamp.now().round("15min")
 
@@ -29,18 +38,22 @@ def predict_ocf(
         ts = datetime.fromisoformat(ts)
 
     if site.capacity_kwp > 4:
-        log.warning("Your site capacity is greater than 4kWp, "
-                    "however the model is trained on sites with capacity <= 4kWp."
-                    "We therefore will run the model with a capacity of 4 kWp, "
-                    "and we'll scale the results afterwards.")
+        log.warning(
+            "Your site capacity is greater than 4kWp, "
+            "however the model is trained on sites with capacity <= 4kWp."
+            "We therefore will run the model with a capacity of 4 kWp, "
+            "and we'll scale the results afterwards."
+        )
         capacity_kwp_original = site.capacity_kwp
         site.capacity_kwp = 4
+        if live_generation is not None:
+            live_generation['power_kw'] = live_generation['power_kw']/capacity_kwp_original * 4
     else:
         capacity_kwp_original = site.capacity_kwp
 
     # make pv and nwp data from nwp_source
     nwp_xr = get_nwp(site=site, ts=ts, nwp_source=nwp_source)
-    pv_xr = make_pv_data(site=site, ts=ts)
+    pv_xr = make_pv_data(site=site, ts=ts, live_generation=live_generation)
 
     # load and run models
     pred_df = forecast_v1_tilt_orientation(nwp_source, nwp_xr, pv_xr, ts, model=model)
@@ -52,26 +65,26 @@ def predict_ocf(
     return pred_df
 
 
-def predict_tryolabs(
-    site: PVSite, ts: datetime | str = None):
+def predict_tryolabs(site: PVSite, ts: datetime | str = None):
     """
     Run the forecast with the xgb model
-    
+
     :param site: the PV site
-    :param ts: the timestamp of the site. If None, defaults to the current timestamp rounded down to 15 minutes.
+    :param ts: the timestamp of the site. If None, defaults to the current
+        timestamp rounded down to 15 minutes.
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
 
     # instantiate class to make predictions
     solar_power_predictor = TryolabsSolarPowerPredictor()
-    
+
     # set start and end time, if no time is given use current time
     if ts is None:
         start_date = pd.Timestamp.now().strftime("%Y-%m-%d")
-        start_time = pd.Timestamp.now().round(freq='h')
+        start_time = pd.Timestamp.now().round(freq="h")
     else:
         start_date = pd.Timestamp(ts).strftime("%Y-%m-%d")
-        start_time = pd.Timestamp(ts).round(freq='h')
+        start_time = pd.Timestamp(ts).round(freq="h")
 
     end_time = start_time + pd.Timedelta(hours=48)
     start_date_datetime = datetime.strptime(start_date, "%Y-%m-%d")
@@ -112,6 +125,7 @@ def run_forecast(
     model: str = "gb",
     ts: datetime | str = None,
     nwp_source: str = "icon",
+    live_generation: pd.DataFrame| None = None
 ) -> pd.DataFrame:
     """
     Predict solar power output for a given site using a specified model.
@@ -119,11 +133,17 @@ def run_forecast(
     :param site: the PV site
     :param model: the model to use for prediction, choose between "ocf" and "tryolabs",
                     by default "ocf" is used
-    :param ts: the timestamp of the site. If None, defaults to the current timestamp rounded down to 15 minutes.
-    :param nwp_source: the nwp data source. Either "gfs", "icon" or "ukmo". Defaults to "icon" 
+    :param ts: the timestamp of the site. If None, defaults to the current
+        timestamp rounded down to 15 minutes.
+    :param nwp_source: the nwp data source. Either "gfs", "icon" or "ukmo". Defaults to "icon"
                        (only relevant if model=="gb")
+    :param live_generation: a dataframe containing live generation data for the site.
+        This should have the columns "power_kw" and "timestamp"
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
+
+    log.info(f"Running forecast for site at lat {site.latitude}, lon {site.longitude} "
+              f"at time {ts} with model {model} and nwp source {nwp_source}")
 
     # log usage to sentry, if you dont want to log usage to sentry, you can
     # 1. set environmental variable QUARTZ_SOLAR_FORECAST_LOGGING='false', or
@@ -131,10 +151,13 @@ def run_forecast(
     write_sentry({"site": site.copy(), "model": model, "ts": ts, "nwp_source": nwp_source})
 
     if model == "gb":
-        return predict_ocf(site, None, ts, nwp_source)
-              
+        return predict_ocf(site, None, ts, nwp_source, live_generation)
+
     elif model == "xgb":
+        if live_generation is not None:
+            log.warning("Live generation data is currently not supported with the xgb model. " \
+            "Ignoring live_generation input.")
         return predict_tryolabs(site, ts)
-    
-    else:  
+
+    else:
         raise ValueError(f"Unsupported model: {model}. Choose between 'xgb' and 'gb'")

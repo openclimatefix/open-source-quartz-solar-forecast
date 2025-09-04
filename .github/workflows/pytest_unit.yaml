@@ -5,13 +5,17 @@ on:
   push:
     branches-ignore: [ "main" ]
     paths-ignore: ['README.md']
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  branch-ci:
+  branch_ci:
     uses: openclimatefix/.github/.github/workflows/branch_ci.yml@main
     secrets: inherit
     with:
-      enable_linting: false
+      enable_linting: true
       enable_typechecking: false
       tests_folder: 'tests/unit'
       tests_matrix: true

@@ -1,9 +1,12 @@
 import pandas as pd
 
 
-def combine_forecast_ground_truth(forecast_df: pd.DataFrame, ground_truth_df: pd.DataFrame) ->pd.DataFrame:
+def combine_forecast_ground_truth(
+    forecast_df: pd.DataFrame, ground_truth_df: pd.DataFrame
+) -> pd.DataFrame:
     """
-    Combine the forecast results with the ground truth (ts, id, horizon (in hours), pred, truth, diff)
+    Combine the forecast results with the ground truth
+    (ts, id, horizon (in hours), pred, truth, diff)
 
 
     forecast_df should have the following columns

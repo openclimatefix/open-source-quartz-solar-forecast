@@ -6,14 +6,14 @@ This takes a random subset of times and for various pv ids and makes a test set
 There is an option to odmit timestamps that don't exsits in the ICON dataset:
 https://huggingface.co/datasets/openclimatefix/dwd-icon-eu/tree/main/data
 """
+
 import os
-from typing import Optional
 
 import numpy as np
 import pandas as pd
+from huggingface_hub import HfFileSystem
 
 from quartz_solar_forecast.eval.utils import make_hf_filename
-from huggingface_hub import HfFileSystem
 
 test_start_date = pd.Timestamp("2021-01-01")
 test_end_date = pd.Timestamp("2022-01-01")
@@ -75,7 +75,11 @@ pv_ids = [
 np.random.seed(42)
 
 
-def make_test_set(output_file_name: Optional[str] = None, number_of_samples_per_system: int = 50, check_hf_files: bool = False):
+def make_test_set(
+    output_file_name: str | None = None,
+    number_of_samples_per_system: int = 50,
+    check_hf_files: bool = False,
+):
     """
     Make a test set of random times and pv ids
 

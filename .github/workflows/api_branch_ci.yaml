@@ -4,11 +4,10 @@ run-name: 'Test branch commit "${{ github.event.head_commit.message }}"'
 on:  
   push:
     branches-ignore: [ "main" ]
-
     paths-ignore: ['README.md']
 
 jobs:
-  branch-ci:
+  branch_ci:
     uses: openclimatefix/.github/.github/workflows/branch_ci.yml@main
     secrets: inherit
     with:
