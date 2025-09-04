@@ -13,8 +13,12 @@ from quartz_solar_forecast.utils.sentry_logging import write_sentry
 
 log = logging.getLogger(__name__)
 
-
-def predict_ocf(site: PVSite, model=None, ts: datetime | str = None, nwp_source: str = "icon"):
+def predict_ocf(
+    site: PVSite,
+    model=None, ts: datetime | str = None,
+    nwp_source: str = "icon",
+    live_generation: pd.DataFrame | None = None
+):
     """
     Run the forecast with the gb model, which can take tilt and orientation as inputs
 
@@ -23,8 +27,10 @@ def predict_ocf(site: PVSite, model=None, ts: datetime | str = None, nwp_source:
     :param ts: the timestamp of the site. If None, defaults to the current
         timestamp rounded down to 15 minutes.
     :param nwp_source: the nwp data source. Either "gfs", "icon" or "ukmo". Defaults to "icon"
+    :param live_generation: a dataframe containing live generation data for the site
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
+
     if ts is None:
         ts = pd.Timestamp.now().round("15min")
 
@@ -40,12 +46,14 @@ def predict_ocf(site: PVSite, model=None, ts: datetime | str = None, nwp_source:
         )
         capacity_kwp_original = site.capacity_kwp
         site.capacity_kwp = 4
+        if live_generation is not None:
+            live_generation['power_kw'] = live_generation['power_kw']/capacity_kwp_original * 4
     else:
         capacity_kwp_original = site.capacity_kwp
 
     # make pv and nwp data from nwp_source
     nwp_xr = get_nwp(site=site, ts=ts, nwp_source=nwp_source)
-    pv_xr = make_pv_data(site=site, ts=ts)
+    pv_xr = make_pv_data(site=site, ts=ts, live_generation=live_generation)
 
     # load and run models
     pred_df = forecast_v1_tilt_orientation(nwp_source, nwp_xr, pv_xr, ts, model=model)
@@ -117,6 +125,7 @@ def run_forecast(
     model: str = "gb",
     ts: datetime | str = None,
     nwp_source: str = "icon",
+    live_generation: pd.DataFrame| None = None
 ) -> pd.DataFrame:
     """
     Predict solar power output for a given site using a specified model.
@@ -128,8 +137,13 @@ def run_forecast(
         timestamp rounded down to 15 minutes.
     :param nwp_source: the nwp data source. Either "gfs", "icon" or "ukmo". Defaults to "icon"
                        (only relevant if model=="gb")
+    :param live_generation: a dataframe containing live generation data for the site.
+        This should have the columns "power_kw" and "timestamp"
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
+
+    log.info(f"Running forecast for site at lat {site.latitude}, lon {site.longitude} "
+              f"at time {ts} with model {model} and nwp source {nwp_source}")
 
     # log usage to sentry, if you dont want to log usage to sentry, you can
     # 1. set environmental variable QUARTZ_SOLAR_FORECAST_LOGGING='false', or
@@ -137,9 +151,12 @@ def run_forecast(
     write_sentry({"site": site.copy(), "model": model, "ts": ts, "nwp_source": nwp_source})
 
     if model == "gb":
-        return predict_ocf(site, None, ts, nwp_source)
+        return predict_ocf(site, None, ts, nwp_source, live_generation)
 
     elif model == "xgb":
+        if live_generation is not None:
+            log.warning("Live generation data is currently not supported with the xgb model. " \
+            "Ignoring live_generation input.")
         return predict_tryolabs(site, ts)
 
     else:

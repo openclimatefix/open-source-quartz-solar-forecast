@@ -1,6 +1,7 @@
 """Main API."""
 
 from datetime import UTC, datetime
+from importlib.metadata import version
 
 import pandas as pd
 from fastapi import FastAPI
@@ -9,6 +10,8 @@ from pydantic import BaseModel
 
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
+
+__version__ = version("quartz_solar_forecast")
 
 description = """
 API for [Open Source Quartz Solar Forecast](https://github.com/openclimatefix/open-source-quartz-solar-forecast).
@@ -40,11 +43,23 @@ curl -X POST "https://open.quartz.solar/forecast/" -H "Content-Type: application
     "longitude": "-122.4194",
     "capacity_kwp": "5.0",
     "tilt": "30",
-    "orientation": "180"
+    "orientation": "180",
   },
-  "timestamp": "2023-08-14T10:00:00Z"
+  "timestamp": "2023-08-14T10:00:00Z",
+  "live_generation": [
+    {
+      "timestamp": "2023-08-14T09:45:00Z",
+      "generation": 2.5
+    },
+    {
+      "timestamp": "2023-08-14T09:30:00Z",
+      "generation": 2.2
+    }
+  ]
 }'
 ```
+
+Please use UTC timestamps throughout
 
 **Response:**
 
@@ -72,7 +87,7 @@ And you can always head over to our [Github page](https://github.com/openclimate
 """
 
 
-app = FastAPI(description=description, version="0.0.1", title="Open Quartz Solar Forecast API")
+app = FastAPI(description=description, version=__version__, title="Open Quartz Solar Forecast API")
 
 # CORS middleware setup
 origins = [
@@ -94,16 +109,24 @@ class ForecastValues(BaseModel):
     power_kw: dict[datetime, float]
 
 
+class GenerationValue(BaseModel):
+    """Generation Value"""
+    timestamp: datetime
+    generation: float
+
+
+
 class ForecastResponse(BaseModel):
     """Response model for forecast predictions."""
-
     timestamp: datetime
     predictions: ForecastValues
 
 
 class ForecastRequest(BaseModel):
+    """Request model for forecast predictions."""
     site: PVSite
     timestamp: datetime | None = None
+    live_generation: list[GenerationValue] = []
 
 
 @app.post("/forecast/")
@@ -112,10 +135,28 @@ def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
     site = forecast_request.site
     ts = forecast_request.timestamp if forecast_request.timestamp else datetime.now(UTC).isoformat()
 
+    live_generation = forecast_request.live_generation
+
     timestamp = pd.Timestamp(ts).tz_localize(None)
     formatted_timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
-    # TODO add live generation
+    # convert live generation to dataframe
+    if live_generation is not None and len(live_generation) > 0:
+        live_generation_df = pd.DataFrame([g.model_dump() for g in live_generation])
+        live_generation_df["timestamp"] = pd.to_datetime(live_generation_df["timestamp"])
+        # if timezone, set to UTC and drop it
+        if live_generation_df["timestamp"].dt.tz is not None:
+            live_generation_df["timestamp"] = live_generation_df["timestamp"].dt.tz_convert("UTC")
+            live_generation_df["timestamp"] = live_generation_df["timestamp"].dt.tz_localize(None)
+
+        # make sure timestamps are ordered from earliest to latest
+        live_generation_df = live_generation_df.sort_values(by="timestamp")
+
+        live_generation_df.rename(columns={"generation": "power_kw"}, inplace=True)
+    else:
+        live_generation_df = None
+
+
 
     site_no_live = PVSite(
         latitude=site.latitude,
@@ -125,7 +166,8 @@ def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
         orientation=site.orientation,
     )
 
-    predictions = run_forecast(site=site_no_live, ts=timestamp)
+    predictions = run_forecast(site=site_no_live, ts=timestamp, live_generation=live_generation_df)
+
 
     response = {
         "timestamp": formatted_timestamp,

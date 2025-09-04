@@ -67,6 +67,12 @@ def body():
             "inverter_type": "string",
         },
         "timestamp": "2021-01-26 01:15:00",
+        "live_generation": [
+            {
+                "timestamp": "2021-01-26 01:10:00",
+                "generation": 0.0
+            }
+        ]
     }
 
 

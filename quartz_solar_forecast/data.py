@@ -181,19 +181,24 @@ def process_pv_data(
 
     return da
 
-
-def make_pv_data(site: PVSite | PVSiteWithInverter, ts: pd.Timestamp) -> xr.Dataset:
+def make_pv_data(
+        site: PVSite | PVSiteWithInverter,
+        ts: pd.Timestamp,
+        live_generation: pd.DataFrame | None = None
+        ) -> xr.Dataset:
     """
     Make PV data by combining live data from various inverters.
 
     :param site: the PV site
     :param ts: the timestamp of the site
+    :param live_generation: a dataframe containing live generation data for the site
     :return: The combined PV dataset in xarray form
     """
     if isinstance(site, PVSiteWithInverter):
         live_generation_kw = site.get_inverter().get_data(ts)
     else:
-        live_generation_kw = None
+        live_generation_kw = live_generation
+
 
     # Process the PV data
     da = process_pv_data(live_generation_kw, ts, site)
