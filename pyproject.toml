@@ -43,6 +43,7 @@ dirty_template = "{tag}"
 
 [dependency-groups]
 dev = [
+    "ruff",
     "streamlit",
     "plotly",
     "gdown==5.1.0",
