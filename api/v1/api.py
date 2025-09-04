@@ -5,7 +5,7 @@ from datetime import UTC, datetime
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
@@ -89,21 +89,53 @@ app.add_middleware(
 
 
 class ForecastValues(BaseModel):
-    """Dictionary mapping timestamps to power predictions in kW."""
+    """
+    Forecast prediction values containing power generation predictions.
+    
+    This model contains a dictionary mapping datetime timestamps to predicted 
+    power generation values in kilowatts (kW) for up to 48 hours ahead.
+    """
 
-    power_kw: dict[datetime, float]
+    power_kw: dict[datetime, float] = Field(
+        ..., 
+        description="Dictionary mapping datetime timestamps to predicted power generation in kilowatts (kW)"
+    )
 
 
 class ForecastResponse(BaseModel):
-    """Response model for forecast predictions."""
+    """
+    Complete forecast response containing timestamp and power predictions.
+    
+    This is the main response model returned by the forecast endpoint, containing
+    the forecast generation timestamp and the predicted power values over time.
+    """
 
-    timestamp: datetime
-    predictions: ForecastValues
+    timestamp: datetime = Field(
+        ..., 
+        description="The timestamp when the forecast was generated (ISO 8601 format)"
+    )
+    predictions: ForecastValues = Field(
+        ..., 
+        description="Forecast predictions containing power generation values over time"
+    )
 
 
 class ForecastRequest(BaseModel):
-    site: PVSite
-    timestamp: datetime | None = None
+    """
+    Request model for generating PV solar forecasts.
+    
+    This model defines the required parameters for requesting a photovoltaic (PV)
+    solar power generation forecast for a specific site and timestamp.
+    """
+    
+    site: PVSite = Field(
+        ..., 
+        description="PV site details including location, capacity, tilt, and orientation"
+    )
+    timestamp: datetime | None = Field(
+        default=None, 
+        description="Optional timestamp for the forecast. If not provided, current UTC time will be used"
+    )
 
 
 @app.post("/forecast/")

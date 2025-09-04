@@ -5,7 +5,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.inverters.enphase import get_enphase_access_token, get_enphase_auth_url
@@ -28,8 +28,22 @@ app.add_middleware(
 
 
 class ForecastRequest(BaseModel):
-    site: PVSiteWithInverter
-    timestamp: datetime | None = None
+    """
+    Request model for generating PV solar forecasts with optional inverter integration.
+    
+    This model defines the required parameters for requesting a photovoltaic (PV)
+    solar power generation forecast for a specific site, with optional real-time
+    data integration from supported inverters.
+    """
+    
+    site: PVSiteWithInverter = Field(
+        ..., 
+        description="PV site details including location, capacity, tilt, orientation, and optional inverter type"
+    )
+    timestamp: datetime | None = Field(
+        default=None, 
+        description="Optional timestamp for the forecast. If not provided, current UTC time will be used"
+    )
 
 
 @app.post("/forecast/")

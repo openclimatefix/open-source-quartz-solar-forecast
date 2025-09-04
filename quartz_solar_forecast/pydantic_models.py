@@ -11,6 +11,14 @@ from quartz_solar_forecast.inverters.victron import VictronInverter, VictronSett
 
 
 class PVSite(BaseModel):
+    """
+    Photovoltaic (PV) site configuration model.
+    
+    This model represents a solar photovoltaic installation site with all the necessary
+    parameters for generating solar power forecasts, including location coordinates,
+    system capacity, and panel configuration details.
+    """
+    
     latitude: float = Field(..., description="the latitude of the site", ge=-90, le=90)
     longitude: float = Field(..., description="the longitude of the site", ge=-180, le=180)
     capacity_kwp: float = Field(..., description="the capacity [kwp] of the site", ge=0)
@@ -42,10 +50,18 @@ class PVSite(BaseModel):
 
 
 class PVSiteWithInverter(PVSite):
+    """
+    PV site configuration model with inverter integration support.
+    
+    This model extends the basic PVSite with optional inverter type specification,
+    enabling real-time data integration from supported solar inverter systems for
+    more accurate forecasting that can incorporate live generation data.
+    """
+    
     inverter_type: str = Field(
         default=None,
-        description="The type of inverter used",
-        json_schema_extra=["enphase", "solis", "givenergy", "solarman", None],
+        description="The type of inverter used (supported: enphase, solis, givenergy, solarman, victron)",
+        json_schema_extra=["enphase", "solis", "givenergy", "solarman", "victron", None],
     )
 
     def get_inverter(self):
@@ -64,9 +80,32 @@ class PVSiteWithInverter(PVSite):
 
 
 class ForecastRequest(BaseModel):
-    site: PVSite
-    timestamp: datetime | None = None
+    """
+    Base request model for generating PV solar forecasts.
+    
+    This model defines the essential parameters required for requesting a 
+    photovoltaic solar power generation forecast for a specific site and timestamp.
+    """
+    
+    site: PVSite = Field(
+        ..., 
+        description="PV site configuration containing location and system details"
+    )
+    timestamp: datetime | None = Field(
+        default=None, 
+        description="Optional timestamp for the forecast. If not provided, current time will be used"
+    )
 
 
 class TokenRequest(BaseModel):
-    redirect_url: str
+    """
+    Request model for handling OAuth token exchange with solar inverter systems.
+    
+    This model is used to process authorization callbacks from inverter OAuth flows,
+    containing the redirect URL with authorization codes needed for token exchange.
+    """
+    
+    redirect_url: str = Field(
+        ..., 
+        description="The redirect URL containing the authorization code from the OAuth flow"
+    )
