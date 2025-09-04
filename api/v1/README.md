@@ -19,7 +19,7 @@ This API provides solar power forecast data based on the given site information.
 - **ForecastRequest:**
   - `site` (PVSite, required): The site details for which the forecast is to be generated.
   - `timestamp` (string, optional): The initialization timestamp for the forecast in ISO 8601 format. If not provided, the current time will be used.
-  - `live_generation`: (list, optional): A list of generation values, that can be used ti help improve the forecast. 
+  - `live_generation`: (list, optional): A list of generation values, that can be used to help improve the forecast. 
 
 - **PVSite:**
   - `latitude` (float, required): The latitude of the site. Must be between -90 and 90.
