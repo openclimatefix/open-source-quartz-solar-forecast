@@ -1,15 +1,15 @@
 """Main API."""
-from datetime import UTC, datetime
 
-from importlib.metadata import PackageNotFoundError, version
+from datetime import UTC, datetime
+from importlib.metadata import version
 
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
-
 
 __version__ = version("quartz_solar_forecast")
 
@@ -39,12 +39,12 @@ For more information, please contact: quartz.support@openclimatefix.org
 ```bash
 curl -X POST "https://open.quartz.solar/forecast/" -H "Content-Type: application/json" -d '{
 "site": {
-    "latitude": "37.7749", 
-    "longitude": "-122.4194", 
-    "capacity_kwp": "5.0", 
-    "tilt": "30", 
-    "orientation": "180"
-  }, 
+    "latitude": "37.7749",
+    "longitude": "-122.4194",
+    "capacity_kwp": "5.0",
+    "tilt": "30",
+    "orientation": "180",
+  },
   "timestamp": "2023-08-14T10:00:00Z",
   "live_generation": [
     {
@@ -102,8 +102,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class ForecastValues(BaseModel):
     """Dictionary mapping timestamps to power predictions in kW."""
+
     power_kw: dict[datetime, float]
 
 
@@ -113,10 +115,12 @@ class GenerationValue(BaseModel):
     generation: float
 
 
+
 class ForecastResponse(BaseModel):
     """Response model for forecast predictions."""
     timestamp: datetime
     predictions: ForecastValues
+
 
 class ForecastRequest(BaseModel):
     """Request model for forecast predictions."""
@@ -154,11 +158,13 @@ def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
 
 
 
-    site_no_live = PVSite(latitude=site.latitude,
-                          longitude=site.longitude,
-                          capacity_kwp=site.capacity_kwp, 
-                          tilt=site.tilt,
-                          orientation=site.orientation)
+    site_no_live = PVSite(
+        latitude=site.latitude,
+        longitude=site.longitude,
+        capacity_kwp=site.capacity_kwp,
+        tilt=site.tilt,
+        orientation=site.orientation,
+    )
 
     predictions = run_forecast(site=site_no_live, ts=timestamp, live_generation=live_generation_df)
 

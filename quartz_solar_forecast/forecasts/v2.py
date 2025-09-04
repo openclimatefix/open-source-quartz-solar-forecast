@@ -1,19 +1,20 @@
 import datetime
-import pandas as pd
-import zipfile
+import logging
 import os.path
 import shutil
-import logging
+import zipfile
 
+import pandas as pd
 from huggingface_hub import hf_hub_download
-from quartz_solar_forecast.weather import WeatherService
-
 from xgboost.sklearn import XGBRegressor
 
-from . import constants
 import quartz_solar_forecast
+from quartz_solar_forecast.weather import WeatherService
+
+from . import constants
 
 logger = logging.getLogger(__name__)
+
 
 class TryolabsSolarPowerPredictor:
     """
@@ -30,19 +31,20 @@ class TryolabsSolarPowerPredictor:
     load_model -> None:
 
         Downloads the model from Google Drive and decropresses it if necessary
-    
+
     predict_power_output(latitude: float, longitude: float, start_date: str, kwp: float,
         orientation: float, tilt: float) -> pd.DataFrame:
 
         Predicts solar power output for the given parameters.
     """
+
     DATE_COLUMN = "date"
     download_dir = os.path.dirname(quartz_solar_forecast.__file__) + "/models"
 
     def _download_model(self, filename: str, repo_id: str, file_path: str) -> str:
         """
         Downloads a model file from a Hugging Face repository and saves it locally.
-    
+
         Parameters:
         -----------
         filename : str
@@ -51,7 +53,7 @@ class TryolabsSolarPowerPredictor:
             The ID of the Hugging Face repository containing the model.
         file_path : str
             The path to the model file within the repository.
-    
+
         Returns:
         --------
         str
@@ -59,14 +61,16 @@ class TryolabsSolarPowerPredictor:
         """
         # Use the project directory instead of the user's home directory
         os.makedirs(self.download_dir, exist_ok=True)
-        
-        downloaded_file = hf_hub_download(repo_id=repo_id, filename=file_path, cache_dir=self.download_dir)
-        
+
+        downloaded_file = hf_hub_download(
+            repo_id=repo_id, filename=file_path, cache_dir=self.download_dir
+        )
+
         target_path = os.path.join(self.download_dir, filename)
 
         # copy file from downloaded_file to target_path
         shutil.copyfile(downloaded_file, target_path)
-        
+
         return target_path
 
     def _decompress_zipfile(self, filename: str) -> None:
@@ -86,14 +90,14 @@ class TryolabsSolarPowerPredictor:
             zip_file.extractall(path=directory)
 
     def load_model(
-        self, 
+        self,
         model_file: str = constants.MODEL_FILE,
         repo_id: str = "openclimatefix/open-source-quartz-solar-forecast",
-        file_path: str = "models/v2/model_10_202405.ubj.zip"
+        file_path: str = "models/v2/model_10_202405.ubj.zip",
     ) -> XGBRegressor:
         """
         Downloads, prepares, and loads the XGBoost model for solar power prediction.
-    
+
         Parameters:
         -----------
         model_file : str, optional
@@ -105,7 +109,7 @@ class TryolabsSolarPowerPredictor:
         file_path : str, optional
             The path to the model file within the repository.
             Default is "models/v2/model_10_202405.ubj.zip".
-    
+
         Returns:
         --------
         XGBRegressor
@@ -113,11 +117,11 @@ class TryolabsSolarPowerPredictor:
         """
         # Use the project directory
         zipfile_model = os.path.join(self.download_dir, model_file + ".zip")
-    
+
         if not os.path.isfile(zipfile_model):
             logger.info("Downloading model...")
             zipfile_model = self._download_model(model_file + ".zip", repo_id, file_path)
-        
+
         model_path = os.path.join(self.download_dir, model_file)
         if not os.path.isfile(model_path):
             logger.info("Preparing model...")
@@ -128,7 +132,7 @@ class TryolabsSolarPowerPredictor:
         loaded_model.load_model(model_path)
         self.model = loaded_model
         return loaded_model
-        
+
     def get_data(
         self,
         latitude: float,
@@ -167,9 +171,7 @@ class TryolabsSolarPowerPredictor:
 
         weather_service = WeatherService()
 
-        weather_data = weather_service.get_hourly_weather(
-            latitude, longitude, start_date, end_date
-        )
+        weather_data = weather_service.get_hourly_weather(latitude, longitude, start_date, end_date)
 
         PANEL_COLUMNS = [
             "latitude_rounded",
@@ -185,9 +187,7 @@ class TryolabsSolarPowerPredictor:
         weather_data["tilt"] = tilt
         weather_data["kwp"] = kwp
 
-        cols = PANEL_COLUMNS + [
-            col for col in weather_data.columns if col not in PANEL_COLUMNS
-        ]
+        cols = PANEL_COLUMNS + [col for col in weather_data.columns if col not in PANEL_COLUMNS]
         weather_data = weather_data[cols]
 
         return weather_data
@@ -214,10 +214,13 @@ class TryolabsSolarPowerPredictor:
         df.loc[:, "date_hour"] = df[self.DATE_COLUMN].dt.hour
         df.loc[:, "date_minute"] = df[self.DATE_COLUMN].dt.minute
 
-        COLUMNS_TO_DROP = ["date_minute", "date_year",
-                           "terrestrial_radiation",
-                           "shortwave_radiation",
-                           "direct_normal_irradiance"]
+        COLUMNS_TO_DROP = [
+            "date_minute",
+            "date_year",
+            "terrestrial_radiation",
+            "shortwave_radiation",
+            "direct_normal_irradiance",
+        ]
 
         df = df.drop(columns=COLUMNS_TO_DROP)
 
@@ -257,7 +260,7 @@ class TryolabsSolarPowerPredictor:
         """
 
         data = self.get_data(latitude, longitude, start_date, kwp, orientation, tilt)
-        #if data is not None:
+        # if data is not None:
         cleaned_data = self.clean(data)
         predictions = self.model.predict(cleaned_data.drop(columns=[self.DATE_COLUMN]))
         predictions_df = pd.DataFrame(predictions, columns=["prediction"])
