@@ -7,27 +7,7 @@ on:
     paths-ignore: ['README.md']
 
 jobs:
-  linting:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      
-      - name: Install ruff
-        run: pip install ruff
-      
-      - name: Run ruff linting
-        run: ruff check .
-      
-      - name: Run ruff formatting check
-        run: ruff format --check .
-
-  tests:
+  branch_ci:
     uses: openclimatefix/.github/.github/workflows/branch_ci.yml@main
     secrets: inherit
     with:
