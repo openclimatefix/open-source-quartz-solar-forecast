@@ -15,6 +15,6 @@ jobs:
     uses: openclimatefix/.github/.github/workflows/tagged_ci.yml@main
     secrets: inherit
     with:
-      containerfile: Containerfile
+      containerfile: Dockerfile
       enable_pypi: true
 
