@@ -1,5 +1,6 @@
 """Main API."""
 
+import os
 from datetime import UTC, datetime
 from importlib.metadata import version
 
@@ -11,7 +12,8 @@ from pydantic import BaseModel, Field
 from quartz_solar_forecast.forecast import run_forecast
 from quartz_solar_forecast.pydantic_models import PVSite
 
-__version__ = version("quartz_solar_forecast")
+# Get version from environment variable (set in Docker) or fall back to package version
+__version__ = os.getenv("QUARTZ_SOLAR_FORECAST_VERSION") or version("quartz_solar_forecast")
 
 description = """
 API for [Open Source Quartz Solar Forecast](
