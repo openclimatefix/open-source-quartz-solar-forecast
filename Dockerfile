@@ -19,10 +19,6 @@ RUN uv sync
 # Copy the entire project directory (including quartz_solar_forecast)
 COPY . /app
 
-# Capture git version and set as environment variable
-RUN GIT_VERSION=$(git describe --tags 2>/dev/null || echo "0.0.0") && \
-    echo "export QUARTZ_SOLAR_FORECAST_VERSION=${GIT_VERSION}" > /app/git_version.sh
-
 # Expose port 8000 to the outside world
 EXPOSE 8000
 
@@ -31,6 +27,6 @@ ENV PYTHONPATH="${PYTHONPATH}:/app/api/v1"
 
 # Run the application using python main.py
 # Note you can override this if you want to load v0
-# Wr run git_version.sh so that the version is set in the app
-CMD ["/bin/bash", "-c", "source /app/git_version.sh && uv run uvicorn api.v1.api:app --host 0.0.0.0 --port 8000"]
+CMD ["uv", "run", "uvicorn", "api.v1.api:app", "--host", "0.0.0.0", "--port", "8000"]
+
 
