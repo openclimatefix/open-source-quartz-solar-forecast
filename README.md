@@ -270,6 +270,8 @@ Although this model is trained on UK data, this tool has been used in the follow
 
 We welcome other models.
 
+- Take a look at the **[official documentation](https://open.quartz.solar/docs)** to learn more about the project's tools and how they work;
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
