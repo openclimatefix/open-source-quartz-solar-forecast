@@ -45,6 +45,8 @@ A colab notebook providing some examples can be found [here](https://colab.resea
 
 ## Generating Forecasts
 
+For comprehensive details on how to generate forecasts, please refer to the official documentation: [Open Quartz Solar Documentation](https://open.quartz.solar/docs).
+
 To generate solar forecasts and save them into a CSV file, follow these steps:
 
 - Run the forecast_csv.py script with desired inputs
@@ -269,8 +271,6 @@ Although this model is trained on UK data, this tool has been used in the follow
 ## Contribution
 
 We welcome other models.
-
-- Take a look at the **[official documentation](https://open.quartz.solar/docs)** to learn more about the project's tools and how they work;
 
 ## Contributors ✨
 
