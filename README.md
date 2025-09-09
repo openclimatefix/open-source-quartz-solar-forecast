@@ -57,12 +57,6 @@ To generate solar forecasts and save them into a CSV file, follow these steps:
 
 - Run the forecast_csv.py script with desired inputs
 
-For comprehensive details on how to generate forecasts, please refer to the official documentation: [Open Quartz Solar Documentation](https://open.quartz.solar/docs).
-
-To generate solar forecasts and save them into a CSV file, follow these steps:
-
-- Run the forecast_csv.py script with desired inputs
-
 ```bash
 python scripts/forecast_csv.py
 ```
