@@ -45,9 +45,14 @@ A colab notebook providing some examples can be found [here](https://colab.resea
 
 ## Generating Forecasts
 
+There is an API to generate forecasts at [https://open.quartz.solar](https://open.quartz.solar/docs). For more detailed information on all available endpoints and parameters, please refer to the [Official API Documentation](https://open.quartz.solar/docs) and the project's `api/` directory.
+
+### Using the Python Script
+
 To generate solar forecasts and save them into a CSV file, follow these steps:
 
 - Run the forecast_csv.py script with desired inputs
+
 
 ```bash
 python scripts/forecast_csv.py
