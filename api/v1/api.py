@@ -145,7 +145,7 @@ def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
     """Get a PV Forecast for a site."""
     site = forecast_request.site
     ts = forecast_request.timestamp if forecast_request.timestamp else datetime.now(UTC).isoformat()
-    nwp_source = site.nwp_source
+    nwp_source = forecast_request.nwp_source
 
     live_generation = forecast_request.live_generation
 
