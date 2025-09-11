@@ -136,12 +136,16 @@ class ForecastRequest(BaseModel):
     live_generation: list[GenerationValue] | None = Field(
         None, description="Optional list of live generation values."
     )
+    nwp_source: str = Field(
+        "icon", description="The nwp data source. Either 'gfs', 'icon' or 'ukmo'. " \
+        "Defaults to 'icon'."
 
 @app.post("/forecast/")
 def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
     """Get a PV Forecast for a site."""
     site = forecast_request.site
     ts = forecast_request.timestamp if forecast_request.timestamp else datetime.now(UTC).isoformat()
+    nwp_source = site.nwp_source
 
     live_generation = forecast_request.live_generation
 
@@ -174,7 +178,10 @@ def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
         orientation=site.orientation,
     )
 
-    predictions = run_forecast(site=site_no_live, ts=timestamp, live_generation=live_generation_df)
+    predictions = run_forecast(site=site_no_live, 
+                               ts=timestamp, 
+                               live_generation=live_generation_df, n
+                               wp_source=nwp_source)
 
 
     response = {
