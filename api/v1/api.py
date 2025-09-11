@@ -138,7 +138,7 @@ class ForecastRequest(BaseModel):
     )
     nwp_source: str = Field(
         "icon", description="The nwp data source. Either 'gfs', 'icon' or 'ukmo'. " \
-        "Defaults to 'icon'."
+        "Defaults to 'icon'.")
 
 @app.post("/forecast/")
 def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
@@ -178,10 +178,10 @@ def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
         orientation=site.orientation,
     )
 
-    predictions = run_forecast(site=site_no_live, 
-                               ts=timestamp, 
-                               live_generation=live_generation_df, n
-                               wp_source=nwp_source)
+    predictions = run_forecast(site=site_no_live,
+                               ts=timestamp,
+                               live_generation=live_generation_df,
+                               nwp_source=nwp_source)
 
 
     response = {
