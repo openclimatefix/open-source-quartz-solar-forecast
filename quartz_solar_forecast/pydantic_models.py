@@ -16,20 +16,17 @@ class PVSite(BaseModel):
         description="the latitude of the site",
         ge=-90,
         le=90,
-        json_schema_extra={"examples": [51.5072]},
     )
     longitude: float = Field(
         ...,
         description="the longitude of the site",
         ge=-180,
         le=180,
-        json_schema_extra={"examples": [-0.1276]},
     )
     capacity_kwp: float = Field(
         ...,
         description="the capacity [kwp] of the site",
         ge=0,
-        json_schema_extra={"examples": [5.0]},
     )
     tilt: float = Field(
         default=35,
