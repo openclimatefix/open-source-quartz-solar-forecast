@@ -1,7 +1,7 @@
 # Quartz Solar Forecast
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-35-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-36-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15322532.svg)](https://doi.org/10.5281/zenodo.15322532)
@@ -328,6 +328,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="http://hrsvrn.com"><img src="https://avatars.githubusercontent.com/u/76729417?v=4?s=100" width="100px;" alt="Harshvardhan Vatsa"/><br /><sub><b>Harshvardhan Vatsa</b></sub></a><br /><a href="#infra-hrsvrn" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Krishnadubey1008"><img src="https://avatars.githubusercontent.com/u/121748506?v=4?s=100" width="100px;" alt="Krishna Dubey"/><br /><sub><b>Krishna Dubey</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=Krishnadubey1008" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/akshay-juneja"><img src="https://avatars.githubusercontent.com/u/226966641?v=4?s=100" width="100px;" alt="Akshay Juneja"/><br /><sub><b>Akshay Juneja</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=akshay-juneja" title="Documentation">📖</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/yuvraajnarula"><img src="https://avatars.githubusercontent.com/u/49155095?v=4?s=100" width="100px;" alt="Yuvraaj Narula"/><br /><sub><b>Yuvraaj Narula</b></sub></a><br /><a href="https://github.com/openclimatefix/open-source-quartz-solar-forecast/commits?author=yuvraajnarula" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
