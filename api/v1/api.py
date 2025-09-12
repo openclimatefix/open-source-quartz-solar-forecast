@@ -115,12 +115,11 @@ class ForecastValues(BaseModel):
     )
 
 
-
 class GenerationValue(BaseModel):
     """Generation Value"""
+
     timestamp: datetime
     generation: float
-
 
 
 class ForecastResponse(BaseModel):
@@ -144,16 +143,17 @@ class ForecastRequest(BaseModel):
                     "longitude": -0.1276,
                     "capacity_kwp": 5.0,
                     "tilt": 30,
-                    "orientation": 180
+                    "orientation": 180,
                 },
                 "timestamp": "2025-09-12T05:35:48.277Z",
                 "live_generation": [
                     {"timestamp": "2025-09-12T05:00:00Z", "generation": 2.5},
-                    {"timestamp": "2025-09-12T04:45:00Z", "generation": 2.2}
-                ]
+                    {"timestamp": "2025-09-12T04:45:00Z", "generation": 2.2},
+                ],
             }
         }
     }
+
 
 @app.post("/forecast/")
 def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
@@ -182,8 +182,6 @@ def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
     else:
         live_generation_df = None
 
-
-
     site_no_live = PVSite(
         latitude=site.latitude,
         longitude=site.longitude,
@@ -193,7 +191,6 @@ def forecast(forecast_request: ForecastRequest) -> ForecastResponse:
     )
 
     predictions = run_forecast(site=site_no_live, ts=timestamp, live_generation=live_generation_df)
-
 
     response = {
         "timestamp": formatted_timestamp,
