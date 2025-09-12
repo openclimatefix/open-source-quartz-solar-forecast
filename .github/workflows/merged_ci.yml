@@ -2,8 +2,7 @@ name: Merged CI
 run-name: 'Bump tag with merge #${{ github.event.number }} "${{ github.event.pull_request.title }}"'
 
 on:
-  pull_request:
-    types: ["closed"]
+  push:
     branches: [ "main" ]
 
 jobs:
