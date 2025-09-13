@@ -2,8 +2,8 @@ from quartz_solar_forecast.eval.pv import get_pv_truth, get_pv_metadata
 import pandas as pd
 import pytest
 
-@pytest.mark.skip(reason="HF files have been changes"
-" - https://github.com/openclimatefix/open-source-quartz-solar-forecast/issues/292")
+# @pytest.mark.skip(reason="HF files have been changes"
+# " - https://github.com/openclimatefix/open-source-quartz-solar-forecast/issues/292")
 @pytest.mark.integration
 def test_get_pv_metadata():
     test_set_df = pd.DataFrame(
@@ -19,8 +19,8 @@ def test_get_pv_metadata():
     assert "latitude" in metadata_df.columns
 
 
-@pytest.mark.skip(reason="HF files have been changes"
-" - https://github.com/openclimatefix/open-source-quartz-solar-forecast/issues/292")
+# @pytest.mark.skip(reason="HF files have been changes"
+# " - https://github.com/openclimatefix/open-source-quartz-solar-forecast/issues/292")
 @pytest.mark.integration
 def test_get_pv():
     # make test dataset file
