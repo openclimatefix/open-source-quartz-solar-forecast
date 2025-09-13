@@ -1,10 +1,11 @@
+import pyarrow.dataset as ds
+
 import os
 
 import numpy as np
 import pandas as pd
 from huggingface_hub import HfFileSystem
 import glob
-import pyarrow.dataset as ds
 
 fs = HfFileSystem()
 
