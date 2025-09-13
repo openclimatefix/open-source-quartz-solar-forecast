@@ -13,7 +13,7 @@ def get_pv_metadata(testset: pd.DataFrame) -> pd.DataFrame:
     cache_dir = "data/pv"
     metadata_file = f"{cache_dir}/metadata.csv"
 
-    if not os.path.exists(metadata_file):
+    if not os.path.exists(metadata_file) or os.path.getsize(metadata_file) == 0:
         os.makedirs(cache_dir, exist_ok=True)
         fs.get("datasets/openclimatefix/uk_pv/metadata.csv", metadata_file)
 
