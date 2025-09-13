@@ -5,6 +5,7 @@ import pandas as pd
 from huggingface_hub import HfFileSystem
 import glob
 import pyarrow.dataset as ds
+
 fs = HfFileSystem()
 
 
@@ -38,6 +39,7 @@ def get_pv_metadata(testset: pd.DataFrame) -> pd.DataFrame:
     combined_data["timestamp"] = pd.to_datetime(combined_data["timestamp"])
     return combined_data
 
+
 def get_pv_truth(testset: pd.DataFrame, horizon_hours: int = 48) -> pd.DataFrame:
     """Fetch PV generation truth values for given testset.
     Vectorized across pv_id and horizons.
@@ -52,7 +54,7 @@ def get_pv_truth(testset: pd.DataFrame, horizon_hours: int = 48) -> pd.DataFrame
         os.makedirs(cache_dir, exist_ok=True)
         fs.get("datasets/openclimatefix/uk_pv/30_minutely", cache_dir, recursive=True)
 
-    # Find all non-empty parquet files 
+    # Find all non-empty parquet files
     files = glob.glob(f"{parquet_dir}/**/*.parquet", recursive=True)
     non_empty_files = [f for f in files if os.path.getsize(f) > 0]
 
@@ -64,14 +66,14 @@ def get_pv_truth(testset: pd.DataFrame, horizon_hours: int = 48) -> pd.DataFrame
     pv_data = dataset.to_table().to_pandas()
 
     # Ensure datetime column is parsed
-    pv_data["datetime_GMT"] = pd.to_datetime(pv_data["datetime_GMT"]).dt.tz_convert('UTC')
+    pv_data["datetime_GMT"] = pd.to_datetime(pv_data["datetime_GMT"]).dt.tz_convert("UTC")
 
-    # Vectorized expansion 
+    # Vectorized expansion
     horizons = np.arange(horizon_hours + 1)
     expanded = testset.loc[testset.index.repeat(len(horizons))].copy()
     expanded["horizon_hour"] = np.tile(horizons, len(testset))
 
-    expanded["timestamp"] = pd.to_datetime(expanded["timestamp"]).dt.tz_localize('UTC')
+    expanded["timestamp"] = pd.to_datetime(expanded["timestamp"]).dt.tz_localize("UTC")
     # Merge with pv_data
     merged = expanded.merge(
         pv_data,
