@@ -26,8 +26,11 @@ dependencies = [
     "uvicorn",
     "pydantic_settings",
     "httpx",
-    "sentry_sdk",
-    "huggingface_hub==0.17.3"
+    "huggingface_hub==0.17.3",
+    # Temporarily pin these to allow simple `pip install` to work
+    # see https://github.com/openclimatefix/open-source-quartz-solar-forecast/issues/316
+    "numexpr==2.13.1",
+    "sentry-sdk==2.37.1"
 ]
 
 [project.urls]
