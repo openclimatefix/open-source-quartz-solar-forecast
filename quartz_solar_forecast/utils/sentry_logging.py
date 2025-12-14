@@ -3,8 +3,6 @@
 import importlib.metadata
 import os
 
-import sentry_sdk
-
 from quartz_solar_forecast.pydantic_models import PVSite
 
 version = importlib.metadata.version("quartz_solar_forecast")
@@ -14,7 +12,16 @@ quartz_solar_forecast_logging = (
 )
 
 SENTRY_DSN = "https://b2b6f3c97299f81464bc16ad0d516d0b@o400768.ingest.us.sentry.io/4508439933157376"
-sentry_sdk.init(dsn=SENTRY_DSN, traces_sample_rate=1.0)
+
+# Only import and initialize Sentry SDK if logging is enabled
+if quartz_solar_forecast_logging:
+    import sentry_sdk
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        traces_sample_rate=1.0,
+        # Disable default integrations to prevent silent data collection
+        default_integrations=False,
+    )
 
 
 def write_sentry(params):
@@ -24,6 +31,9 @@ def write_sentry(params):
 
     if not quartz_solar_forecast_logging:
         return
+
+    # Import sentry_sdk only when needed
+    import sentry_sdk
 
     try:
         for key, value in params.items():
