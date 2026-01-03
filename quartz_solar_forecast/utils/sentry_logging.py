@@ -14,7 +14,8 @@ quartz_solar_forecast_logging = (
 )
 
 SENTRY_DSN = "https://b2b6f3c97299f81464bc16ad0d516d0b@o400768.ingest.us.sentry.io/4508439933157376"
-sentry_sdk.init(dsn=SENTRY_DSN, traces_sample_rate=1.0)
+if quartz_solar_forecast_logging:
+    sentry_sdk.init(dsn=SENTRY_DSN, traces_sample_rate=1.0)
 
 
 def write_sentry(params):
