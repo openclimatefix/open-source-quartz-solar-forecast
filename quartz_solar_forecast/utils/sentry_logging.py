@@ -14,8 +14,17 @@ quartz_solar_forecast_logging = (
 )
 
 SENTRY_DSN = "https://b2b6f3c97299f81464bc16ad0d516d0b@o400768.ingest.us.sentry.io/4508439933157376"
+
 if quartz_solar_forecast_logging:
-    sentry_sdk.init(dsn=SENTRY_DSN, traces_sample_rate=1.0)
+    def filter_integrations(integrations):
+        try:
+            from sentry_sdk.integrations.huggingface_hub import HuggingFaceHubIntegration
+
+            return [i for i in integrations if not isinstance(i, HuggingFaceHubIntegration)]
+        except (ImportError, AttributeError):
+            return integrations
+
+    sentry_sdk.init(dsn=SENTRY_DSN, traces_sample_rate=1.0, integrations=filter_integrations)
 
 
 def write_sentry(params):
