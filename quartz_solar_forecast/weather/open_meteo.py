@@ -70,10 +70,11 @@ class WeatherService:
         ValueError
             If coordinates are not within valid ranges.
         """
-        assert -90 <= latitude <= 90 and -180 <= longitude <= 180, (
-            "Invalid coordinates. Latitude must be between -90 and 90, "
-            "and longitude must be between -180 and 180."
-        )
+        if not (-90 <= latitude <= 90 and -180 <= longitude <= 180):
+            raise ValueError(
+                "Invalid coordinates. Latitude must be between -90 and 90, "
+                "and longitude must be between -180 and 180."
+            )
 
     def _validate_date_format(self, start_date: str, end_date: str) -> None:
         """
@@ -94,12 +95,16 @@ class WeatherService:
         try:
             start_datetime = datetime.strptime(start_date, "%Y-%m-%d")
             end_datetime = datetime.strptime(end_date, "%Y-%m-%d")
-            assert end_datetime > start_datetime, "End date must be greater than start date."
-        except (ValueError, AssertionError) as e:
+        except ValueError as e:
             raise ValueError(
-                f"Invalid date format or range. Please use YYYY-MM-DD and ensure "
-                f"end_date is greater than start_date. Error: {str(e)}"
+                f"Invalid date format. Please use YYYY-MM-DD format. Error: {str(e)}"
             ) from e
+        
+        if not (end_datetime > start_datetime):
+            raise ValueError(
+                f"Invalid date range. End date ({end_date}) must be greater than "
+                f"start date ({start_date})."
+            )
 
     def get_hourly_weather(
         self, latitude: float, longitude: float, start_date: str, end_date: str
