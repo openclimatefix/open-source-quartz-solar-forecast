@@ -26,8 +26,8 @@ dependencies = [
     "uvicorn",
     "pydantic_settings",
     "httpx",
-    "sentry_sdk==1.45.0",
-    "huggingface_hub==0.17.3"
+    "sentry_sdk",
+    "huggingface_hub>=0.20.0"
 ]
 
 [project.urls]
