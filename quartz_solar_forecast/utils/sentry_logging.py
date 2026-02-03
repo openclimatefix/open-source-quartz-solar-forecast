@@ -5,6 +5,8 @@ import os
 
 import sentry_sdk
 
+from sentry_sdk.integrations.huggingface_hub import HuggingfaceHubIntegration
+
 from quartz_solar_forecast.pydantic_models import PVSite
 
 version = importlib.metadata.version("quartz_solar_forecast")
@@ -14,7 +16,11 @@ quartz_solar_forecast_logging = (
 )
 
 SENTRY_DSN = "https://b2b6f3c97299f81464bc16ad0d516d0b@o400768.ingest.us.sentry.io/4508439933157376"
-sentry_sdk.init(dsn=SENTRY_DSN, traces_sample_rate=1.0)
+sentry_sdk.init(
+    dsn=SENTRY_DSN,
+    traces_sample_rate=1.0,
+    disabled_integrations=[HuggingfaceHubIntegration],
+)
 
 
 def write_sentry(params):

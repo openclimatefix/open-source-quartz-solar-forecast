@@ -7,6 +7,7 @@ import zipfile
 import pandas as pd
 from huggingface_hub import hf_hub_download
 from xgboost.sklearn import XGBRegressor
+import xgboost as xgb
 
 import quartz_solar_forecast
 from quartz_solar_forecast.weather import WeatherService
@@ -91,7 +92,7 @@ class TryolabsSolarPowerPredictor:
 
     def load_model(
         self,
-        model_file: str = constants.MODEL_FILE,
+        model_file: str = "model_10_202405.ubj",
         repo_id: str = "openclimatefix/open-source-quartz-solar-forecast",
         file_path: str = "models/v2/model_10_202405.ubj.zip",
     ) -> XGBRegressor:
@@ -115,21 +116,13 @@ class TryolabsSolarPowerPredictor:
         XGBRegressor
             The loaded XGBoost model ready for making predictions.
         """
-        # Use the project directory
-        zipfile_model = os.path.join(self.download_dir, model_file + ".zip")
-
-        if not os.path.isfile(zipfile_model):
-            logger.info("Downloading model...")
-            zipfile_model = self._download_model(model_file + ".zip", repo_id, file_path)
 
         model_path = os.path.join(self.download_dir, model_file)
-        if not os.path.isfile(model_path):
-            logger.info("Preparing model...")
-            self._decompress_zipfile(zipfile_model)
 
-        logger.info("Loading model...")
-        loaded_model = XGBRegressor()
+        logger.info(f"Loading Raw Booster from {model_path}...")
+        loaded_model = xgb.Booster()
         loaded_model.load_model(model_path)
+        loaded_model._estimator_type = "regressor"
         self.model = loaded_model
         return loaded_model
 
@@ -260,14 +253,13 @@ class TryolabsSolarPowerPredictor:
         """
 
         data = self.get_data(latitude, longitude, start_date, kwp, orientation, tilt)
-        # if data is not None:
         cleaned_data = self.clean(data)
-        predictions = self.model.predict(cleaned_data.drop(columns=[self.DATE_COLUMN]))
+        X = cleaned_data.drop(columns=[self.DATE_COLUMN])
+        dmatrix = xgb.DMatrix(X)
+        predictions = self.model.predict(dmatrix)
         predictions_df = pd.DataFrame(predictions, columns=["prediction"])
         final_data = cleaned_data.join(predictions_df)
-        # set night predictions to 0
         final_data.loc[final_data["is_day"] == 0, "prediction"] = 0
-        # set negative output to 0
         final_data.loc[final_data["prediction"] < 0, "prediction"] = 0
         df = final_data[[self.DATE_COLUMN, "prediction"]]
         df = df.rename(columns={"prediction": "power_kw"})
