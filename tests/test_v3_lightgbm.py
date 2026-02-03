@@ -4,17 +4,15 @@ Tests for the LightGBM solar predictor (v3) and feature engineering.
 Author: Raakshass (GSoC 2026 Contributor)
 """
 
-import numpy as np
+
 import pandas as pd
-import pytest
-from datetime import datetime, timedelta
 
 from quartz_solar_forecast.forecasts.feature_engineering import (
-    calculate_solar_position,
-    encode_cyclical_time,
+    FeatureEngineer,
     calculate_derived_weather_features,
     calculate_panel_factors,
-    FeatureEngineer,
+    calculate_solar_position,
+    encode_cyclical_time,
     get_feature_names,
 )
 
@@ -156,7 +154,9 @@ class TestPanelFactors:
         result_east = calculate_panel_factors(sun_azimuth, sun_elevation, 30.0, 90.0)
 
         # South-facing should have higher factor when sun is in south
-        assert result_south["panel_incidence_factor"].iloc[0] > result_east["panel_incidence_factor"].iloc[0]
+        south_factor = result_south["panel_incidence_factor"].iloc[0]
+        east_factor = result_east["panel_incidence_factor"].iloc[0]
+        assert south_factor > east_factor
 
 
 class TestFeatureEngineer:
