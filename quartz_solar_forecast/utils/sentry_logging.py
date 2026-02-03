@@ -1,9 +1,9 @@
-"""Log usage of this package to Sentry"""
-
 import importlib.metadata
 import os
 
 import sentry_sdk
+
+from sentry_sdk.integrations.huggingface_hub import HuggingfaceHubIntegration
 
 from quartz_solar_forecast.pydantic_models import PVSite
 

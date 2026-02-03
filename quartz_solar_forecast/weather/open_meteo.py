@@ -98,8 +98,7 @@ class WeatherService:
         except ValueError as e:
             raise ValueError(
                 f"Invalid date format. Please use YYYY-MM-DD format. Error: {str(e)}"
-            ) from e
-        
+
         if not (end_datetime > start_datetime):
             raise ValueError(
                 f"Invalid date range. End date ({end_date}) must be greater than "
@@ -166,6 +165,7 @@ class WeatherService:
         except requests.exceptions.Timeout as e:
             raise TimeoutError(f"Request to OpenMeteo API timed out. URl - {url}") from e
 
+        # Process the hourly data
         hourly = response[0].Hourly()
         hourly_data = {
             "time": pd.date_range(
