@@ -98,7 +98,7 @@ class WeatherService:
         except ValueError as e:
             raise ValueError(
                 f"Invalid date format. Please use YYYY-MM-DD format. Error: {str(e)}"
-        
+
         if not (end_datetime > start_datetime):
             raise ValueError(
                 f"Invalid date range. End date ({end_date}) must be greater than "
