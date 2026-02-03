@@ -93,31 +93,32 @@ def predict_tryolabs(site: PVSite, ts: datetime | str = None):
     three_months_ago = datetime.today() - timedelta(days=3 * 30)
 
     if start_date_datetime < three_months_ago:
-        print(
-            f"Start date ({start_date}) is more than 3 months ago, no",
-            "forecast data available.",
-        )
-    else:
-        # download the model from google drive and decompress if necessary
-        solar_power_predictor.load_model()
-        # make predictions
-        predictions = solar_power_predictor.predict_power_output(
-            latitude=site.latitude,
-            longitude=site.longitude,
-            start_date=start_date,
-            kwp=site.capacity_kwp,
-            orientation=site.orientation,
-            tilt=site.tilt,
+        raise ValueError(
+            f"Start date ({start_date}) is more than 3 months ago. "
+            "Historical forecast data is not available beyond this range. "
+            "Please use a more recent date."
         )
 
-        # postprocessing of the dataframe
-        predictions = predictions[
-            (predictions["date"] >= start_time) & (predictions["date"] < end_time)
-        ]
-        predictions = predictions.reset_index(drop=True)
-        predictions.set_index("date", inplace=True)
-        print("Predictions finished.")
-        return predictions
+    # download the model from google drive and decompress if necessary
+    solar_power_predictor.load_model()
+    # make predictions
+    predictions = solar_power_predictor.predict_power_output(
+        latitude=site.latitude,
+        longitude=site.longitude,
+        start_date=start_date,
+        kwp=site.capacity_kwp,
+        orientation=site.orientation,
+        tilt=site.tilt,
+    )
+
+    # postprocessing of the dataframe
+    predictions = predictions[
+        (predictions["date"] >= start_time) & (predictions["date"] < end_time)
+    ]
+    predictions = predictions.reset_index(drop=True)
+    predictions.set_index("date", inplace=True)
+    log.info("Predictions finished.")
+    return predictions
 
 
 def run_forecast(
