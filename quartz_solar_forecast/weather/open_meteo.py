@@ -99,7 +99,6 @@ class WeatherService:
             raise ValueError(
                 f"Invalid date format or range. Please use YYYY-MM-DD and ensure "
                 f"end_date is greater than start_date. Error: {str(e)}"
-            ) from e
 
     def get_hourly_weather(
         self, latitude: float, longitude: float, start_date: str, end_date: str
