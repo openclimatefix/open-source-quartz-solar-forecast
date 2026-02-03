@@ -1,6 +1,3 @@
-def write_sentry(message):
-    pass
-
 import importlib.metadata
 import os
 

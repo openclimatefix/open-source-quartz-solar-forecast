@@ -165,7 +165,7 @@ class WeatherService:
         except requests.exceptions.Timeout as e:
             raise TimeoutError(f"Request to OpenMeteo API timed out. URl - {url}") from e
 
-        # process the hourly data
+        # Process the hourly data
         hourly = response[0].Hourly()
         hourly_data = {
             "time": pd.date_range(
