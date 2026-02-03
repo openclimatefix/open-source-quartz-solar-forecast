@@ -5,6 +5,7 @@ import pandas as pd
 
 from quartz_solar_forecast.data import get_nwp, make_pv_data
 from quartz_solar_forecast.forecasts import (
+    LightGBMSolarPredictor,
     TryolabsSolarPowerPredictor,
     forecast_v1_tilt_orientation,
 )
@@ -121,6 +122,64 @@ def predict_tryolabs(site: PVSite, ts: datetime | str = None):
     return predictions
 
 
+def predict_lightgbm(site: PVSite, ts: datetime | str = None):
+    """
+    Run the forecast with the LightGBM model.
+
+    This model uses enhanced feature engineering including solar position,
+    cyclical time features, and derived weather features.
+
+    :param site: the PV site
+    :param ts: the timestamp of the site. If None, defaults to the current
+        timestamp rounded down to 15 minutes.
+    :return: The PV forecast of the site for time (ts) for 48 hours
+    """
+
+    # instantiate class to make predictions
+    solar_power_predictor = LightGBMSolarPredictor()
+
+    # set start and end time, if no time is given use current time
+    if ts is None:
+        start_date = pd.Timestamp.now().strftime("%Y-%m-%d")
+        start_time = pd.Timestamp.now().round(freq="h")
+    else:
+        start_date = pd.Timestamp(ts).strftime("%Y-%m-%d")
+        start_time = pd.Timestamp(ts).round(freq="h")
+
+    end_time = start_time + pd.Timedelta(hours=48)
+    start_date_datetime = datetime.strptime(start_date, "%Y-%m-%d")
+
+    # Check if the start date is more than 3 months ago
+    three_months_ago = datetime.today() - timedelta(days=3 * 30)
+
+    if start_date_datetime < three_months_ago:
+        print(
+            f"Start date ({start_date}) is more than 3 months ago, no",
+            "forecast data available.",
+        )
+        return None
+    else:
+        # load model (will use physics-based fallback if not trained yet)
+        solar_power_predictor.load_model()
+        # make predictions
+        predictions = solar_power_predictor.predict_power_output(
+            latitude=site.latitude,
+            longitude=site.longitude,
+            start_date=start_date,
+            kwp=site.capacity_kwp,
+            orientation=site.orientation,
+            tilt=site.tilt,
+        )
+
+        # postprocessing of the dataframe
+        predictions = predictions[
+            (predictions["date"] >= start_time) & (predictions["date"] < end_time)
+        ]
+        predictions = predictions.reset_index(drop=True)
+        predictions.set_index("date", inplace=True)
+        print("Predictions finished.")
+        return predictions
+
 def run_forecast(
     site: PVSite,
     model: str = "gb",
@@ -132,8 +191,10 @@ def run_forecast(
     Predict solar power output for a given site using a specified model.
 
     :param site: the PV site
-    :param model: the model to use for prediction, choose between "ocf" and "tryolabs",
-                    by default "ocf" is used
+    :param model: the model to use for prediction. Options:
+                  - "gb": Gradient Boosting (default, OCF model)
+                  - "xgb": XGBoost (Tryolabs model)
+                  - "lgbm": LightGBM with enhanced features (experimental)
     :param ts: the timestamp of the site. If None, defaults to the current
         timestamp rounded down to 15 minutes.
     :param nwp_source: the nwp data source. Either "gfs", "icon" or "ukmo". Defaults to "icon"
@@ -160,5 +221,11 @@ def run_forecast(
             "Ignoring live_generation input.")
         return predict_tryolabs(site, ts)
 
+    elif model == "lgbm":
+        if live_generation is not None:
+            log.warning("Live generation data is currently not supported with the lgbm model. " \
+            "Ignoring live_generation input.")
+        return predict_lightgbm(site, ts)
+
     else:
-        raise ValueError(f"Unsupported model: {model}. Choose between 'xgb' and 'gb'")
+        raise ValueError(f"Unsupported model: {model}. Choose between 'gb', 'xgb', or 'lgbm'")
