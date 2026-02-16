@@ -2,11 +2,16 @@ import os
 from datetime import datetime
 
 import pandas as pd
-from psp.serialization import load_model
 
 from quartz_solar_forecast.data import format_nwp_data, make_pv_data
-from quartz_solar_forecast.forecasts.v1 import forecast_v1
 from quartz_solar_forecast.pydantic_models import PVSite
+
+try:
+    from psp.serialization import load_model
+    from quartz_solar_forecast.forecasts.v1 import forecast_v1
+except ImportError:
+    load_model = None
+    forecast_v1 = None
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -28,6 +33,12 @@ def run_forecast(pv_df: pd.DataFrame, nwp_df: pd.DataFrame, nwp_source="ICON") -
         - cloudcover_high",
         maybe more
     """
+
+    if load_model is None or forecast_v1 is None:
+        raise ImportError(
+            "Evaluation requires pv-site-prediction. "
+            "Install with: pip install 'quartz-solar-forecast[legacy]' (requires Python <3.12)"
+        )
 
     # load model only once
     model = load_model(f"{dir_path}/../models/model-0.3.0.pkl")
