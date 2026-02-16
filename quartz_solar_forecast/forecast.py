@@ -56,6 +56,12 @@ def predict_ocf(
     pv_xr = make_pv_data(site=site, ts=ts, live_generation=live_generation)
 
     # load and run models
+    if forecast_v1_tilt_orientation is None:
+        raise ImportError(
+            "The 'gb' model requires pv-site-prediction which is not installed. "
+            "Install it with: pip install 'quartz-solar-forecast[legacy]' "
+            "(requires Python <3.12). Alternatively, use model='xgb'."
+        )
     pred_df = forecast_v1_tilt_orientation(nwp_source, nwp_xr, pv_xr, ts, model=model)
 
     # scale the results if the capacity is different
