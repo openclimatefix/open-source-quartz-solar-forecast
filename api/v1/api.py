@@ -5,6 +5,7 @@ from datetime import UTC, datetime
 from importlib.metadata import version
 
 import pandas as pd
+from apitally.fastapi import ApitallyMiddleware
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -94,6 +95,16 @@ And you can always head over to our
 
 
 app = FastAPI(description=description, version=__version__, title="Open Quartz Solar Forecast API")
+
+client_id = os.getenv("APITALLY_CLIENT_ID")
+
+if client_id:
+    app.add_middleware(
+        ApitallyMiddleware,
+        client_id=client_id,
+        environment=os.getenv("APITALLY_ENVIRONMENT", "dev"),
+    )
+
 
 # CORS middleware setup
 origins = [
