@@ -27,7 +27,8 @@ dependencies = [
     "pydantic_settings",
     "httpx",
     "sentry_sdk",
-    "huggingface_hub==0.17.3"
+    "huggingface_hub==0.17.3",
+    "apitally[fastapi]>=0.22.3"
 ]
 
 [project.urls]
@@ -51,6 +52,7 @@ dev = [
     "matplotlib",
     "zipfile36",
     "pytest",
+    "huggingface_hub==0.17.3"
 ]
 inverters = ["ocf_vrmapi"] # victron
 all = [
@@ -60,6 +62,7 @@ all = [
     "gdown==5.1.0",
     "fastapi",
     "pytest",
+    "huggingface_hub==0.17.3"
 ]
 
 [tool.mypy]

@@ -89,6 +89,18 @@ and how we can make improvements in the future.
 Note that any latitudes and longitudes are rounded to 2 decimals places in order to anonymize the data.
 If you would like to disable this logging, you can do so by setting the environment variable `QUARTZ_SOLAR_FORECAST_LOGGING` to `False`.
 
+### API Monitoring (APITally)
+
+The FastAPI application supports optional monitoring via APITally.
+
+To enable API request monitoring, set the following environment variables before starting the API:
+
+```bash
+APITALLY_CLIENT_ID=your_client_id
+APITALLY_ENVIRONMENT=dev
+```
+
+
 
 ## Model
 
