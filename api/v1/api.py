@@ -102,7 +102,7 @@ if client_id:
     app.add_middleware(
         ApitallyMiddleware,
         client_id=client_id,
-        environment=os.getenv("APITALLY_ENVIRONMENT", "local"),
+        environment=os.getenv("APITALLY_ENVIRONMENT", "open_quartz_local"),
         enable_request_logging=True,
         log_request_headers=True,
         log_request_body=True,

@@ -97,7 +97,7 @@ To enable API request monitoring, set the following environment variables before
 
 ```bash
 export APITALLY_CLIENT_ID=your_client_id
-export APITALLY_ENVIRONMENT=local
+export APITALLY_ENVIRONMENT=open_quartz_local
 ```
 
 ## Model
