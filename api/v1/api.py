@@ -102,10 +102,13 @@ if client_id:
     app.add_middleware(
         ApitallyMiddleware,
         client_id=client_id,
-        environment=os.getenv("APITALLY_ENVIRONMENT", "dev"),
+        environment=os.getenv("APITALLY_ENVIRONMENT", "local"),
+        enable_request_logging=True,
+        log_request_headers=True,
+        log_request_body=True,
+        log_response_body=True,
+        capture_logs=True,
     )
-
-
 # CORS middleware setup
 origins = [
     "*",

@@ -96,11 +96,9 @@ The FastAPI application supports optional monitoring via APITally.
 To enable API request monitoring, set the following environment variables before starting the API:
 
 ```bash
-APITALLY_CLIENT_ID=your_client_id
-APITALLY_ENVIRONMENT=dev
+export APITALLY_CLIENT_ID=your_client_id
+export APITALLY_ENVIRONMENT=local
 ```
-
-
 
 ## Model
 
