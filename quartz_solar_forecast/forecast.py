@@ -1,4 +1,6 @@
 import logging
+import warnings
+
 from datetime import datetime, timedelta
 
 import pandas as pd
@@ -12,6 +14,35 @@ from quartz_solar_forecast.pydantic_models import PVSite
 from quartz_solar_forecast.utils.sentry_logging import write_sentry
 
 log = logging.getLogger(__name__)
+
+def _normalize_ts(ts):
+    """
+    Normalize input timestamp to a timezone-aware pandas Timestamp in UTC.
+
+    Returns:
+        ts_utc (pd.Timestamp): timezone-aware UTC timestamp
+        out_tz (tzinfo): original timezone (or UTC)
+    """
+    if ts is None:
+        ts_pd = pd.Timestamp.now(tz="UTC")
+        return ts_pd, ts_pd.tz
+
+    ts_pd = pd.Timestamp(ts)
+
+    if ts_pd.tzinfo is None:
+        warnings.warn(
+            "Naive timestamps are assumed to be UTC and will be deprecated "
+            "in a future release.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        ts_pd = ts_pd.tz_localize("UTC")
+        return ts_pd, ts_pd.tz
+
+    out_tz = ts_pd.tz
+    ts_utc = ts_pd.tz_convert("UTC")
+    return ts_utc, out_tz
+
 
 def predict_ocf(
     site: PVSite,
@@ -79,12 +110,10 @@ def predict_tryolabs(site: PVSite, ts: datetime | str = None):
     solar_power_predictor = TryolabsSolarPowerPredictor()
 
     # set start and end time, if no time is given use current time
-    if ts is None:
-        start_date = pd.Timestamp.now().strftime("%Y-%m-%d")
-        start_time = pd.Timestamp.now().round(freq="h")
-    else:
-        start_date = pd.Timestamp(ts).strftime("%Y-%m-%d")
-        start_time = pd.Timestamp(ts).round(freq="h")
+    now = pd.Timestamp(ts) if ts is not None else pd.Timestamp.now(tz="UTC")
+
+    start_time = now.round(freq="h")
+    start_date = start_time.strftime("%Y-%m-%d")
 
     end_time = start_time + pd.Timedelta(hours=48)
     start_date_datetime = datetime.strptime(start_date, "%Y-%m-%d")
@@ -150,15 +179,17 @@ def run_forecast(
     # 1. set environmental variable QUARTZ_SOLAR_FORECAST_LOGGING='false', or
     # 2. comment out this line
     write_sentry({"site": site.copy(), "model": model, "ts": ts, "nwp_source": nwp_source})
+    ts_utc, out_tz = _normalize_ts(ts)
+
 
     if model == "gb":
-        return predict_ocf(site, None, ts, nwp_source, live_generation)
+        return predict_ocf(site, None, ts_utc, nwp_source, live_generation)
 
     elif model == "xgb":
         if live_generation is not None:
             log.warning("Live generation data is currently not supported with the xgb model. " \
             "Ignoring live_generation input.")
-        return predict_tryolabs(site, ts)
+        return predict_tryolabs(site, ts_utc)
 
     else:
         raise ValueError(f"Unsupported model: {model}. Choose between 'xgb' and 'gb'")
