@@ -26,7 +26,6 @@ dependencies = [
     "uvicorn",
     "pydantic_settings",
     "httpx",
-    "sentry_sdk",
     "huggingface_hub==0.17.3",
     "apitally[fastapi]>=0.22.3"
 ]
