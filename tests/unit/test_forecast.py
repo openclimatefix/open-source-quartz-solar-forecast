@@ -38,7 +38,9 @@ def test_run_forecast_historical():
 
     # model input data creation
     site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
-    ts = datetime.today() - timedelta(days=200)
+
+    # Use 60 days to stay within the 3-month (90-day) limit allowed by the XGB model
+    ts = datetime.today() - timedelta(days=60)
 
     # run model with icon, gfs and ukmo nwp
     predications_df_gfs = run_forecast(site=site, ts=ts, model="gb", nwp_source="gfs")
