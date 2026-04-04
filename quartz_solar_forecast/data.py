@@ -21,7 +21,7 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
 
     :param site: the PV site
     :param ts: the timestamp for when you want the forecast for
-    :param nwp_source: the nwp data source. Either "gfs", "icon" or "ukmo". Defaults to "icon"
+    :param nwp_source: the nwp data source. Either "gfs", "icon" "ukmo" or "ecmwf". Defaults to "icon"
     :return: nwp forecast in xarray
     """
     now = datetime.now()
@@ -61,9 +61,9 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     else:
         # Getting NWP from open meteo weather forecast API by ICON, GFS, or UKMO
         # within the last 3 months
-        url_nwp_source = {"icon": "dwd-icon", "gfs": "gfs", "ukmo": "ukmo_seamless"}.get(nwp_source)
+        url_nwp_source = {"icon": "dwd-icon", "gfs": "gfs", "ukmo": "ukmo_seamless","ecmwf":"ecmwf"}.get(nwp_source)
         if not url_nwp_source:
-            raise Exception(f'Source ({nwp_source}) must be either "icon", "gfs", or "ukmo"')
+            raise Exception(f'Source ({nwp_source}) must be either "icon", "gfs",  "ukmo" or "ecmwf"')
         url = (
             f"https://api.open-meteo.com/v1/"
             f"{url_nwp_source if nwp_source != 'ukmo' else 'forecast'}"

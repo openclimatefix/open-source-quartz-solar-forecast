@@ -23,7 +23,18 @@ Want to learn more about the project? We've presented Quartz Solar Forecast at t
 - **LF Energy 2024**: Exploring Open Quartz's developments - new models, inverter APIs, and our Open Source journey at Open Climate Fix [Watch the talk](https://www.youtube.com/watch?v=YTaq41ztEDg)
 
 
-The current model uses GFS or ICON NWPs to predict the solar generation at a site
+The current model uses GFS, ICON, UKMO, or ECMWF (IFS/AIFS) NWPs to predict the solar generation at a site.
+### NWP Data Sources
+
+You can set the NWP source by passing `nwp_source` to `run_forecast`:
+
+| Model | Provider        | Country | Resolution | `nwp_source`     |
+|-------|-----------------|---------|------------|------------------|
+| ICON  | DWD             | Germany | 2 - 11 km  | `icon` (default) |
+| GFS.  | NOAA            | USA     | 3 - 25 km  | `gfs`            |
+| IFS   | ECMWF           | EU      | 9 - 25 km  | `ecmwf_ifs`      |
+| AIFS  | ECMWF           | EU      | ~25 km     | `ecmwf_aifs`     |
+| UKMO  | UK Met Office   | UK      | 2 - 10 km  | `ukmo`           |
 
 ```python
 from quartz_solar_forecast.forecast import run_forecast
@@ -106,7 +117,7 @@ Two models are currently available to make predictions.
 
 **Gradient Boosting Model** (default)
 
-The model uses GFS or ICON NWPs to predict the solar generation at a site.
+The model uses NWP data from GFS, ICON, UKMO, or ECMWF (IFS/AIFS) to predict the solar generation at a site.
 It is a gradient boosted tree model and uses 9 NWP variables.
 It is trained on 25,000 PV sites with over 5 years of PV history, which is available [here](https://huggingface.co/datasets/openclimatefix/uk_pv).
 The training of this model is handled in [pv-site-prediction](https://github.com/openclimatefix/pv-site-prediction)
@@ -166,7 +177,7 @@ _Predictions using the two different models and different data sources._
 ## Known restrictions
 
 - The model is trained on [UK MetOffice](https://www.metoffice.gov.uk/services/data/met-office-weather-datahub) NWPs, but when running inference we use [GFS](https://www.ncei.noaa.gov/products/weather-climate-models/global-forecast) data from [Open-meteo](https://open-meteo.com/). The differences between GFS and UK MetOffice could led to some odd behaviours.
-- Depending, whether the timestamp for the prediction lays more than 90 days in the past or not, different data sources for the NWP are used. If we predict within the last 90 days, we can use ICON or GFS from the open-meteo Weather Forecast API. Since ICON doesn't provide visibility, this parameter is queried from GFS in any case. If the date for the prediction is further back in time, a reanalysis model of historical data is used (open-meteo | Historical Weather API). The historical weather API doesn't provide visibility at all, that's why it's set to a maximum of 24000 meter in this case. This can lead to some loss of precision.
+- Depending, whether the timestamp for the prediction lays more than 90 days in the past or not, different data sources for the NWP are used.If we predict within the last 90 days, we can use ICON, GFS, UKMO, or ECMWF (IFS/AIFS) from the open-meteo Weather Forecast API. Since ICON doesn't provide visibility, this parameter is queried from GFS in any case. If the date for the prediction is further back in time, a reanalysis model of historical data is used (open-meteo | Historical Weather API). The historical weather API doesn't provide visibility at all, that's why it's set to a maximum of 24000 meter in this case. This can lead to some loss of precision.
 - The model was trained and tested only over the UK, applying it to other geographical regions should be done with caution.
 - When using the XGBoost model, only hourly predictions within the last 90 days are available for data consistency.
 
@@ -255,6 +266,10 @@ To set up the development environment for this project, follow these steps:
 - MAE: Mean Absolute Error
 - [ICON](https://www.dwd.de/EN/ourservices/nwp_forecast_data/nwp_forecast_data.html): ICOsahedral Nonhydrostatic
 - KW: Kilowatt
+- UKMO: United Kingdom Met Office
+- ECMWF: European Centre for Medium-Range Weather Forecasts
+- IFS: Integrated Forecasting System
+- AIFS: Artificial Intelligence Forecasting System
 
 ## FOSDEM
 
