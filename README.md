@@ -43,6 +43,10 @@ which should result in a time series similar to this one:
 
 A colab notebook providing some examples can be found [here](https://colab.research.google.com/drive/1qKDFRpq4Hk-LHgWuDsz_Najc3Zq-GVNY?usp=sharing).
 
+## Prediction Accuracy
+
+See [docs/prediction-accuracy.md](docs/prediction-accuracy.md) for details on expected accuracy, known limitations, and how to evaluate the model on your own PV data.
+
 ## Generating Forecasts
 
 There is an API to generate forecasts at [https://open.quartz.solar](https://open.quartz.solar/docs). For more detailed information on all available endpoints and parameters, please refer to the [Official API Documentation](https://open.quartz.solar/docs) and the project's `api/` directory.
