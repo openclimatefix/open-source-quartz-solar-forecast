@@ -57,7 +57,7 @@ export function PVForecastForm({ updatePredictions }) {
       body: JSON.stringify({site:values}),
     });
     const data = await response.json();
-    updatePredictions(data.power_kw);
+    updatePredictions(data.predictions.power_kw);
   }
   return (
     <Form {...form}>
