@@ -27,7 +27,8 @@ def predict_ocf(
     :param model: the model to use for prediction
     :param ts: the timestamp of the site. If None, defaults to the current
         timestamp rounded down to 15 minutes.
-    :param nwp_source: the nwp data source. Either "gfs", "icon", "ukmo", or "ecmwf". Defaults to "icon"
+    :param nwp_source: the nwp data source. Either "gfs", "icon", "ukmo",
+        or "ecmwf". Defaults to "icon"
     :param live_generation: a dataframe containing live generation data for the site
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
@@ -137,8 +138,8 @@ def run_forecast(
                     by default "ocf" is used
     :param ts: the timestamp of the site. If None, defaults to the current
         timestamp rounded down to 15 minutes.
-    :param nwp_source: the nwp data source. Either "gfs", "icon", "ukmo", or "ecmwf". Defaults to "icon"
-                       (only relevant if model=="gb")
+    :param nwp_source: the nwp data source. Either "gfs", "icon", "ukmo",
+        or "ecmwf". Defaults to "icon" (only relevant if model=="gb")
     :param live_generation: a dataframe containing live generation data for the site.
         This should have the columns "power_kw" and "timestamp"
     :return: The PV forecast of the site for time (ts) for 48 hours
