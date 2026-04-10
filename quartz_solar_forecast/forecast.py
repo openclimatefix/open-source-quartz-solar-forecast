@@ -12,11 +12,13 @@ from quartz_solar_forecast.pydantic_models import PVSite
 
 log = logging.getLogger(__name__)
 
+
 def predict_ocf(
     site: PVSite,
-    model=None, ts: datetime | str = None,
+    model=None,
+    ts: datetime | str = None,
     nwp_source: str = "icon",
-    live_generation: pd.DataFrame | None = None
+    live_generation: pd.DataFrame | None = None,
 ):
     """
     Run the forecast with the gb model, which can take tilt and orientation as inputs
@@ -25,7 +27,7 @@ def predict_ocf(
     :param model: the model to use for prediction
     :param ts: the timestamp of the site. If None, defaults to the current
         timestamp rounded down to 15 minutes.
-    :param nwp_source: the nwp data source. Either "gfs", "icon" or "ukmo". Defaults to "icon"
+    :param nwp_source: the nwp data source. Either "gfs", "icon", "ukmo", or "ecmwf". Defaults to "icon"
     :param live_generation: a dataframe containing live generation data for the site
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
@@ -46,7 +48,7 @@ def predict_ocf(
         capacity_kwp_original = site.capacity_kwp
         site.capacity_kwp = 4
         if live_generation is not None:
-            live_generation['power_kw'] = live_generation['power_kw']/capacity_kwp_original * 4
+            live_generation["power_kw"] = live_generation["power_kw"] / capacity_kwp_original * 4
     else:
         capacity_kwp_original = site.capacity_kwp
 
@@ -125,7 +127,7 @@ def run_forecast(
     model: str = "gb",
     ts: datetime | str = None,
     nwp_source: str = "icon",
-    live_generation: pd.DataFrame| None = None
+    live_generation: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """
     Predict solar power output for a given site using a specified model.
@@ -135,24 +137,27 @@ def run_forecast(
                     by default "ocf" is used
     :param ts: the timestamp of the site. If None, defaults to the current
         timestamp rounded down to 15 minutes.
-    :param nwp_source: the nwp data source. Either "gfs", "icon" or "ukmo". Defaults to "icon"
+    :param nwp_source: the nwp data source. Either "gfs", "icon", "ukmo", or "ecmwf". Defaults to "icon"
                        (only relevant if model=="gb")
     :param live_generation: a dataframe containing live generation data for the site.
         This should have the columns "power_kw" and "timestamp"
     :return: The PV forecast of the site for time (ts) for 48 hours
     """
 
-    log.info(f"Running forecast for site at lat {site.latitude}, lon {site.longitude} "
-              f"at time {ts} with model {model} and nwp source {nwp_source}")
-
+    log.info(
+        f"Running forecast for site at lat {site.latitude}, lon {site.longitude} "
+        f"at time {ts} with model {model} and nwp source {nwp_source}"
+    )
 
     if model == "gb":
         return predict_ocf(site, None, ts, nwp_source, live_generation)
 
     elif model == "xgb":
         if live_generation is not None:
-            log.warning("Live generation data is currently not supported with the xgb model. " \
-            "Ignoring live_generation input.")
+            log.warning(
+                "Live generation data is currently not supported with the xgb model. "
+                "Ignoring live_generation input."
+            )
         return predict_tryolabs(site, ts)
 
     else:

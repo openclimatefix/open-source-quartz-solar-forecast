@@ -61,9 +61,16 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
     else:
         # Getting NWP from open meteo weather forecast API by ICON, GFS, or UKMO
         # within the last 3 months
-        url_nwp_source = {"icon": "dwd-icon", "gfs": "gfs", "ukmo": "ukmo_seamless"}.get(nwp_source)
+        url_nwp_source = {
+            "icon": "dwd-icon",
+            "gfs": "gfs",
+            "ukmo": "ukmo_seamless",
+            "ecmwf": "ecmwf_ifs025",
+        }.get(nwp_source)
         if not url_nwp_source:
-            raise Exception(f'Source ({nwp_source}) must be either "icon", "gfs", or "ukmo"')
+            raise Exception(
+                f'Source ({nwp_source}) must be either "icon", "gfs", "ukmo", or "ecmwf"'
+            )
         url = (
             f"https://api.open-meteo.com/v1/"
             f"{url_nwp_source if nwp_source != 'ukmo' else 'forecast'}"
@@ -181,11 +188,10 @@ def process_pv_data(
 
     return da
 
+
 def make_pv_data(
-        site: PVSite | PVSiteWithInverter,
-        ts: pd.Timestamp,
-        live_generation: pd.DataFrame | None = None
-        ) -> xr.Dataset:
+    site: PVSite | PVSiteWithInverter, ts: pd.Timestamp, live_generation: pd.DataFrame | None = None
+) -> xr.Dataset:
     """
     Make PV data by combining live data from various inverters.
 
@@ -198,7 +204,6 @@ def make_pv_data(
         live_generation_kw = site.get_inverter().get_data(ts)
     else:
         live_generation_kw = live_generation
-
 
     # Process the PV data
     da = process_pv_data(live_generation_kw, ts, site)
