@@ -65,7 +65,7 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
             "icon": "dwd-icon",
             "gfs": "gfs",
             "ukmo": "ukmo_seamless",
-            "ecmwf": "ecmwf_ifs025",
+            "ecmwf": "ecmwf",
         }.get(nwp_source)
         if not url_nwp_source:
             raise Exception(
