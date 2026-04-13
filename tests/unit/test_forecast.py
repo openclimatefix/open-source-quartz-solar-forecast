@@ -11,10 +11,11 @@ def test_run_forecast():
     site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
     ts = datetime.today() - timedelta(weeks=2)
 
-    # run model with icon, gfs and ukmo nwp
+    # run model with icon, gfs, ukmo and ecmwf nwp
     predications_df_gfs = run_forecast(site=site, model="gb", ts=ts, nwp_source="gfs")
     predications_df_icon = run_forecast(site=site, model="gb", ts=ts, nwp_source="icon")
     predications_df_ukmo = run_forecast(site=site, model="gb", ts=ts, nwp_source="ukmo")
+    predications_df_ecmwf = run_forecast(site=site, model="gb", ts=ts, nwp_source="ecmwf")
     predications_df_xgb = run_forecast(site=site, ts=ts)
 
     print("\n Prediction based on GFS NWP\n")
@@ -29,6 +30,10 @@ def test_run_forecast():
     print(predications_df_ukmo)
     print(f" Max: {predications_df_ukmo['power_kw'].max()}")
 
+    print("\n Prediction based on ECMWF NWP\n")
+    print(predications_df_ecmwf)
+    print(f" Max: {predications_df_ecmwf['power_kw'].max()}")
+
     print("\n Prediction based on XGB\n")
     print(predications_df_xgb)
     print(f" Max: {predications_df_xgb['power_kw'].max()}")
@@ -42,10 +47,11 @@ def test_run_forecast_historical():
     # Use 60 days to stay within the 3-month (90-day) limit allowed by the XGB model
     ts = datetime.today() - timedelta(days=60)
 
-    # run model with icon, gfs and ukmo nwp
+    # run model with icon, gfs, ukmo and ecmwf nwp
     predications_df_gfs = run_forecast(site=site, ts=ts, model="gb", nwp_source="gfs")
     predications_df_icon = run_forecast(site=site, ts=ts, model="gb", nwp_source="icon")
     predications_df_ukmo = run_forecast(site=site, ts=ts, model="gb", nwp_source="ukmo")
+    predications_df_ecmwf = run_forecast(site=site, ts=ts, model="gb", nwp_source="ecmwf")
     predications_df_xgb = run_forecast(site=site, model="xgb")
 
     print("\nPrediction for a historical date \n")
@@ -61,6 +67,10 @@ def test_run_forecast_historical():
     print("\n Prediction based on UKMO NWP\n")
     print(predications_df_ukmo)
     print(f" Max: {predications_df_ukmo['power_kw'].max()}")
+
+    print("\n Prediction based on ECMWF NWP\n")
+    print(predications_df_ecmwf)
+    print(f" Max: {predications_df_ecmwf['power_kw'].max()}")
 
     print("\n Prediction based on XGB\n")
     print(predications_df_xgb)
@@ -86,10 +96,9 @@ def test_run_forecast_live_generation():
     # make input data
     site = PVSite(latitude=51.75, longitude=-1.25, capacity_kwp=1.25)
     ts = datetime.today() - timedelta(weeks=2)
-    live = pd.DataFrame({
-        "timestamp": [ts - timedelta(minutes=15), ts],
-        "power_kw": [0.0, 0.1]
-    })
+    live = pd.DataFrame({"timestamp": [ts - timedelta(minutes=15), ts], "power_kw": [0.0, 0.1]})
 
     # run model with icon, gfs and ukmo nwp
-    predications_df_gfs = run_forecast(site=site, model="gb", ts=ts, nwp_source="gfs", live_generation=live)
+    predications_df_gfs = run_forecast(
+        site=site, model="gb", ts=ts, nwp_source="gfs", live_generation=live
+    )
