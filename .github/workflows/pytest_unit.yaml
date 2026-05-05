@@ -1,14 +1,17 @@
 name: Unit Tests(branch)
 run-name: 'Test branch commit "${{ github.event.head_commit.message }}"'
 
-on:  
-  push:
-    branches-ignore: [ "main" ]
-    paths-ignore: ['README.md']
-  pull_request:
-    types: [opened, synchronize, reopened]
-  pull_request_target:
-    types: [opened, synchronize, reopened, ready_for_review]
+# on:  
+  # push:
+    # branches-ignore: [ "main" ]
+    # paths-ignore: ['README.md']
+  # pull_request:
+    # types: [opened, synchronize, reopened]
+  # pull_request_target:
+    # types: [opened, synchronize, reopened, ready_for_review]
+on:
+  workflow_dispatch:
+
 
 jobs:
   branch_ci:

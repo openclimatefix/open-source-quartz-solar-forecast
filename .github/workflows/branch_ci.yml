@@ -1,0 +1,12 @@
+name: Branch CI
+
+on:
+  push:
+    branches-ignore: ["main"]
+  pull_request:
+
+jobs:
+  run-ci:
+    uses: openclimatefix/.github/.github/workflows/branch_ci@main
+    secrets:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}

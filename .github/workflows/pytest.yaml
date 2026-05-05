@@ -1,16 +1,21 @@
 name: Python package tests - integration
 
+# on:
+  # push:
+  # schedule:
+    # - cron: "0 12 * * 1"
 on:
-  push:
   schedule:
     - cron: "0 12 * * 1"
+  workflow_dispatch:
+
 
 jobs:
 
   call-run-python-tests-integration:
     # only run on push, not external PR
     uses: openclimatefix/.github/.github/workflows/python-test.yml@issue/pip-all
-    if: github.event_name == 'push'
+    
     with:
       # pytest-cov looks at this folder
       pytest_cov_dir: "quartz_solar_forecast"
