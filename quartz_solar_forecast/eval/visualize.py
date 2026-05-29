@@ -8,8 +8,9 @@ import zipfile
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
 import xarray as xr
-from mpl_toolkits.basemap import Basemap
 from tqdm import tqdm
 from PIL import Image
 
@@ -59,11 +60,9 @@ def create_elevation_map(dem_file, lon_begin, lon_end, lat_begin, lat_end, outpu
     lon_grid, lat_grid = np.meshgrid(lon_new, lat_new)
     dem = dem_full[lat_begin_index:lat_end_index, lon_begin_index:lon_end_index]
 
-    plt.figure(figsize=(10, 6), dpi=300)
-
-    m = Basemap(projection='cyl', resolution='i',
-                llcrnrlon=lon_begin, llcrnrlat=lat_begin,
-                urcrnrlon=lon_end, urcrnrlat=lat_end)
+    fig, ax = plt.subplots(figsize=(10, 6), dpi=300,
+                           subplot_kw={'projection': ccrs.PlateCarree()})
+    ax.set_extent([lon_begin, lon_end, lat_begin, lat_end], crs=ccrs.PlateCarree())
 
     levels = [-8000, -6000, -4000, -2000, -1000, -200, -50, 0, 50, 200, 500,
               1000, 1500, 2000, 3000, 4000, 5000, 6000, 7000, 8000]
@@ -73,10 +72,10 @@ def create_elevation_map(dem_file, lon_begin, lon_end, lat_begin, lat_end, outpu
               '#addd8e', '#d9f0a3', '#f7fcb9', '#c9bc87', '#a69165',
               '#856b49', '#664830', '#ad9591', '#d7ccca']
 
-    m.contourf(lon_grid, lat_grid, dem, levels=levels[5:-5], 
-               extend='both', colors=colors[5:-5])
-    m.drawcoastlines()
-    m.drawcountries()
+    ax.contourf(lon_grid, lat_grid, dem, levels=levels[5:-5],
+                extend='both', colors=colors[5:-5], transform=ccrs.PlateCarree())
+    ax.add_feature(cfeature.COASTLINE, linewidth=0.5)
+    ax.add_feature(cfeature.BORDERS, linewidth=0.5)
 
     plt.savefig(output_file, dpi=300, bbox_inches='tight', pad_inches=0)
     plt.close()
@@ -115,17 +114,17 @@ def create_pv_heatmap(results_df, pv_metadata, lon_begin, lon_end,
                 weights = weights / weights.sum()
                 pv_array[i, j] = (site_avg.loc[mask, 'forecast_power'] * weights).sum()
 
-    plt.figure(figsize=(10, 6), dpi=300)
+    fig, ax = plt.subplots(figsize=(10, 6), dpi=300,
+                           subplot_kw={'projection': ccrs.PlateCarree()})
+    ax.set_extent([lon_begin, lon_end, lat_begin, lat_end], crs=ccrs.PlateCarree())
 
-    m = Basemap(projection='cyl', resolution='i',
-                llcrnrlon=lon_begin, llcrnrlat=lat_begin,
-                urcrnrlon=lon_end, urcrnrlat=lat_end)
+    ax.contourf(lon_grid, lat_grid, pv_array, levels=15, cmap='hot', alpha=0.8,
+                transform=ccrs.PlateCarree())
+    ax.scatter(site_avg['longitude'].values, site_avg['latitude'].values,
+               c='white', s=20, edgecolors='black', linewidths=0.5, zorder=5,
+               transform=ccrs.PlateCarree())
 
-    m.contourf(lon_grid, lat_grid, pv_array, levels=15, cmap='hot', alpha=0.8)
-    m.scatter(site_avg['longitude'].values, site_avg['latitude'].values, 
-              c='white', s=20, edgecolors='black', linewidths=0.5, zorder=5)
-
-    plt.axis('off')
+    ax.axis('off')
     plt.savefig(output_file, dpi=300, bbox_inches='tight', pad_inches=0)
     plt.close()
 
