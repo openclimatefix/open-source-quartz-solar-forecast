@@ -234,7 +234,7 @@ To set up the development environment for this project, follow these steps:
 
 3. **Install the required dependencies:**
   ```bash
-  pip install -r requirements.txt
+  pip install -e .
   ```
 
 4. **Run the Jupyter Notebook server:**
