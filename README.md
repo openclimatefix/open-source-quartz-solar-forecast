@@ -232,9 +232,9 @@ To set up the development environment for this project, follow these steps:
   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
   ```
 
-3. **Install the required dependencies:**
+3. **Install the package in editable mode (uses `pyproject.toml`):**
   ```bash
-  pip install -r requirements.txt
+  pip install -e .
   ```
 
 4. **Run the Jupyter Notebook server:**
