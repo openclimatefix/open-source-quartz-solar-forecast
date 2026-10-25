@@ -7,6 +7,7 @@ from quartz_solar_forecast.data import get_nwp, make_pv_data
 from quartz_solar_forecast.forecasts import (
     TryolabsSolarPowerPredictor,
     forecast_v1_tilt_orientation,
+    forecast_v3,
 )
 from quartz_solar_forecast.pydantic_models import PVSite
 
@@ -136,8 +137,9 @@ def run_forecast(
     Predict solar power output for a given site using a specified model.
 
     :param site: the PV site
-    :param model: the model to use for prediction, choose between "ocf" and "tryolabs",
-                    by default "ocf" is used
+    :param model: the model to use for prediction, choose between "gb", "xgb" and "multi_nwp",
+                    by default "gb" is used. "multi_nwp" combines ICON, ECMWF and GFS itself,
+                    so it ignores nwp_source
     :param ts: the timestamp of the site. If None, defaults to the current
         timestamp rounded down to 15 minutes.
     :param nwp_source: the nwp data source. Either "gfs", "icon", "ukmo",
@@ -163,5 +165,15 @@ def run_forecast(
             )
         return predict_tryolabs(site, ts)
 
+    elif model == "multi_nwp":
+        if live_generation is not None:
+            log.warning(
+                "Live generation data is currently not supported with the multi_nwp model. "
+                "Ignoring live_generation input."
+            )
+        if ts is None:
+            ts = pd.Timestamp.now().round("15min")
+        return forecast_v3(site, pd.Timestamp(ts))
+
     else:
-        raise ValueError(f"Unsupported model: {model}. Choose between 'xgb' and 'gb'")
+        raise ValueError(f"Unsupported model: {model}. Choose between 'xgb', 'gb' and 'multi_nwp'")

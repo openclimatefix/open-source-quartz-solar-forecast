@@ -156,6 +156,14 @@ The second option is an XGBoost model and uses the following Numerical Weather P
 
 To use this model specify `model="xgb"` in `run_forecast(site=site, model="xgb", ts=datetime.today())`.
 
+**Multi-NWP gradient boosting**
+
+The third option uses three NWP models from [open-meteo](https://open-meteo.com/): ICON, ECMWF IFS and GFS. Each one's irradiance is converted to plane-of-array irradiance for the site's tilt and orientation, and a gradient boosted model (absolute error loss) predicts power from all three, the spread between them, and the irradiance an hour either side. It doesn't use live generation data.
+
+It was trained on 49 uk_pv sites (1-4 kWp, April 2024 to March 2025) using day-ahead forecasts from the open-meteo Previous Runs API, i.e. the run issued 24-48 h before each time. Training and backtest code is in `scripts/v3/`.
+
+To use it, set `model="multi_nwp"`: `run_forecast(site=site, model="multi_nwp", ts=datetime.today())`. `nwp_source` is ignored.
+
 ## Model Comparisons
 
 The following plot shows example predictions of both models for the same time period. Additionally for the Gradient Boosting model (default) the results from the two different data sources are shown.
