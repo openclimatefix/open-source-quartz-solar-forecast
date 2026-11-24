@@ -1,6 +1,5 @@
 """Function to get NWP data and create fake PV dataset"""
 
-import ssl
 from datetime import datetime
 
 import numpy as np
@@ -11,8 +10,6 @@ import xarray as xr
 from retry_requests import retry
 
 from quartz_solar_forecast.pydantic_models import PVSite, PVSiteWithInverter
-
-ssl._create_default_https_context = ssl._create_unverified_context
 
 
 def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon") -> xr.Dataset:
